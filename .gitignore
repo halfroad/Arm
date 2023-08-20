@@ -51,3 +51,16 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Project specific
+# Files
+*.uvoptx
+*.uvguix.*
+*.o
+*.d
+
+# Folders
+DebugConfig/
+Templates/
+Listings/
+Objects/
+RTE/
