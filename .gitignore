@@ -57,6 +57,7 @@ dkms.conf
 *.uvguix.*
 *.o
 *.d
+*.scvd
 
 # Folders
 DebugConfig/
