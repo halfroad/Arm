@@ -56,7 +56,7 @@ int main(void)
   /* GPIOG Peripheral clock enable */
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOF, ENABLE);
 
-  /* Configure PG6 and PG8 in output pushpull mode */
+  /* Configure PF9 and PF10 in output pushpull mode */
   GPIO_InitStructure.GPIO_Pin = LED1_PIN | LED2_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -65,61 +65,75 @@ int main(void)
   GPIO_Init(GPIOF, &GPIO_InitStructure);
 
   /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
-     You can monitor PG6 or PG8 on the scope to measure the output signal. 
+     You can monitor PF9 or PF10 on the scope to measure the output signal. 
      If you need to fine tune this frequency, you can add more GPIO set/reset 
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */  
   while (1)
   {
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+	/*
+	  #define LED1_PIN GPIO_Pin_9,
+	  #define GPIO_Pin_9	((uint16_t)0x0200),	0b0000 0010, 0000 0000,	low 16 bits
+	  #define GPIO_Pin_10	((uint16_t)0x0400,	0b0000 0100, 0000 0000,	low 16 bits
+	  
+	  GPIO_Pin_9 | GPIO_Pin_10, 0b0000 0110, 0000 0000. For those low 16 bit (0 ~ 15) pins whose bits are 1,
+	  GPIOx->BSRR will set the GPIO port to 1 (high level). The ports will not be changed for the bits are 0.
+	  GPIOF->BSRR = 0b0000 0110, 0000 0000, the GPIOF ports at bit 9 and 10 will be set to 1, the bits equal 0 will keep unchanged.
+	*/
+    /* Set PF9 and PF10 */
+	GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+	/*
+	  (uint32_t)((LED1_PIN | LED2_PIN)<< 16), 0b0000 0110, 0000 0000 << 16,
+	  0b0000 0110, 0000 0000, 0000 0000, 0000 0000. For those high 16 bit (16 ~ 31) pins whose bits are
+	  are 1 , i.e. 16 ~ 31, GPIOx->BSRR will reset the GPIO port to 0. the bits equal 0 will keep unchanged. 
+	  */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+    /* Set PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 
-    /* Set PG6 and PG8 */
+    /* Set PF9 and PF10 */
     GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+    /* Reset PF9 and PF10 */
+    GPIOG->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+    /* Set PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);;
+    /* Set PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);;
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+    /* Set PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+    /* Set PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+    /* Set PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+    /* Set PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 
-    /* Set PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
-    /* Reset PG6 and PG8 */
-    GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+    /* Set PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+    /* Reset PF9 and PF10 */
+    GPIOF->BSRR = (uint32_t)((LED1_PIN | LED2_PIN)<< 16);
   }
 }
 
