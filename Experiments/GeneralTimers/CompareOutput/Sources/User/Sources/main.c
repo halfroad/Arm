@@ -20,8 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "LED.h"
-#include "BasicTimer.h"
+#include "PulseWidthModulation.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
@@ -43,7 +42,6 @@
   * @param  None
   * @retval None
   */
-
 int main(void)
 {
   /*!< At this stage the microcontroller clock setting is already configured, 
@@ -53,19 +51,17 @@ int main(void)
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f4xx.c file
      */  
-	init_led_gpios(LED1_PIN | LED2_PIN);
-	config_nvic(TIM7_IRQn, 0x01, 0x03);
-	init_basic_timer_irq(8400 - 1, 500 - 1);
+	
+	init_pwm_out_gpios();
+	init_pwm_out_timer();
 
   /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
      You can monitor PF9 or PF10 on the scope to measure the output signal. 
      If you need to fine tune this frequency, you can add more GPIO set/reset 
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */  
-	
 	while (1)
 	{
-		//init_basic_time_delay(8400 - 1, 50000 - 1, time_arrival_handler);
 	}
 }
 
