@@ -19,10 +19,6 @@ void init_pwm_out_gpios(void)
 	gpio_init_struct.GPIO_Speed = GPIO_Speed_50MHz;
 	
 	GPIO_Init(GPIOA, &gpio_init_struct);
-	
-	/* Select the category of AF for Pin 6 and 7. */
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_TIM3);
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_TIM3);
 }
 
 void init_pwm_out_timer(void)

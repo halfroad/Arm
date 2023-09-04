@@ -49,10 +49,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>GeneralTimers</OutputName>
+          <OutputName>CaptureWaves</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>1</CreateHexFile>
+          <CreateHexFile>0</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>-1</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -410,6 +410,16 @@
               <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_rcc.c</FilePath>
             </File>
             <File>
+              <FileName>stm32f4xx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\misc.c</FilePath>
+            </File>
+            <File>
               <FileName>stm32f4xx_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_tim.c</FilePath>
@@ -435,9 +445,14 @@
               <FilePath>.\Sources\User\Sources\main.c</FilePath>
             </File>
             <File>
-              <FileName>PulseWidthModulation.c</FileName>
+              <FileName>CaptureWaves.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\PulseWidthModulation.c</FilePath>
+              <FilePath>.\Sources\User\Sources\CaptureWaves.c</FilePath>
+            </File>
+            <File>
+              <FileName>Serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\User\Sources\Serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -464,7 +479,7 @@
   <LayerInfo>
     <Layers>
       <Layer>
-        <LayName>GeneralTimers</LayName>
+        <LayName>CaptureWaves</LayName>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>
