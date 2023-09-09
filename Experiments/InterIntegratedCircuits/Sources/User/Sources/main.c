@@ -62,23 +62,18 @@ int main(void)
        system_stm32f4xx.c file
 	*/
 	
-	timer_init();
-	
+	timer_init(168);
 	i2c_init();
 	
 	char version[] = "This is the version of firmware.";
 	
-	uint8_t f = GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9);
-
-	
-	uint8_t result = eeprom_write_bytes(SLAVE_ADDRESS, 0x00, (uint8_t *)version, strlen(version));
+	//eeprom_write_bytes(SLAVE_ADDRESS, 0x00, (uint8_t *)version, strlen(version));
 	
 	uint8_t bytes[] = {0};
 	
 	/*YL-90 AT24C02 Slave Address: 0b 101 0000, that is 0b0101 0000, 0x50. */
-	//eeprom_read_bytes(SLAVE_ADDRESS, 0, bytes, 100);
-	
-	//int t = strlen((char *)bytes);
+	eeprom_read_bytes(SLAVE_ADDRESS, 0, bytes, 100);
+	int t = strlen((char *)bytes);
 	
 	/* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
      You can monitor PF9 or PF10 on the scope to measure the output signal. 

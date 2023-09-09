@@ -38,126 +38,32 @@
 			AT24C512.
 */
 
-uint8_t eeprom_write_bytes(uint8_t slave_address, uint16_t register_address /* AT24C02 */, uint8_t *bytes, uint16_t length)
+void eeprom_write_bytes(uint8_t slave_address, uint16_t register_address /* AT24C02 */, uint8_t *bytes, uint16_t length)
 {
-	i2c_start();															/* 1. Start. */
-		
-	uint8_t acknowledgement = i2c_send(slave_address | EEPROM_WRITE);		/* 2. Send Slave Address << WRITE/READ flag. */
+	i2c_generate_start_conditions();				/* 1. Start conditions. */
+	i2c_send(slave_address | EEPROM_WRITE, 1);		/* 2. Send Slave Address << WRITE/READ flag. */
+	i2c_send(register_address, 1);					/* 3. Register address of data. */
 	
-	if (NO_ACKNOWLEDGEMENT == acknowledgement)
-	{
-		i2c_stop();
-		
-		return 1;
-	}
+	for (uint16_t i = 0; i < length; i++)
+		i2c_send(bytes[i], 1);						/* 4. Data. */
 	
-	/* Write address of Data. */
-#if (EEPROM_WORD_ADDRESS_SIZE == 8)
-	acknowledgement = i2c_send((uint8_t)(register_address & 0x00ff));			/* 3.1. Data address with 8 bits. */
-#else
-	acknowledgement = i2c_send((uint8_t)(register_address >> 8));				/* 3.2.1 Data address with 16 bits, first 8 bits.*/
-	
-	if (NO_ACKNOWLEDGEMENT == acknowledgement)
-	{
-		i2c_stop();
-		
-		return 2;
-	}
-	
-	acknowledgement = i2c_send((uint8_t)(register_address & 00ff));				/* 3.2.2 Data address with 16 bits, last 8 bits*/
-	
-	if (NO_ACKNOWLEDGEMENT == acknowledgement)
-	{
-		i2c_stop();
-		
-		return 3;
-	}
-	
-#endif
-	
-	/* Write Data. */
-	for (uint16_t i = 0; i < length; i ++)
-	{
-		acknowledgement = i2c_send(bytes[i]);
-		
-		if (NO_ACKNOWLEDGEMENT == acknowledgement)
-		{
-			i2c_stop();
-			
-			break;
-		}
-	}
-	
-	i2c_stop();
-	
-	return 0;
+	i2c_generate_stopt_conditions();
 }
 
 uint8_t eeprom_read_bytes(uint8_t slave_address, uint16_t register_address, uint8_t *bytes, uint16_t length)
 {
-	i2c_start();															/* 1. Start. */
+	i2c_generate_start_conditions();
+	i2c_send(slave_address | EEPROM_READ, 1);
+	i2c_send(register_address, 1);
 	
-	uint8_t acknowledgement = i2c_send(slave_address | EEPROM_WRITE);		/* 2. Send Slave Address << WRITE/READ flag. */
-	
-	if (NO_ACKNOWLEDGEMENT == acknowledgement)
-	{
-		i2c_stop();
-		
-		return 1;
-	}
-	
-#if (8 == EEPROM_WORD_ADDRESS_SIZE)
-	
-	acknowledgement = i2c_send((uint8_t)(register_address & 0x00ff));		/* 3.1. Data address with 8 bits. */
-	
-	if (NO_ACKNOWLEDGEMENT == acknowledgement)
-	{
-		i2c_stop();
-		
-		return 2;
-	}
-	
-#else
-	
-	acknowledgement  = i2c_send((uint8_t)(register_address << 8));			/* 3.2.1 Data address with 16 bits, first 8 bits.*/
-	
-	if (NO_ACKNOWLEDGEMENT == acknowledgement)
-	{
-		i2c_stop();
-		
-		return 3;
-	}
-	
-	acknowledgement = i2c_send((uint8_t)(register_address & 0x00ff));		/* 3.2.2 Data address with 16 bits, last 8 bits*/
-	
-	if (NO_ACKNOWLEDGEMENT == acknowledgement)
-	{
-		i2c_stop();
-		
-		return 4;
-	}
-	
-#endif
-
-	/* Start again. */
-	i2c_start();
-	
-	acknowledgement = i2c_send(slave_address | EEPROM_READ);
-	
-	if (NO_ACKNOWLEDGEMENT == acknowledgement)
-	{
-		i2c_stop();
-		
-		return 5;
-	}
+	i2c_generate_start_conditions();				/*Start again */
+	i2c_send(slave_address | EEPROM_READ, 1);
 	
 	/* Read bytes. */
 	for (uint16_t i = 0; i < length; i ++)
-		*(bytes + 1) = i2c_read(ACKNOWLEDGEMENT);							/* Read bytes and acknowledgement from Slave. */
+		*(bytes + i) = i2c_read();					/* Read bytes and acknowledgement from Slave. */
 	
-	*(bytes + length - 1) = i2c_read(NO_ACKNOWLEDGEMENT);					/* Read last byte and no acknowledgement from Slave. */
-	
-	i2c_stop();
+	*(bytes + length - 1) = i2c_read();				/* Read last byte and no acknowledgement from Slave. */
 	
 	return 0;
 }

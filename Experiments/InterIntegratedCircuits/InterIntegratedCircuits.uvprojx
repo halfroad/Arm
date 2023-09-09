@@ -419,6 +419,11 @@
               <FileType>1</FileType>
               <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_tim.c</FilePath>
             </File>
+            <File>
+              <FileName>misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\misc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

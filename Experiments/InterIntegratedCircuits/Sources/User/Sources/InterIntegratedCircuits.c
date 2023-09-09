@@ -7,15 +7,8 @@
 #define SCL_GPIO_PIN		GPIO_Pin_8	/* I2C1_SCL: PB6 */
 #define SDA_GPIO_PIN		GPIO_Pin_9	/* I2C_SDA: PB7 */
 
-#define SET_SCL_HIGH()		GPIO_SetBits(GPIOB, SCL_GPIO_PIN)
-#define SET_SCL_LOW()		GPIO_ResetBits(GPIOB, SCL_GPIO_PIN)
-
-#define SET_SDA_HIGH()		GPIO_SetBits(GPIOB, SDA_GPIO_PIN)
-#define SET_SDA_LOW()		GPIO_ResetBits(GPIOB, SDA_GPIO_PIN)
-
-#define READ_SDA_INPUT()	GPIO_ReadInputDataBit(GPIOB, SDA_GPIO_PIN)
-
-#define DELAY()				delay_us(5);
+#define I2C_SET_SCL(x)		GPIO_WriteBit(GPIOB, SCL_GPIO_PIN, (BitAction)(x))
+#define I2C_SET_SDA(x)		GPIO_WriteBit(GPIOB, SDA_GPIO_PIN, (BitAction)(x))
 
 /*
 
@@ -32,6 +25,18 @@ void i2c_init(void)
 	*/
 	
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	
+	GPIO_InitTypeDef gpio_init_struct;
+	
+	gpio_init_struct.GPIO_Pin = SCL_GPIO_PIN | SDA_GPIO_PIN;
+	gpio_init_struct.GPIO_Mode = GPIO_Mode_OUT;
+	gpio_init_struct.GPIO_OType = GPIO_OType_OD;
+	gpio_init_struct.GPIO_Speed = GPIO_Speed_50MHz;
+	
+	GPIO_Init(GPIOB, &gpio_init_struct);
+	
+	I2C_SET_SCL(1);
+	I2C_SET_SDA(1);
 }
 
 /*
@@ -39,186 +44,100 @@ void i2c_init(void)
 Configure I2C SDA to input.
 
 */
-void set_sda_in(void)
+
+void i2c_generate_start_conditions(void)
 {
-	GPIO_InitTypeDef gpio_init_struct;
+	I2C_SET_SDA(1);
+	delay_us(10);
 	
-	gpio_init_struct.GPIO_Pin = SDA_GPIO_PIN;
-	gpio_init_struct.GPIO_Mode = GPIO_Mode_IN;
+	I2C_SET_SCL(1);
+	delay_us(10);
 	
-	GPIO_Init(GPIOB, &gpio_init_struct);
+	I2C_SET_SDA(0);
+	delay_us(10);
+	
+	I2C_SET_SCL(0);
+	delay_us(10);
 }
 
-/*
-
-Configure I2C SDA to ouput.
-
-*/
-void set_sda_out(void)
+void i2c_generate_stopt_conditions(void)
 {
-	GPIO_InitTypeDef gpio_init_struct;
+	I2C_SET_SDA(0);
+	delay_us(10);
 	
-	gpio_init_struct.GPIO_Pin = SDA_GPIO_PIN;
-	gpio_init_struct.GPIO_Mode = GPIO_Mode_OUT;
-	gpio_init_struct.GPIO_OType = GPIO_OType_PP;
-	gpio_init_struct.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	gpio_init_struct.GPIO_Speed = GPIO_Speed_50MHz;
+	I2C_SET_SCL(1);
+	delay_us(10);
 	
-	GPIO_Init(GPIOB, &gpio_init_struct);
+	I2C_SET_SDA(10);
+	delay_us(10);
 }
 
-void i2c_start(void)
+uint8_t i2c_send(uint8_t byte, uint8_t acknowledgement)
 {
-	set_sda_out();		/* Set mode to OUT. */
-	
-	SET_SCL_HIGH();		/* SCL High */
-	DELAY();			/* Wait for a while 5 us. */
-	
-	SET_SDA_HIGH();		/* SDA High */
-	DELAY();			/* Wait for a while 5 us. */
-	
-	SET_SDA_LOW();		/* Start Bit, Falling edge. */
-	DELAY();			/* Wait for a while 5 us. */
-	
-	SET_SCL_LOW();
-	DELAY();
-}
-
-void i2c_stop(void)
-{
-	set_sda_out();
-	
-	SET_SDA_LOW();
-	DELAY();
-	
-	SET_SCL_HIGH();
-	DELAY();
-	
-	SET_SDA_HIGH();
-	DELAY();
-}
-
-/*
-
-Master acknowledges the slave (, and then the Slave reads the acknowledgement).
-
-*/
-void acknowledge(uint8_t acknowldgement)
-{
-	set_sda_out();
-	
-	SET_SCL_LOW();	/* The SDA will be set in this moment. */
-	DELAY();
-	
-	if (ACKNOWLEDGEMENT == acknowldgement)
-		SET_SDA_LOW();	/* ACK (0)*/
-	else
-		SET_SDA_HIGH();	/* NO ACK (1)*/
-	
-	DELAY();
-	
-	SET_SCL_HIGH();
-	DELAY();
-	
-	SET_SCL_LOW();
-	DELAY();
-}
-
-/*
-
-Master acquires acknowledgement from slave (Slave acknowledges the master prior to the acquisition.).
-
-*/
-
-uint8_t acquire_acknowledgement(void)
-{	
-	SET_SCL_LOW();
-	DELAY();
-	
-	set_sda_in();
-	
-	SET_SCL_HIGH();
-	DELAY();
-	
-	uint8_t acknowledgement = 0;
-	uint8_t time = 0;
-		
-	while (READ_SDA_INPUT())
+	for (uint8_t i = 0; i < 8; i ++)
 	{
-		time ++;
+		I2C_SET_SDA(byte & 0x80);
 		
-		if (time > 250)
+		byte <<= 1;
+		
+		delay_us(10);
+		
+		I2C_SET_SCL(1);
+		delay_us(10);
+		
+		I2C_SET_SCL(0);
+		delay_us(10);
+	}
+	
+	I2C_SET_SDA(1);		/* No Ack. */
+	delay_us(10);
+	
+	I2C_SET_SCL(1);
+	
+	uint8_t times = 0;
+	
+	while (GPIO_ReadInputDataBit(GPIOB, SDA_GPIO_PIN) == SET
+		&& acknowledgement == 1)
+	{
+		times ++;
+		
+		if (times > 200)
 		{
-			SET_SCL_LOW();
+			I2C_SET_SCL(0);
+			delay_us(10);
 			
-			acknowledgement = 1;
-			
-			break;
+			return 0;
 		}
 	}
 	
-	SET_SCL_LOW();
-	DELAY();
+	I2C_SET_SCL(0);
+	delay_us(10);
 	
-	return acknowledgement;
+	return 1;
 }
 
-uint8_t i2c_send(uint8_t byte)
+uint8_t i2c_read()
 {
-	set_sda_out();
+	uint8_t byte = 0x00;
+	
+	/*SCL = 0 at this moment. */
+	
+	I2C_SET_SDA(1);
+	delay_us(10);
 	
 	for (uint8_t i = 0; i < 8; i ++)
 	{
-		SET_SCL_LOW();
-		DELAY();
-		
-		/* 0b1000 0000. */
-		if (byte & 0x80)
-			SET_SDA_HIGH();
-		else
-			SET_SDA_LOW();
+		I2C_SET_SCL(1);
+		delay_us(10);
 		
 		byte <<= 1;
+		byte |= GPIO_ReadInputDataBit(GPIOB, SDA_GPIO_PIN);
 		
-		DELAY();
+		delay_us(10);
 		
-		SET_SCL_HIGH();
-		DELAY();
+		I2C_SET_SCL(10);
+		delay_us(10);
 	}
-	
-	SET_SCL_LOW();
-	DELAY();
-	
-	return acquire_acknowledgement();
-}
-
-uint8_t i2c_read(uint8_t acknowledgement)
-{
-	SET_SCL_LOW();
-	DELAY();
-	
-	set_sda_in();
-	
-	uint8_t byte = 0xff;		/* 0b1111 1111. */
-	
-	for (uint8_t i = 0; i < 8; i ++)
-	{
-		SET_SCL_HIGH();
-		DELAY();
-		
-		/* 0b1111 1110. */
-		byte <<= 1;
-		
-		if (READ_SDA_INPUT())	/* SDA is high. */
-			byte |= 0x01;		/* 0b0000 0001. */
-		
-		SET_SCL_LOW();
-		DELAY();
-	}
-		
-	// Acknowledge, 0 means ack, 1 means non ack.
-		
-	acknowledge(acknowledgement);
 	
 	return byte;
 }
