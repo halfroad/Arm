@@ -40,8 +40,6 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 
-#define SLAVE_ADDRESS	0x50
-
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -67,12 +65,12 @@ int main(void)
 	
 	char version[] = "This is the version of firmware.";
 	
-	//eeprom_write_bytes(SLAVE_ADDRESS, 0x00, (uint8_t *)version, strlen(version));
+	//eeprom_write_bytes((0x00, (uint8_t *)version, strlen(version));
 	
-	uint8_t bytes[] = {0};
+	uint8_t bytes[100] = {0};
 	
 	/*YL-90 AT24C02 Slave Address: 0b 101 0000, that is 0b0101 0000, 0x50. */
-	eeprom_read_bytes(SLAVE_ADDRESS, 0, bytes, 100);
+	eeprom_read_bytes(0x00, bytes, sizeof(bytes));
 	int t = strlen((char *)bytes);
 	
 	/* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
