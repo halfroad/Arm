@@ -9,12 +9,12 @@ void init_usart_ports(uint32_t bautRate)
 	/* Initialize USART1 Settings */
 	USART_InitTypeDef usart_init_struct;
 	
-	usart_init_struct.USART_BaudRate 			= bautRate;
+	usart_init_struct.USART_BaudRate 						= bautRate;
 	/* Receive and Transmit */
-	usart_init_struct.USART_Mode 				= USART_Mode_Tx | USART_Mode_Rx;
-	usart_init_struct.USART_WordLength			= USART_WordLength_8b;
-	usart_init_struct.USART_Parity				= USART_Parity_No;
-	usart_init_struct.USART_StopBits			= USART_StopBits_1;
+	usart_init_struct.USART_Mode 								= USART_Mode_Tx | USART_Mode_Rx;
+	usart_init_struct.USART_WordLength					= USART_WordLength_8b;
+	usart_init_struct.USART_Parity							= USART_Parity_No;
+	usart_init_struct.USART_StopBits						= USART_StopBits_1;
 	usart_init_struct.USART_HardwareFlowControl	= USART_HardwareFlowControl_None;
 	
 	USART_Init(USART1, &usart_init_struct);

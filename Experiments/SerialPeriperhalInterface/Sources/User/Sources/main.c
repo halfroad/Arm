@@ -19,16 +19,7 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-
-#include <stdio.h>
-#include <string.h>
-
 #include "main.h"
-#include "InterIntegratedCircuits.h"
-#include "EEPROM.h"
-#include "Timer.h"
-#include "GPIO.h"
-#include "USART.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
   * @{
@@ -40,7 +31,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -61,32 +51,77 @@ int main(void)
        system_stm32f4xx.c file
 	*/
 	
-	delay_init(168);
-	gpio_ports_init();
-	usart_init(115200);
-	i2c_init();
+	/* GPIOG Peripheral clock enable */
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOF, ENABLE);
 	
-	char version[] = "This is the version of firmware.";
+	GPIO_InitTypeDef gpio_init_struct;
 	
-	//eeprom_write_byte(0x00, 'a');
+	/* Configure PF9 and PF10 in output pushpull mode */
+	gpio_init_struct.GPIO_Pin 	= LED1_PIN | LED2_PIN;
+	gpio_init_struct.GPIO_Mode 	= GPIO_Mode_OUT;
+	gpio_init_struct.GPIO_OType	= GPIO_OType_PP;
+	gpio_init_struct.GPIO_Speed	= GPIO_Speed_100MHz;
+	gpio_init_struct.GPIO_PuPd	= GPIO_PuPd_NOPULL;
+	
+	GPIO_Init(GPIOF, &gpio_init_struct);
 	
 	/* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
      You can monitor PF9 or PF10 on the scope to measure the output signal. 
      If you need to fine tune this frequency, you can add more GPIO set/reset 
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.
-	
-	*/
-	
-	uint8_t byte = 0;
-	
+	 */
 	while (1)
 	{
-		eeprom_read_byte(0x00, &byte);
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 		
-		transmit(byte);
-		delay_ms(500);
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 		
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+		
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+		
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+		
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+		
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+		
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+		
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
+		
+		/* Set PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(LED1_PIN | LED2_PIN);
+		/* Reset PF9 and PF10 */
+		GPIOG->BSRR = (uint32_t)(uint32_t)((LED1_PIN | LED2_PIN)<< 16);
 	}
 }
 

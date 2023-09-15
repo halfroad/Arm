@@ -1,0 +1,1 @@
+void spi_gpios_init(void);

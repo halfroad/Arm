@@ -65,7 +65,7 @@ int main(void)
 
 	while (1)
 	{
-		transmit(0xaa);
+		transmit('A');
 	}
 }
 

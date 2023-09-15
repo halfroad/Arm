@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>InterIntegratedCircuits</OutputName>
+          <OutputName>W25QxxFlash</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>-1</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -195,7 +195,7 @@
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>3</RwSelD>
+            <RwSelD>4</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -330,7 +330,7 @@
             <uGnu>1</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
-            <v6LangP>0</v6LangP>
+            <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -410,24 +410,19 @@
               <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_rcc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_i2c.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f4xx_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_tim.c</FilePath>
             </File>
             <File>
-              <FileName>misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\misc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f4xx_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -445,34 +440,44 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\User\Sources\delay.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Sources\User\Sources\main.c</FilePath>
             </File>
             <File>
-              <FileName>InterIntegratedCircuits.c</FileName>
+              <FileName>printable.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\InterIntegratedCircuits.c</FilePath>
+              <FilePath>.\Sources\User\Sources\printable.c</FilePath>
             </File>
             <File>
-              <FileName>Timer.c</FileName>
+              <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\Timer.c</FilePath>
+              <FilePath>.\Sources\User\Sources\usart.c</FilePath>
             </File>
             <File>
-              <FileName>EEPROM.c</FileName>
+              <FileName>usart_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\EEPROM.c</FilePath>
+              <FilePath>.\Sources\User\Sources\usart_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>USART.c</FileName>
+              <FileName>spi_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\USART.c</FilePath>
+              <FilePath>.\Sources\User\Sources\spi_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>GPIO.c</FileName>
+              <FileName>spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\GPIO.c</FilePath>
+              <FilePath>.\Sources\User\Sources\spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\User\Sources\w25qxx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -499,7 +504,7 @@
   <LayerInfo>
     <Layers>
       <Layer>
-        <LayName>InterIntegratedCircuits</LayName>
+        <LayName>W25QxxFlash</LayName>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>

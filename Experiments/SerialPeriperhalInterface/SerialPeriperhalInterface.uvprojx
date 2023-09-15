@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>InterIntegratedCircuits</OutputName>
+          <OutputName>SerialPeriperhalInterface</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4096</DriverSelection>
+            <DriverSelection>-1</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -195,7 +195,7 @@
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>3</RwSelD>
+            <RwSelD>4</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -330,7 +330,7 @@
             <uGnu>1</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
-            <v6LangP>0</v6LangP>
+            <v6LangP>1</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32F40_41xxx,STM32F40_41xxx_DEVEBOX,USE_STDPERIPH_DRIVER</Define>
+              <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER,STM32F40_41xxx_DEVEBOX</Define>
               <Undefine></Undefine>
               <IncludePath>.\Sources\CMSIS\Includes;.\Sources\StandardPeripheralDrivers\Includes;.\Sources\Startup\Includes;.\Sources\User\Includes</IncludePath>
             </VariousControls>
@@ -362,7 +362,7 @@
             </VariousControls>
           </Aads>
           <LDads>
-            <umfTarg>1</umfTarg>
+            <umfTarg>0</umfTarg>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
             <noStLib>0</noStLib>
@@ -410,24 +410,9 @@
               <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_rcc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f4xx_i2c.c</FileName>
+              <FileName>stm32f4xx_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\misc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_usart.c</FilePath>
+              <FilePath>.\Sources\StandardPeripheralDrivers\Sources\stm32f4xx_spi.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -450,29 +435,19 @@
               <FilePath>.\Sources\User\Sources\main.c</FilePath>
             </File>
             <File>
-              <FileName>InterIntegratedCircuits.c</FileName>
+              <FileName>SerialPeripheralInterface.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\InterIntegratedCircuits.c</FilePath>
-            </File>
-            <File>
-              <FileName>Timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\Timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>EEPROM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\EEPROM.c</FilePath>
-            </File>
-            <File>
-              <FileName>USART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\User\Sources\USART.c</FilePath>
+              <FilePath>.\Sources\User\Sources\SerialPeripheralInterface.c</FilePath>
             </File>
             <File>
               <FileName>GPIO.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Sources\User\Sources\GPIO.c</FilePath>
+            </File>
+            <File>
+              <FileName>W25Qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\User\Sources\W25Qxx.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -499,7 +474,7 @@
   <LayerInfo>
     <Layers>
       <Layer>
-        <LayName>InterIntegratedCircuits</LayName>
+        <LayName>SerialPeriperhalInterface</LayName>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>
