@@ -26,7 +26,7 @@ void spi_init()
 }
 
 /* Read and Write byte (In parallel) via SPI1. */
-uint16_t spi_read_write(uint16_t byte)
+uint16_t spi_write_read(uint16_t byte)
 {
 	/* Wait until the send buffer is empty. */
 	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET)

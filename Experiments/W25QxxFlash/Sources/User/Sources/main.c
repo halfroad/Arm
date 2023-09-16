@@ -70,11 +70,18 @@ int main(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.
 	 */
+	
+	uint8_t bytes[] = "Hello Serial Peripheral Interfaces.";
+	
+	w25qxx_flash_page_write(0x00, bytes, sizeof bytes);
+	
+	char *readBytes;
+	
 	while (1)
 	{
-		uint16_t identifier = w25qxx_flash_read_identifier();
+		w25qxx_flash_read(0x00, (uint8_t *)readBytes, 10);
 		
-		printf("%ud\n", identifier);
+		printf("%s\n", readBytes);
 		
 		delay_ms(500);
 	}
