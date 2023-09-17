@@ -1,6 +1,9 @@
 #include "spi.h"
 
 #define W25QXX_FLASH_DEFALUT_VOLUME	128
+
+void w25qxx_init(void);
+	
 /*
 
 Read identifier.
@@ -29,7 +32,8 @@ Byte0|byte1|byte2|byte3|byte4|...|byteN, 0x02|A23 ~ A16|A15 ~ A8|A7 ~ A0|D7 ~ D0
 @number, number of bytes to be written.
 
 */
-void w25qxx_flash_page_write(uint32_t address, uint8_t *bytes, uint32_t length);
+uint32_t w25qxx_flash_page_write(uint32_t address, uint8_t *bytes, uint32_t length);
+
 /*
 
 Multiple Pages Write.

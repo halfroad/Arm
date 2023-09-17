@@ -1,7 +1,11 @@
+#include "spi_gpio.h"
 #include "spi.h"
 
 void spi_init()
 {
+	/* https://blog.csdn.net/we_long/article/details/131782390 */
+	spi_gpios_init();
+	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 	
 	SPI_InitTypeDef spi_init_struct;
@@ -16,7 +20,7 @@ void spi_init()
                                          hardware (NSS pin) or by software using the SSI bit. 
 				#define SPI_NSS_Soft                    ((uint16_t)0x0200)
 				#define SPI_NSS_Hard                    ((uint16_t)0x0000) */
-	spi_init_struct.SPI_BaudRatePrescaler	= SPI_BaudRatePrescaler_256;			/*Baud Rate Prescaler. */
+	spi_init_struct.SPI_BaudRatePrescaler	= SPI_BaudRatePrescaler_4;			/*Baud Rate Prescaler. */
 	spi_init_struct.SPI_CRCPolynomial		= 7;									/* This field (and CRC register) defines the CRC polynomial in a binary form. See the link http://en.wikipedia.org/wiki/Cyclic_redundancy_check for more. */
 	
 	/* Enable the SPI1. */
@@ -26,7 +30,7 @@ void spi_init()
 }
 
 /* Read and Write byte (In parallel) via SPI1. */
-uint16_t spi_write_read(uint16_t byte)
+uint8_t spi_write_read(uint8_t byte)
 {
 	/* Wait until the send buffer is empty. */
 	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET)
@@ -38,6 +42,6 @@ uint16_t spi_write_read(uint16_t byte)
 	/* Wait until the receive buffer is not empty. */
 	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET)
 		;
-	
-	return SPI_I2S_ReceiveData(SPI1);
+		
+	return SPI_I2S_ReceiveData(SPI1);;
 }

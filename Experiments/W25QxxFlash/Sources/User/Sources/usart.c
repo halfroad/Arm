@@ -1,7 +1,10 @@
 #include "usart.h"
+#include "usart_gpio.h"
 
 void usart_init(uint32_t baudRate)
 {
+	usart_gpios_init();
+	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 	
 	USART_InitTypeDef usart_init_struct;

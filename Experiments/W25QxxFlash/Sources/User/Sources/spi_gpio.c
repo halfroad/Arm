@@ -19,26 +19,26 @@ void spi_gpios_init(void)
 	
 	GPIO_InitTypeDef gpio_init_struct;
 	
+	gpio_init_struct.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+	gpio_init_struct.GPIO_Mode = GPIO_Mode_AF;
+	gpio_init_struct.GPIO_OType = GPIO_OType_PP;
+	gpio_init_struct.GPIO_Speed = GPIO_Speed_50MHz;
+	
+	GPIO_Init(GPIOA, &gpio_init_struct);
+	
 	/* GPIOA Pin 4 is connected to Chip Select pinout of W25Qxx, thus the mode of CS is Output. */
 	gpio_init_struct.GPIO_Pin = GPIO_Pin_4;
 	gpio_init_struct.GPIO_Mode = GPIO_Mode_OUT;
 	gpio_init_struct.GPIO_OType = GPIO_OType_PP;
 	gpio_init_struct.GPIO_Speed = GPIO_Speed_50MHz;
-	gpio_init_struct.GPIO_PuPd = GPIO_PuPd_UP;				/* CS is High level by default.*/
 	
 	GPIO_Init(GPIOA, &gpio_init_struct);
 	
-	memset(&gpio_init_struct, 0, sizeof gpio_init_struct);
+	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 	
-	gpio_init_struct.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
-	gpio_init_struct.GPIO_Mode = GPIO_Mode_AF;
-	gpio_init_struct.GPIO_OType = GPIO_OType_OD;
-	gpio_init_struct.GPIO_Speed = GPIO_Speed_50MHz;
-	
-	GPIO_Init(GPIOA, &gpio_init_struct);
-	
-	/* Configure the pins for Alternate Functions. */
+	/* Configure the pins for Alternate Functions.
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_SPI1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource6, GPIO_AF_SPI1);
 	GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_SPI1);
+	*/
 }

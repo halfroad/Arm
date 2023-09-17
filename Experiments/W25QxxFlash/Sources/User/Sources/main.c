@@ -22,10 +22,7 @@
 #include "main.h"
 
 #include "delay.h"
-#include "usart_gpio.h"
 #include "usart.h"
-#include "printable.h"
-#include "spi_gpio.h"
 #include "w25qxx.h"
 
 /** @addtogroup STM32F4xx_StdPeriph_Examples
@@ -59,10 +56,8 @@ int main(void)
 	*/
 	
 	delay_init(168);
-	usart_gpios_init();
 	usart_init(115200);
-	spi_gpios_init();
-	spi_init();
+	w25qxx_init();
 	
 	/* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
      You can monitor PF9 or PF10 on the scope to measure the output signal. 
@@ -70,19 +65,32 @@ int main(void)
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.
 	 */
-	
+	/*
 	uint8_t bytes[] = "Hello Serial Peripheral Interfaces.";
+	uint32_t length = sizeof bytes;
+	uint32_t result = w25qxx_flash_page_write(0x00, bytes, length);
+	uint32_t success = (4 + length) * 0xFF;
 	
-	w25qxx_flash_page_write(0x00, bytes, sizeof bytes);
-	
-	char *readBytes;
+	uint8_t readBytes[100] = {0};
+	*/
 	
 	while (1)
 	{
-		w25qxx_flash_read(0x00, (uint8_t *)readBytes, 10);
+		/*
+		if (success == result)
+		{
+			w25qxx_flash_read(0x00, readBytes, 10);
 		
-		printf("%s\n", readBytes);
+			printf("%s\n", readBytes);
+			
+			delay_ms(500);
+		}
+		*/
 		
+		uint16_t identifier = w25qxx_flash_read_identifier();
+		
+		printf("%ud\n", identifier);
+			
 		delay_ms(500);
 	}
 }

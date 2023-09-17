@@ -6,4 +6,4 @@
 void spi_init();
 
 /* Write and Read byte (In parallel) via SPI1. */
-uint16_t spi_write_read(uint16_t byte);
+uint8_t spi_write_read(uint8_t byte);
