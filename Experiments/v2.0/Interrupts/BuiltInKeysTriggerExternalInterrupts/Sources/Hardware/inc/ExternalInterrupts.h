@@ -1,0 +1,1 @@
+void init_external_interrupt_line_8_9(void);
