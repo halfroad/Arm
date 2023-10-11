@@ -1,0 +1,1 @@
+void init_pulse_waves_capture(void);
