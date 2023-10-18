@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>PulseWidthModulationWavesCapture</OutputName>
+          <OutputName>PhotoResistor</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -134,11 +134,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -400,6 +400,16 @@
           <GroupName>Hardware</GroupName>
           <Files>
             <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\Hardware\src\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\Hardware\src\gpio.c</FilePath>
+            </File>
+            <File>
               <FileName>printable.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Sources\Hardware\src\printable.c</FilePath>
@@ -415,29 +425,9 @@
               <FilePath>.\Sources\Hardware\src\usart_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>gpio.c</FileName>
+              <FileName>PhotoResistor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\Sources\Hardware\src\gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\Hardware\src\timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>PulseWidthModulationWavesGenerator.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\Hardware\src\PulseWidthModulationWavesGenerator.c</FilePath>
-            </File>
-            <File>
-              <FileName>NestedVectoredInterruptController.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\Hardware\src\NestedVectoredInterruptController.c</FilePath>
-            </File>
-            <File>
-              <FileName>PulseWidthModulationWavesCapture.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Sources\Hardware\src\PulseWidthModulationWavesCapture.c</FilePath>
+              <FilePath>.\Sources\Hardware\src\PhotoResistor.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -468,6 +458,11 @@
               <FileName>stm32f4xx_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Sources\StandardPeripheralDrivers\src\stm32f4xx_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Sources\StandardPeripheralDrivers\src\stm32f4xx_adc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -514,7 +509,7 @@
   <LayerInfo>
     <Layers>
       <Layer>
-        <LayName>PulseWidthModulationWavesCapture</LayName>
+        <LayName>PhotoResistor</LayName>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>
