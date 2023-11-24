@@ -104,8 +104,10 @@ int main(void)
     /* USER CODE BEGIN WHILE */
     while (1)
     {
-        LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_0);
+        GPIOB -> BSRR |= 0x00000001;
+        LL_mDelay(500);
         
+        GPIOB -> BSRR |= 0x00010000;
         LL_mDelay(500);
         
         /* USER CODE END WHILE */

@@ -424,6 +424,11 @@
               <FileType>1</FileType>
               <FilePath>.\Application\Core\Periphes\Src\gpio.c</FilePath>
             </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Application\Core\Periphes\Src\usart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

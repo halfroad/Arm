@@ -1,0 +1,18 @@
+--cpu=Cortex-M33
+".\compilations\main.o"
+".\compilations\stm32h5xx_hal_msp.o"
+".\compilations\cache.o"
+".\compilations\stm32h5xx_it.o"
+".\compilations\gpio.o"
+".\compilations\usart.o"
+".\compilations\delay.o"
+".\compilations\startup_stm32h563xx.o"
+".\compilations\system_stm32h5xx.o"
+".\compilations\stm32h5xx_ll_utils.o"
+".\compilations\stm32h5xx_hal.o"
+".\compilations\stm32h5xx_hal_cortex.o"
+".\compilations\stm32h5xx_hal_rcc.o"
+".\compilations\stm32h5xx_hal_gpio.o"
+--ro-base 0x08000000 --entry 0x08000000 --rw-base 0x20000000 --entry Reset_Handler --first __Vectors --strict --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Compilations\Listings\SystemTicks.map" -o .\Compilations\SystemTicks.axf
