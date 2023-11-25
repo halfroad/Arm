@@ -714,6 +714,11 @@
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\CM7\Peripherals\Source\delay.c</FilePath>
             </File>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Peripherals\Source\LED.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1527,6 +1532,11 @@
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\CM7\Peripherals\Source\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Peripherals\Source\LED.c</FilePath>
             </File>
           </Files>
         </Group>

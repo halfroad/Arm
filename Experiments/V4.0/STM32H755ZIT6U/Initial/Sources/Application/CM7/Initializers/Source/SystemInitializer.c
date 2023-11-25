@@ -52,11 +52,12 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
         Scale 1 for best performance for FLASH.
 
    */
-   PWR -> D3CR |= (0x03 << 14);
+   PWR -> D3CR &= ~(0x03 << 14);
+   PWR -> D3CR |= 0x03 << 14;
    
    /*
    
-   Bit 3 VOSRDY: VOS Ready bit for VCORE voltage scaling output selection.
+   Bit 13 VOSRDY: VOS Ready bit for VCORE voltage scaling output selection.
    This bit is set to 1 by hardware when Bypass mode is selected in PWR control register 3
     (PWR_CR3).
         0: Not ready, voltage level below VOS selected level.
@@ -66,7 +67,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
 
    */
    
-   while (PWR -> D3CR & (0x01 << 13) == 0)
+   while ((PWR -> D3CR & (0x01 << 13)) == 0)
        ;
    
    /*
@@ -93,7 +94,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
     1: HSI clock is ready
 
    */
-   while ((RCC -> CR & (0x01 << 2)) == 0 && (retrials < MAXIMUM_RETRIALS))
+   while ((RCC -> CR & (0x01 << 2)) == 0 && retrials < MAXIMUM_RETRIALS)
        retrials ++;
    
    if (retrials == MAXIMUM_RETRIALS)
@@ -225,7 +226,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
             ref1_ck / pll1_prescalerr_m, update this value accordingly once upon the pll1_prescalerr_m gets changed.
        */
        
-       RCC -> PLLCFGR &= ~(0x02 << 2);
+       RCC -> PLLCFGR &= ~(0x03 << 2);
        RCC -> PLLCFGR |= 0x02 << 2;
        
        /*
@@ -237,8 +238,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
         1: Medium VCO range: 150 to 420 MHz
 
        */
-       RCC -> PLLCFGR &= ~(0x00 << 1);
-       RCC -> PLLCFGR |= (0x00 << 1);
+       RCC -> PLLCFGR &= ~(0x01 << 1);
        
        /*
        
@@ -273,7 +273,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
 
        */
        
-       RCC -> CR |= 0x03 << 24;
+       RCC -> CR |= 0x01 << 24;
        
        /*
        
@@ -330,7 +330,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
        
        */
        
-       RCC -> PLL2DIVR &= ~(0xFF << 0);
+       RCC -> PLL2DIVR &= ~(0x1FF << 0);
        RCC -> PLL2DIVR |= (440 - 1) << 0;
        
        /*
@@ -360,7 +360,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
             11: The PLL2 input (ref2_ck) clock range frequency is between 8 and 16 MHz
        
        */
-       RCC -> CFGR |= 0x00 << 6;
+       RCC -> PLLCFGR &= ~(0x03 << 6);
        
        /*
        
@@ -372,7 +372,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
        
        */
        
-       RCC -> PLLCFGR |= 0x00 << 5;
+       RCC -> PLLCFGR &= ~(0x01 << 5);
        
        /*
        
@@ -626,7 +626,7 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
        
        */
        RCC -> D2CFGR &= ~(0x07 << 8);
-       RCC -> D2CFGR = 0x04 << 8;
+       RCC -> D2CFGR |= 0x04 << 8;
        
        /*
        
@@ -689,7 +689,7 @@ static void SetNVICVectorTable(uint32_t baseAddress, uint32_t offset)
     SCB -> VTOR = baseAddress | (offset & (uint32_t) 0xFFFFFE00);
 }
 
-void SystemClockInit(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_multiplication_factor_n, uint32_t pll1_division_factor_p, uint32_t pll1_division_factor_q)
+static void InitSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_multiplication_factor_n, uint32_t pll1_division_factor_p, uint32_t pll1_division_factor_q)
 {
     /*
     
@@ -729,7 +729,7 @@ void SystemClockInit(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_multiplicatio
     /*!< AXI interconnect - TARG 7 issuing functionality modification register,              Address offset: 0x8108          */
     GPV -> AXI_TARG7_FN_MOD |= 0x00000001;
     
-    SetSystemClock(pll1_prescalerr_m, pll1_vco_multiplication_factor_n, pll1_division_factor_p, pll1_division_factor_q, 1);
+    SetSystemClock(pll1_prescalerr_m, pll1_vco_multiplication_factor_n, pll1_division_factor_p, pll1_division_factor_q, 2);
     
     EnableCaches();
     
@@ -743,6 +743,14 @@ void SystemClockInit(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_multiplicatio
     
 #endif
 
+}
+
+void InitSystem(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_multiplication_factor_n, uint32_t pll1_division_factor_p, uint32_t pll1_division_factor_q, uint32_t pll1_division_factor_r)
+{
+    SetSystemClock(pll1_prescalerr_m, pll1_vco_multiplication_factor_n, pll1_division_factor_p, pll1_division_factor_q, pll1_division_factor_r);
+    SystemCoreClockUpdate();
+    
+    EnableCaches();
 }
 
 static void SoftResetSystem(void)

@@ -1,5 +1,8 @@
 #include "SystemInitializer.h"
 #include "delay.h"
+#include "LED.h"
+
+extern uint32_t SystemCoreClock;
 
 int main(void)
 {
@@ -18,19 +21,36 @@ int main(void)
     
     */
     
-    DelayInit(480);
-    
-    static uint8_t i = 0;
-    
+    InitSystem(4, 60, 2, 2, 2);
+    InitDelay(240);
+    InitLEDs();
+        
     while (1)
     {
-        DelayMilliseconds(1000);
+        /*
+    
+        Bits 31:16 BR[15:0]: Port x reset I/O pin y (y = 15 to 0)
+        These bits are write-only. A read to these bits returns the value 0x0000.
+            0: No action on the corresponding ODRx bit
+            1: Resets the corresponding ODRx bit
+        Note: If both BSx and BRx are set, BSx has priority.
         
-        i ++;
+        Bits 15:0 BS[15:0]: Port x set I/O pin y (y = 15 to 0)
+        These bits are write-only. A read to these bits returns the value 0x0000.
+            0: No action on the corresponding ODRx bit
+            1: Sets the corresponding ODRx bit
         
-        if (i > 10)
-        {
-            i = 0;
-        }
+        */
+        GPIOB -> BSRR |= 0x01 << 0;
+        GPIOB -> BSRR |= 0x01 << 14;
+        GPIOE -> BSRR |= 0x01 << 1;
+        
+        DelayMilliseconds(500);
+        
+        GPIOB -> BSRR |= 0x01 << 16;
+        GPIOB -> BSRR |= 0x01 << 30;
+        GPIOE -> BSRR |= 0x01 << 17;
+        
+        DelayMilliseconds(500);
     }
 }
