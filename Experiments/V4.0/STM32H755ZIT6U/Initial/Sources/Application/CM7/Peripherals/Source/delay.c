@@ -5,7 +5,7 @@
 #include "delay.h"
 
 
-static uint16_t fac_microseconds = 0;
+static uint16_t factor_microseconds = 0;
 
 void InitDelay(uint16_t systemTicks)
 {
@@ -16,14 +16,14 @@ void InitDelay(uint16_t systemTicks)
     
     SysTick -> CTRL |= 0x01 << 2;
     
-    fac_microseconds = systemTicks;
+    factor_microseconds = systemTicks;
 }
 
 void DelayMicroseconds(uint32_t numberOfMicroseconds)
 {
     uint32_t times;
     
-    SysTick -> LOAD = numberOfMicroseconds * fac_microseconds;                   /* Load the durartion of delay. */
+    SysTick -> LOAD = numberOfMicroseconds * factor_microseconds;                   /* Load the durartion of delay. */
     SysTick -> VAL = 0x00;                                                       /* Clear the counter. */
     SysTick -> CTRL |= SysTick_CTRL_ENABLE_Msk << SysTick_CTRL_ENABLE_Pos;       /* Enbale the countdown. */
     
@@ -42,7 +42,7 @@ static void DelayNumberOfMilliseconds(uint16_t numberOfMilliseconds)
 {	 		  	  
 	uint32_t times;
     
-	SysTick -> LOAD = (uint32_t) numberOfMilliseconds * fac_microseconds * 1000;
+	SysTick -> LOAD = (uint32_t) numberOfMilliseconds * factor_microseconds * 1000;
 	SysTick -> VAL = 0x00;
 	SysTick -> CTRL |= SysTick_CTRL_ENABLE_Msk << SysTick_CTRL_ENABLE_Pos;
     
