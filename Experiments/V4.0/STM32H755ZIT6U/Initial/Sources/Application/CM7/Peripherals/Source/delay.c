@@ -1,8 +1,4 @@
-#ifndef DELAY_H
-
-#define DELAY_G
-
-#include "delay.h"
+#include "Delay.h"
 
 
 static uint16_t factor_microseconds = 0;
@@ -71,6 +67,4 @@ void DelayMilliseconds(uint16_t numberOfMilliseconds)
     
 	if(residual)
         DelayNumberOfMilliseconds(residual);
-} 
-
-#endif
+}

@@ -1,8 +1,8 @@
 #include "SystemInitializer.h"
-#include "delay.h"
+#include "Delay.h"
 #include "LED.h"
-#include "bmp.h"
-#include "oled.h"
+#include "BMP.h"
+#include "OLED.h"
 
 extern uint32_t SystemCoreClock;
 

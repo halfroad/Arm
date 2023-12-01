@@ -1,7 +1,8 @@
-#include "oled.h"
-#include "stdlib.h"
-#include "oledfont.h"       
-#include "delay.h"
+#include <stdlib.h>
+
+#include "OLED.h"
+#include "OLEDFont.h"       
+#include "Delay.h"
 
 uint8_t OLED_GRAM[144][8];
 
@@ -17,7 +18,7 @@ void OLED_Init(void)
      
      */
     
-   // RCC->AHB4ENR |= 0x01 << 1; /* Enable the AHB4 clock for GPIOB. */
+   // RCC -> AHB4ENR |= 0x01 << 1; /* Enable the AHB4 clock for GPIOB. */
 
     /* Configure I2C1_SCL on PB8. */
 
@@ -31,8 +32,8 @@ void OLED_Init(void)
      11: Analog mode (reset state)
      */
 
-    GPIOB->MODER &= ~(0x03 << I2C1_SCL_PIN * 2); /* Generic output. */
-    GPIOB->MODER |= 0x01 << I2C1_SCL_PIN * 2;
+    GPIOB -> MODER &= ~(0x03 << I2C1_SCL_PIN * 2); /* Generic output. */
+    GPIOB -> MODER |= 0x01 << I2C1_SCL_PIN * 2;
 
     /*
      
@@ -41,11 +42,11 @@ void OLED_Init(void)
      0: Output push-pull (reset state)
      1: Output open-drain
      
-     GPIOB -> OTYPER &= ~(0x01 << I2C1_SCL_PIN);
+     GPIOB  ->  OTYPER &= ~(0x01 << I2C1_SCL_PIN);
      
      */
 
-    GPIOB->OTYPER |= 0x01 << I2C1_SCL_PIN; /* Open Drain. */
+    GPIOB -> OTYPER |= 0x01 << I2C1_SCL_PIN; /* Open Drain. */
 
     /*
      
@@ -59,8 +60,8 @@ void OLED_Init(void)
      and external load.
      
      */
-    GPIOB->OSPEEDR &= ~(0x03 << I2C1_SCL_PIN * 2);
-    GPIOB->OSPEEDR |= 0x02 << I2C1_SCL_PIN * 2;
+    GPIOB -> OSPEEDR &= ~(0x03 << I2C1_SCL_PIN * 2);
+    GPIOB -> OSPEEDR |= 0x02 << I2C1_SCL_PIN * 2;
 
     /*
      
@@ -73,21 +74,21 @@ void OLED_Init(void)
      
      */
 
-    GPIOB->PUPDR &= ~(0x03 << I2C1_SCL_PIN * 2);
-    GPIOB->PUPDR |= 0x01 << I2C1_SCL_PIN * 2;
+    GPIOB -> PUPDR &= ~(0x03 << I2C1_SCL_PIN * 2);
+    GPIOB -> PUPDR |= 0x01 << I2C1_SCL_PIN * 2;
 
     /* Configure I2C1_SDA on PB9. */
 
-    GPIOB->MODER &= ~(0x03 << I2C1_SDA_PIN * 2);
-    GPIOB->MODER |= 0x01 << I2C1_SDA_PIN * 2;
+    GPIOB -> MODER &= ~(0x03 << I2C1_SDA_PIN * 2);
+    GPIOB -> MODER |= 0x01 << I2C1_SDA_PIN * 2;
 
-    GPIOB->OTYPER |= 0x01 << I2C1_SDA_PIN;
+    GPIOB -> OTYPER |= 0x01 << I2C1_SDA_PIN;
 
-    GPIOB->OSPEEDR &= ~(0x03 << I2C1_SDA_PIN * 2);
-    GPIOB->OSPEEDR |= 0x02 << I2C1_SDA_PIN * 2;
+    GPIOB -> OSPEEDR &= ~(0x03 << I2C1_SDA_PIN * 2);
+    GPIOB -> OSPEEDR |= 0x02 << I2C1_SDA_PIN * 2;
 
-    GPIOB->PUPDR &= ~(0x03 << I2C1_SDA_PIN * 2);
-    GPIOB->PUPDR |= 0x01 << I2C1_SDA_PIN * 2;
+    GPIOB -> PUPDR &= ~(0x03 << I2C1_SDA_PIN * 2);
+    GPIOB -> PUPDR |= 0x01 << I2C1_SDA_PIN * 2;
 
     OLED_RES_CLR();
 

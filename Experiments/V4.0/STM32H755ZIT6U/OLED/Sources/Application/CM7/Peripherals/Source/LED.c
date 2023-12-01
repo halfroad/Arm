@@ -50,7 +50,7 @@ void InitLEDs(void)
     
     */
     GPIOB -> OSPEEDR &= ~((0x03 << 0) | (0x03 << 14 * 2));
-    GPIOB -> OSPEEDR |= (0x02 << 0) | (0x02 << 14 * 2);
+    GPIOB -> OSPEEDR |= ((0x02 << 0) | (0x02 << 14 * 2));
     
     /*
     
@@ -111,7 +111,7 @@ void InitLEDs(void)
     
     */
     GPIOE -> OSPEEDR &= ~(0x03 << 2);
-    GPIOE -> OSPEEDR |= 0x02 << 2;
+    GPIOE -> OSPEEDR |= ~(0x02 << 2);
     /*
     
     Bits 31:0 PUPDR[15:0][1:0]: Port x configuration I/O pin y (y = 15 to 0)

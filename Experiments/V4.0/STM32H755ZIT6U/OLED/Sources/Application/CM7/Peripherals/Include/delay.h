@@ -1,9 +1,8 @@
 #ifndef DELAY_H
-
 #define DELAY_H
 
 
-#include "stm32h7xx.h"
+#include <stm32h7xx.h>
 
 void InitDelay(uint16_t ticks);
 

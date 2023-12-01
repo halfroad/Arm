@@ -385,9 +385,9 @@
           <GroupName>Application/CM4/Entry</GroupName>
           <Files>
             <File>
-              <FileName>entry.c</FileName>
+              <FileName>Entry.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Application\CM4\Entry\Source\entry.c</FilePath>
+              <FilePath>..\Sources\Application\CM4\Entry\Source\Entry.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -480,9 +480,9 @@
           </GroupOption>
           <Files>
             <File>
-              <FileName>entry.c</FileName>
+              <FileName>Entry.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Application\CM7\Entry\Source\entry.c</FilePath>
+              <FilePath>..\Sources\Application\CM7\Entry\Source\Entry.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -710,19 +710,19 @@
           </GroupOption>
           <Files>
             <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Application\CM7\Peripherals\Source\delay.c</FilePath>
-            </File>
-            <File>
               <FileName>LED.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\CM7\Peripherals\Source\LED.c</FilePath>
             </File>
+            <File>
+              <FileName>Delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Peripherals\Source\Delay.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Common</GroupName>
+          <GroupName>Independence/shared</GroupName>
           <Files>
             <File>
               <FileName>system_stm32h7xx_dualcore_boot_cm4_cm7.c</FileName>
@@ -1273,9 +1273,9 @@
           </GroupOption>
           <Files>
             <File>
-              <FileName>entry.c</FileName>
+              <FileName>Entry.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Application\CM4\Entry\Source\entry.c</FilePath>
+              <FilePath>..\Sources\Application\CM4\Entry\Source\Entry.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1506,9 +1506,9 @@
           <GroupName>Application/CM7/Entry</GroupName>
           <Files>
             <File>
-              <FileName>entry.c</FileName>
+              <FileName>Entry.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Application\CM7\Entry\Source\entry.c</FilePath>
+              <FilePath>..\Sources\Application\CM7\Entry\Source\Entry.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1529,19 +1529,19 @@
           <GroupName>Application/CM7/Peripherals</GroupName>
           <Files>
             <File>
-              <FileName>delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Application\CM7\Peripherals\Source\delay.c</FilePath>
-            </File>
-            <File>
               <FileName>LED.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\CM7\Peripherals\Source\LED.c</FilePath>
             </File>
+            <File>
+              <FileName>Delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Peripherals\Source\Delay.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Common</GroupName>
+          <GroupName>Independence/shared</GroupName>
           <Files>
             <File>
               <FileName>system_stm32h7xx_dualcore_boot_cm4_cm7.c</FileName>
