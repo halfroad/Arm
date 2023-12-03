@@ -4,8 +4,6 @@
 #include "BMP.h"
 #include "OLED.h"
 
-extern uint32_t SystemCoreClock;
-
 int main(void)
 {
     /*

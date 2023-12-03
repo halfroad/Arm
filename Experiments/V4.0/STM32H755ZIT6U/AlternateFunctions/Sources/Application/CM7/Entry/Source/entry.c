@@ -1,6 +1,10 @@
 #include "SystemInitializer.h"
 #include "Delay.h"
 #include "LED.h"
+#include "USART.h"
+#include "SystemInterrupts.h"
+
+void onReceived(uint8_t *buffer, uint8_t status);
 
 int main(void)
 {
@@ -26,6 +30,7 @@ int main(void)
 #endif
     InitDelay(240);
     InitLEDs();
+    InitUSART(120, 115200, onReceived);
             
     while (1)
     {
@@ -55,4 +60,9 @@ int main(void)
         
         DelayMilliseconds(500);
     }
+}
+
+void onReceived(uint8_t *buffer, uint8_t status)
+{
+    
 }
