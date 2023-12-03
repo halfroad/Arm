@@ -185,9 +185,9 @@ void InitUSART(uint32_t APB1Clock, uint32_t baudRate, void(*onReceived)(uint8_t 
     Bit 28 M1: Word length
     This bit must be used in conjunction with bit 12 (M0) to determine the word length. It is set or
     cleared by software.
-        M[1:0] = ¡®00¡¯: 1 start bit, 8 Data bits, n Stop bit
-        M[1:0] = ¡®01¡¯: 1 start bit, 9 Data bits, n Stop bit
-        M[1:0] = ¡®10¡¯: 1 start bit, 7 Data bits, n Stop bit
+        M[1:0] = ??00?¡¥: 1 start bit, 8 Data bits, n Stop bit
+        M[1:0] = ??01?¡¥: 1 start bit, 9 Data bits, n Stop bit
+        M[1:0] = ??10?¡¥: 1 start bit, 7 Data bits, n Stop bit
     This bit can only be written when the USART is disabled (UE=0).
     Note: In 7-bits data length mode, the Smartcard mode, LIN master mode and Auto baud rate
     (0x7F and 0x55 frames detection) are not supported.
@@ -222,9 +222,9 @@ void InitUSART(uint32_t APB1Clock, uint32_t baudRate, void(*onReceived)(uint8_t 
     This bit enables the transmitter. It is set and cleared by software.
     0: Transmitter is disabled
     1: Transmitter is enabled
-    Note: During transmission, a low pulse on the TE bit (¡®0¡¯ followed by ¡®1¡¯) sends a preamble
+    Note: During transmission, a low pulse on the TE bit (??0?¡¥ followed by ??1?¡¥) sends a preamble
     (idle line) after the current word, except in Smartcard mode. In order to generate an idle
-    character, the TE must not be immediately written to ¡®1¡¯. To ensure the required duration,
+    character, the TE must not be immediately written to ??1?¡¥. To ensure the required duration,
     the software can poll the TEACK bit in the USART_ISR register.
     In Smartcard mode, when TE is set, there is a 1 bit-time delay before the transmission
     starts.

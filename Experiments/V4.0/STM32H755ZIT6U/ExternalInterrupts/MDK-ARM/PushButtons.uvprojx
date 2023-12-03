@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Compilations\CM4\Objects\</OutputDirectory>
-          <OutputName>OLED_CM4</OutputName>
+          <OutputName>PushButtons_CM4</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -636,6 +636,18 @@
               </Aads>
             </GroupArmAds>
           </GroupOption>
+          <Files>
+            <File>
+              <FileName>ExternalInterrupts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Interrupts\Source\ExternalInterrupts.c</FilePath>
+            </File>
+            <File>
+              <FileName>SystemInterrutps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Interrupts\Source\SystemInterrutps.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Application/CM7/Peripherals</GroupName>
@@ -723,6 +735,11 @@
               <FileName>OLED.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\CM7\Peripherals\Source\OLED.c</FilePath>
+            </File>
+            <File>
+              <FileName>GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Peripherals\Source\GPIO.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -873,7 +890,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Compilations\CM7\Objects\</OutputDirectory>
-          <OutputName>OLED_CM7</OutputName>
+          <OutputName>PushButtons_CM7</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -1529,6 +1546,18 @@
         </Group>
         <Group>
           <GroupName>Application/CM7/Interrupts</GroupName>
+          <Files>
+            <File>
+              <FileName>ExternalInterrupts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Interrupts\Source\ExternalInterrupts.c</FilePath>
+            </File>
+            <File>
+              <FileName>SystemInterrutps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Interrupts\Source\SystemInterrutps.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Application/CM7/Peripherals</GroupName>
@@ -1547,6 +1576,11 @@
               <FileName>OLED.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\CM7\Peripherals\Source\OLED.c</FilePath>
+            </File>
+            <File>
+              <FileName>GPIO.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Peripherals\Source\GPIO.c</FilePath>
             </File>
           </Files>
         </Group>

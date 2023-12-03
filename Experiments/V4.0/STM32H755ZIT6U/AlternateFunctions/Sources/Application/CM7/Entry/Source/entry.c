@@ -2,7 +2,6 @@
 #include "Delay.h"
 #include "LED.h"
 #include "USART.h"
-#include "SystemInterrupts.h"
 
 void onReceived(uint8_t *buffer, uint8_t status);
 
