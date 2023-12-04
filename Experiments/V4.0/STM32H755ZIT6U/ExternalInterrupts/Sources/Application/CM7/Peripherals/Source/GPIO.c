@@ -1,9 +1,12 @@
 #include <stm32h7xx.h>
 
 #include "SystemInterrupts.h"
-#include "ExternalInterrupts.h"
+#include "ExtendedInterrupts.h"
 #include "GPIO.h"
 #include "OLED.h"
+#include "Delay.h"
+
+uint8_t buttonPressed = 0x00;
 
 void InitGPIOs(void)
 {
@@ -43,14 +46,32 @@ void InitGPIOs(void)
     
     */
     GPIOC -> PUPDR &= ~(0x03 << 13 * 2);
-    GPIOC -> PUPDR |= 0x10 << 13 * 2;
+    GPIOC -> PUPDR |= 0x02 << 13 * 2;
     
     SetNestedVectoredInterruptPriorty(2, 2, EXTI15_10_IRQn);
-    ConfigureExternalInterrutp(0x02, 13, 0x01);
+    ConfigureExternalInterrutp(0x02, 13, 0x00);
 }
 
 void EXTI15_10_IRQHandler(void)
 {
-    OLED_ShowString(8, 45, (uint8_t *)"Button pressed.!", 16, 1);
+    EXTI_D1 -> PR1 = 0x01 << 13;
+    
+    OLED_Clear();
+    
+    if (buttonPressed & 0x80)
+    {
+        OLED_ShowString(8, 32, (uint8_t *)"Button released.", 8, 1);
+        
+        buttonPressed = 0x00;
+    }
+    else
+    {
+        OLED_ShowString(8, 32, (uint8_t *)"Button pressed.", 8, 1);
+        
+        buttonPressed = 0x80;
+    }
+    
     OLED_Refresh();
+    
+    DelayMilliseconds(100);
 }

@@ -19,11 +19,7 @@ int main(void)
     
     */
     
-#ifdef USE_HSE
-    InitSystem(4, 480, 2, 2, 2);
-#else
     InitSystem(4, 60, 2, 2, 2);
-#endif
     InitDelay(240);
     InitLEDs();
             

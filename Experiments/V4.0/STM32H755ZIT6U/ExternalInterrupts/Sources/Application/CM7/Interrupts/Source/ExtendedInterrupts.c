@@ -1,4 +1,4 @@
-#include "ExternalInterrupts.h"
+#include "ExtendedInterrupts.h"
 
 void ConfigureExternalInterrutp(uint8_t GPIOx, uint8_t bitNumber, uint8_t triggerEdge)
 {
@@ -10,6 +10,7 @@ void ConfigureExternalInterrutp(uint8_t GPIOx, uint8_t bitNumber, uint8_t trigge
         1: SYSCFG peripheral clock enabled
     
     */
+
     RCC -> APB4ENR |= 0x01 << 1;
     
     uint8_t offset = (bitNumber % 4) * 4;
@@ -39,8 +40,15 @@ void ConfigureExternalInterrutp(uint8_t GPIOx, uint8_t bitNumber, uint8_t trigge
     SYSCFG -> EXTICR[bitNumber / 4] &= ~(0x0F << offset);
     SYSCFG -> EXTICR[bitNumber / 4] |= GPIOx << offset;
     
+    EXTI_D1 -> IMR1 = 0x01 << bitNumber;
+    
     if (triggerEdge & 0x01)
         EXTI -> FTSR1 = 0x01 << bitNumber;
-    else
+    else if (triggerEdge & 0x02)
         EXTI -> RTSR1 = 0x01 << bitNumber;
+    else
+    {
+        EXTI -> FTSR1 = 0x01 << bitNumber;
+        EXTI -> RTSR1 = 0x01 << bitNumber;
+    }
 }

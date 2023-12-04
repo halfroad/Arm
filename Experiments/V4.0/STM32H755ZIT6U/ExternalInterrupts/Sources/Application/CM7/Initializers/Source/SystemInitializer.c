@@ -1,4 +1,5 @@
 #include "SystemInitializer.h"
+#include "SystemInterrupts.h"
 
 #define MAXIMUM_RETRIALS    0x7FFF
 
@@ -70,7 +71,35 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
    while ((PWR -> D3CR & (0x01 << 13)) == 0)
        ;
    
+#ifdef USE_HSE
+   
+    /*
+   
+   Bit 16 HSEON: HSE clock enable
+    Set and cleared by software.
+    Cleared by hardware to stop the HSE when entering Stop or Standby mode.
+    This bit cannot be cleared if the HSE is used directly (via SW mux) as system clock or if the HSE is
+    selected as reference clock for PLL1 with PLL1 enabled (PLL1ON bit set to ¡®1¡¯).
+        0: HSE is OFF (default after reset)
+        1: HSE is ON
+                   
+   */
+   RCC -> CR |= (0x01 << 16);
+   
    /*
+   
+   Bit 17 HSERDY: HSE clock ready flag
+    Set by hardware to indicate that the HSE oscillator is stable.
+        0: HSE clock is not ready (default after reset)
+        1: HSE clock is ready
+
+   */
+   while ((RCC -> CR & (0x01 << 17)) == 0 && retrials < MAXIMUM_RETRIALS)
+       retrials ++;
+       
+#else
+   
+    /*
    
    Bit 0 HSION: High Speed Internal clock enable
     Set and cleared by software.
@@ -96,6 +125,8 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
    */
    while ((RCC -> CR & (0x01 << 2)) == 0 && retrials < MAXIMUM_RETRIALS)
        retrials ++;
+
+#endif
    
    if (retrials == MAXIMUM_RETRIALS)
        status = 1;
@@ -113,7 +144,13 @@ static uint8_t SetSystemClock(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_mult
             11: No clock send to DIVMx divider and PLLs
        
        */
+       
+#ifdef USE_HSE
        RCC -> PLLCKSELR &= ~(0x03 << 0);
+       RCC -> PLLCKSELR |= 0x02 << 0;
+#else
+       RCC -> PLLCKSELR &= ~(0x03 << 0);
+#endif
        
        /*
        
@@ -751,6 +788,7 @@ void InitSystem(uint32_t pll1_prescalerr_m, uint32_t pll1_vco_multiplication_fac
     SystemCoreClockUpdate();
     
     EnableCaches();
+    ConfigNestedVectoredInterruptsPriortyGroup(NVIC_PRIORTY_GROUP);
 }
 
 static void SoftResetSystem(void)

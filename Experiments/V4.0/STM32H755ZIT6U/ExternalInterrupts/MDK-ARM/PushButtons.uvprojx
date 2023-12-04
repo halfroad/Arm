@@ -638,14 +638,14 @@
           </GroupOption>
           <Files>
             <File>
-              <FileName>ExternalInterrupts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Application\CM7\Interrupts\Source\ExternalInterrupts.c</FilePath>
-            </File>
-            <File>
               <FileName>SystemInterrutps.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\CM7\Interrupts\Source\SystemInterrutps.c</FilePath>
+            </File>
+            <File>
+              <FileName>ExtendedInterrupts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Interrupts\Source\ExtendedInterrupts.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1548,14 +1548,14 @@
           <GroupName>Application/CM7/Interrupts</GroupName>
           <Files>
             <File>
-              <FileName>ExternalInterrupts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Application\CM7\Interrupts\Source\ExternalInterrupts.c</FilePath>
-            </File>
-            <File>
               <FileName>SystemInterrutps.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\CM7\Interrupts\Source\SystemInterrutps.c</FilePath>
+            </File>
+            <File>
+              <FileName>ExtendedInterrupts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Interrupts\Source\ExtendedInterrupts.c</FilePath>
             </File>
           </Files>
         </Group>

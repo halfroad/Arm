@@ -35,36 +35,36 @@ void DelayMicroseconds(uint32_t numberOfMicroseconds)
 
 
 static void DelayNumberOfMilliseconds(uint16_t numberOfMilliseconds)
-{	 		  	  
-	uint32_t times;
+{
+    uint32_t times;
     
-	SysTick -> LOAD = (uint32_t) numberOfMilliseconds * factor_microseconds * 1000;
-	SysTick -> VAL = 0x00;
-	SysTick -> CTRL |= SysTick_CTRL_ENABLE_Msk << SysTick_CTRL_ENABLE_Pos;
+    SysTick -> LOAD = (uint32_t) numberOfMilliseconds * factor_microseconds * 1000;
+    SysTick -> VAL = 0x00;
+    SysTick -> CTRL |= SysTick_CTRL_ENABLE_Msk << SysTick_CTRL_ENABLE_Pos;
     
-	do
-	{
-		times = SysTick -> CTRL;
+    do
+    {
+        times = SysTick -> CTRL;
         
-	}
+    }
     while((times & 0x01) &&!(times & (0x01 << 16)));
     
-	SysTick -> CTRL &= ~(SysTick_CTRL_ENABLE_Msk << SysTick_CTRL_ENABLE_Pos);
-	SysTick -> VAL = 0x00;   
+    SysTick -> CTRL &= ~(SysTick_CTRL_ENABLE_Msk << SysTick_CTRL_ENABLE_Pos);
+    SysTick -> VAL = 0x00;   
 } 
 
 
 void DelayMilliseconds(uint16_t numberOfMilliseconds)
 {
-	uint16_t repetitions = numberOfMilliseconds / 30;
-	uint16_t residual = numberOfMilliseconds % 30;
+    uint16_t repetitions = numberOfMilliseconds / 30;
+    uint16_t residual = numberOfMilliseconds % 30;
     
-	while(repetitions)
-	{
-		DelayNumberOfMilliseconds(30);
-		repetitions --;
-	}
+    while(repetitions)
+    {
+        DelayNumberOfMilliseconds(30);
+        repetitions --;
+    }
     
-	if(residual)
+    if(residual)
         DelayNumberOfMilliseconds(residual);
 }
