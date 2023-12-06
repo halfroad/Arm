@@ -92,7 +92,7 @@ void OLED_Init(void)
 
     OLED_RES_CLR();
 
-    DelayMilliseconds(200);
+    DelayMilliseconds(180);
 
     OLED_RES_SET();
 

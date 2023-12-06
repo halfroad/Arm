@@ -22,7 +22,7 @@ int main(void)
     */
     
 #ifdef USE_HSE
-    InitSystem(4, 480, 2, 2, 2);
+    InitSystem(1, 120, 2, 2, 2);
 #else
     InitSystem(4, 60, 2, 2, 2);
 #endif
@@ -114,13 +114,13 @@ int main(void)
         GPIOB->BSRR |= 0x01 << 14;
         GPIOE->BSRR |= 0x01 << 1;
 
-        DelayMilliseconds(250);
+        DelayMilliseconds(500);
 
         GPIOB->BSRR |= 0x01 << (0 + 16);
         GPIOB->BSRR |= 0x01 << (14 + 16);
         GPIOE->BSRR |= 0x01 << (1 + 16);
 
-        DelayMilliseconds(250);
+        DelayMilliseconds(500);
         
     }
 }

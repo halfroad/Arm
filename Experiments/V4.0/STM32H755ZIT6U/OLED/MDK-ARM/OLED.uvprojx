@@ -636,6 +636,13 @@
               </Aads>
             </GroupArmAds>
           </GroupOption>
+          <Files>
+            <File>
+              <FileName>SystemInterrutps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Interrupts\Source\SystemInterrutps.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Application/CM7/Peripherals</GroupName>
@@ -958,11 +965,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -1529,6 +1536,13 @@
         </Group>
         <Group>
           <GroupName>Application/CM7/Interrupts</GroupName>
+          <Files>
+            <File>
+              <FileName>SystemInterrutps.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\CM7\Interrupts\Source\SystemInterrutps.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Application/CM7/Peripherals</GroupName>

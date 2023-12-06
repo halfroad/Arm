@@ -68,7 +68,7 @@ int main(void)
 void Init(void)
 {
 #ifdef USE_HSE
-    InitSystem(4, 480, 2, 2, 2);
+    InitSystem(1, 120, 2, 2, 2);
 #else
     InitSystem(4, 60, 2, 2, 2);
 #endif
