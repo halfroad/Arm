@@ -25,22 +25,28 @@ int main(void)
     
     */
     
+    
     Init();
     
-    uint8_t buffer[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x0d, 0x0a};
+    uint8_t buffer[] = "Hello, world!\n";
     
     while (1)
     {
-        SendBytes(buffer);
+        for (uint8_t i = 0; i < sizeof buffer; i ++)
+        {
+            SendByte(buffer[i]);
+        }
         
-        DelayMilliseconds(100);
+        DelayMilliseconds(500);
+        
     }
 }
 
 void onReceived(uint8_t *buffer, uint8_t length)
 {
-    for (uint8_t i = 0; i < length; i ++)
-        OLED_ShowChar(3, 16, buffer[i], 8, 1);
+    OLED_Clear();
+    
+    OLED_ShowString(8, 16, buffer, 16, 1);
     
     OLED_Refresh();
 }
@@ -57,5 +63,5 @@ void Init(void)
     InitLEDs();
     OLED_Init();
     InitGPIOs();
-    InitUSART(120, 115200, onReceived);
+    InitUSART(60, 115200, onReceived);
 }

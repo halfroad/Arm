@@ -48,7 +48,7 @@ void InitGPIOs(void)
     GPIOC -> PUPDR &= ~(0x03 << 13 * 2);
     GPIOC -> PUPDR |= 0x02 << 13 * 2;
     
-    SetNestedVectoredInterruptPriorty(2, 2, EXTI15_10_IRQn);
+    SetNestedVectoredInterruptPriorty(3, 2, EXTI15_10_IRQn);
     ConfigureExternalInterrutp(0x02, 13, 0x00);
 }
 

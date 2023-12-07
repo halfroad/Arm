@@ -190,7 +190,7 @@ void InitUSART(uint32_t APB1Clock, uint32_t baudRate, void(*onReceived)(uint8_t 
     BRR[3] must be kept cleared.
         
     */
-    uint32_t division = (APB1Clock * 1000000 + baudRate / 2) / baudRate;
+    uint32_t division = APB1Clock * 1000000 / baudRate;
     
     /* Over8 = 0. */
     USART3 -> BRR = division;
@@ -302,30 +302,63 @@ void InitUSART(uint32_t APB1Clock, uint32_t baudRate, void(*onReceived)(uint8_t 
     onReceivedHandler = onReceived;
 }
 
-void SendBytes(uint8_t *bytes)
+void SendByte(uint8_t byte)
 {
-    for (uint8_t i = 0; i < sizeof bytes; i ++)
-    {
-        USART3 -> TDR = bytes[i];
+     /*
         
-        while ((USART3 -> ISR & (0x01 << 6)) == 0)
-            ;
-    }
+    Bits 8:0 TDR[8:0]: Transmit data value
+    Contains the data character to be transmitted.
+    The USART_TDR register provides the parallel interface between the internal bus and the
+    output shift register (see Figure 611).
+    When transmitting with the parity enabled (PCE bit set to 1 in the USART_CR1 register),
+    the value written in the MSB (bit 7 or bit 8 depending on the data length) has no effect
+    because it is replaced by the parity.
+    Note: This register must be written only when TXE/TXFNF=1.
+        
+    */
+    
+    USART3 -> TDR = byte;
+    
+    /*
+    
+    Bit 6 TC: Transmission complete
+    This bit indicates that the last data written in the USART_TDR has been transmitted out of
+    the shift register.
+    It is set by hardware when the transmission of a frame containing data is complete and
+    when TXFE is set.
+    An interrupt is generated if TCIE=1 in the USART_CR1 register.
+    TC bit is is cleared by software, by writing 1 to the TCCF in the USART_ICR register or by a
+    write to the USART_TDR register.
+        0: Transmission is not complete
+        1: Transmission is complete
+    Note: If TE bit is reset and no transmission is on going, the TC bit is immediately set.
+    
+    */
+    while ((USART3 -> ISR & (0x01 << 6)) == 0)
+        ;
+    
+    /*
+    
+    Bit 6 TCCF: Transmission complete clear flag
+    Writing 1 to this bit clears the TC flag in the USART_ISR register
+    
+    */
+    
+    USART3 -> ICR |= 0x01 << 6;
 }
 
 void USART3_IRQHandler(void)
 {
     /*
     
-    Bit 5 RXFNE: RXFIFO not empty
-    RXFNE bit is set by hardware when the RXFIFO is not empty, meaning that data can be
-    read from the USART_RDR register. Every read operation from the USART_RDR frees a
-    location in the RXFIFO.
-    RXFNE is cleared when the RXFIFO is empty. The RXFNE flag can also be cleared by
-    writing 1 to the RXFRQ in the USART_RQR register.
-    An interrupt is generated if RXFNEIE=1 in the USART_CR1 register.
+   Bit 5 RXNE: Read data register not empty
+    RXNE bit is set by hardware when the content of the USART_RDR shift register has been
+    transferred to the USART_RDR register. It is cleared by reading from the USART_RDR
+    register. The RXNE flag can also be cleared by writing 1 to the RXFRQ in the USART_RQR
+    register.
+    An interrupt is generated if RXNEIE=1 in the USART_CR1 register.
         0: Data is not received
-        1: Received data is ready to be read.
+        1: Received data is ready to be read
     
     */
     
@@ -341,12 +374,28 @@ void USART3_IRQHandler(void)
             /* 0x0D is received. */
             if (USART3_RX_STATUS & 0x4000)
             {
-                if (byte == 0x0d)
+                if (byte == 0x0A)
                 {
                     USART3_RX_STATUS |= 0x8000;
                     
+                    /*
+                    
+                    Bit 3 RXFRQ: Receive data flush request
+                    Writing 1 to this bit empties the entire receive FIFO i.e. clears the bit RXFNE.
+                    This enables to discard the received data without reading them, and avoid an overrun
+                    condition.
+
+                    */
+                    USART3 -> RQR |= 0x01 << 3;
+                    
                     if (onReceivedHandler)
+                    {
                         onReceivedHandler(USART3_RX_BUFFER, USART3_RX_STATUS & 0x3FFFF);
+                        
+                        USART3_RX_STATUS = 0;
+                    }
+                    
+                    
                 }
                 else
                     USART3_RX_STATUS = 0;   /* Error occured. */
@@ -370,9 +419,19 @@ void USART3_IRQHandler(void)
     
     /*
     
+    Bit 3 ORE: Overrun error
+    This bit is set by hardware when the data currently being received in the shift register is
+    ready to be transferred into the USART_RDR register while RXNE=1. It is cleared by a
+    software, writing 1 to the ORECF, in the USART_ICR register.
+    An interrupt is generated if RXNEIE=1 or EIE = 1 in the USART_CR1 register.
+        0: No overrun error
+        1: Overrun error is detected
+    
     Bit 3 ORECF: Overrun error clear flag
     Writing 1 to this bit clears the ORE flag in the USART_ISR register.
     
     */
-    USART3 -> ICR |= 0x01 << 3;
+    
+    if (USART3 -> ISR & 0x01 << 3)
+        USART3 -> ICR |= 0x01 << 3;
 }
