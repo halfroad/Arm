@@ -51,7 +51,8 @@ int main(void)
         else if (pwm == 300)
             direction = 0;
         
-        OLED_ShowNum(8, 16, pwm, 5, 8, 1);
+        OLED_ShowString(8, 16, (uint8_t *)"Duty Cycles: ", 8, 1);
+        OLED_ShowNum(8, 28, pwm, 3, 8, 1);
         OLED_Refresh();
         
         SetCaptureCompare(pwm);

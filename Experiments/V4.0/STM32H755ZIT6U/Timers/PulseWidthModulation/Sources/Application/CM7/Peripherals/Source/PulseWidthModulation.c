@@ -133,7 +133,7 @@ void InitPulseWdithModulation(uint32_t prescaler, uint32_t autoReload)
     CC1NP=1, CC1P=0: This configuration is reserved, it must not be used.
 
     */
-    TIM3 -> CCER |= 0x01 << 9;
+    TIM3 -> CCER |= 0x00 << 9;
     
     /*
     
@@ -161,20 +161,18 @@ void SetCaptureCompare(uint16_t newCompare)
 {
     /*
     
-    Bits 31:16 CCR4[31:16]: High Capture/Compare 4 value (TIM2 and TIM5)
-    Bits 15:0 CCR4[15:0]: Low Capture/Compare value
-    
-    1. if CC4 channel is configured as output (CC4S bits):
-    CCR4 is the value to be loaded in the actual capture/compare 4 register (preload value).
-    It is loaded permanently if the preload feature is not selected in the TIMx_CCMR2
-    register (bit OC4PE). Else the preload value is copied in the active capture/compare 4
-    register when an update event occurs.
+    Bits 31:16 CCR3[31:16]: High Capture/Compare 3 value (TIM2 and TIM5)
+    Bits 15:0 CCR3[15:0]: Low Capture/Compare value
+    If channel CC3 is configured as output:
+    CCR3 is the value to be loaded in the actual capture/compare 3 register (preload value).
+    It is loaded permanently if the preload feature is not selected in the TIMx_CCMR2 register
+    (bit OC3PE). Else the preload value is copied in the active capture/compare 3 register when
+    an update event occurs.
     The active capture/compare register contains the value to be compared to the counter
-    TIMx_CNT and signalled on OC4 output.
-    
-    2. if CC4 channel is configured as input (CC4S bits in TIMx_CCMR4 register):
-    CCR4 is the counter value transferred by the last input capture 4 event (IC4). The
-    TIMx_CCR4 register is read-only and cannot be programmed.
+    TIMx_CNT and signalled on OC3 output.
+    If channel CC3is configured as input:
+    CCR3 is the counter value transferred by the last input capture 3 event (IC3). The
+    TIMx_CCR3 register is read-only and cannot be programmed.
     */
-    TIM3 -> CCR4 = newCompare;
+    TIM3 -> CCR3 = newCompare;
 }
