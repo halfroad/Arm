@@ -1,6 +1,6 @@
 #include "ExtendedInterrupts.h"
 
-void ConfigureExternalInterrutp(uint8_t GPIOx, uint8_t bitNumber, uint8_t triggerEdge)
+void ConfigureExternalInterrupt(uint8_t GPIOx, uint8_t bitNumber, uint8_t triggerEdge)
 {
     /*
     
