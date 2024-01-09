@@ -1,7 +1,7 @@
-#include "../../../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h"
+#include <stdio.h>
 
-//#include "../../../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h"
-//#include "../../../Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
+#include "../../../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h"
+#include "../../../Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
 
 #include "../../Peripherals/Include/gpio.h"
 #include "../Include/FlashLEDTasks.h"
@@ -10,6 +10,12 @@ static void CreateTasks(void);
 
 static void StartFlashGreenLEDTask(void *argument);
 static void StartFlashRedLEDTask(void *argument);
+
+#define FLASH_GREEN_LED_TASK_STACK_DEPTH    128
+#define FLASH_RED_LED_TASK_STACK_DEPTH      128
+
+#define FLASH_GREEN_LED_TASK_PRIORITY       5
+#define FLASH_RED_LED_TASK_PRIORITY         6
 
 TaskHandle_t FlashGreenLEDTaskHandle;
 TaskHandle_t FlashRedLEDTaskHandle;
@@ -43,9 +49,9 @@ void CreateTasks(void)
 
     /* Create the thread(s) */
     /* creation of FlashGreenLEDTask */
-    xTaskCreate(StartFlashGreenLEDTask, "StartFlashGreenLEDTaskName", 128, NULL, 24, &FlashGreenLEDTaskHandle);
+    xTaskCreate(StartFlashGreenLEDTask, "StartFlashGreenLEDTaskName", FLASH_GREEN_LED_TASK_STACK_DEPTH, NULL, FLASH_GREEN_LED_TASK_PRIORITY, &FlashGreenLEDTaskHandle);
     /* creation of FlashRedLEDTask */
-    xTaskCreate(StartFlashRedLEDTask, "StartFlashRedLEDTaskName", 128, NULL, 24, &FlashRedLEDTaskHandle);
+    xTaskCreate(StartFlashRedLEDTask, "StartFlashRedLEDTaskName", FLASH_RED_LED_TASK_STACK_DEPTH, (void *) 1, FLASH_RED_LED_TASK_PRIORITY, &FlashRedLEDTaskHandle);
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
@@ -65,14 +71,16 @@ void CreateTasks(void)
  * @retval None
  */
 /* USER CODE END Header_StartFlashGreenLEDTask */
-void StartFlashGreenLEDTask(void *argument)
+static void StartFlashGreenLEDTask(void *argument)
 {
     /* USER CODE BEGIN StartFlashGreenLEDTask */
     /* Infinite loop */
     for (;;)
     {
         HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
-
+        
+        printf("Hello, world!");
+        
         vTaskDelay(500);
     }
     /* USER CODE END StartFlashGreenLEDTask */
@@ -85,7 +93,7 @@ void StartFlashGreenLEDTask(void *argument)
  * @retval None
  */
 /* USER CODE END Header_StartFlashRedLEDTask */
-void StartFlashRedLEDTask(void *argument)
+static void StartFlashRedLEDTask(void *argument)
 {
     /* USER CODE BEGIN StartFlashRedLEDTask */
     /* Infinite loop */
