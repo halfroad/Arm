@@ -124,7 +124,7 @@ void StartFlashYellowLEDTask(void *argument)
     {
         HAL_GPIO_TogglePin(YELLOW_LED_GPIO_Port, YELLOW_LED_Pin);
 
-        HAL_Delay(500);
+        vTaskDelay(500);
     }
     /* USER CODE END FlashYellowLEDTask */
 }

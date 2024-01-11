@@ -48,7 +48,7 @@
 #define START_FLASH_YELLOW_LED_TASK_PRIORY              7
 
 #define START_FLASH_RED_LED_TASK_STACK_DEPTH            128
-#define START_FLASH_RED_LED_TASK_PRIORY                 7
+#define START_FLASH_RED_LED_TASK_PRIORY                 8
 
 /* USER CODE END PM */
 
@@ -140,7 +140,7 @@ void StartFlashGreenLEDTask(void *argument)
     {
         HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
 
-        HAL_Delay(500);
+        vTaskDelay(500);
     }
     /* USER CODE END FlashGreenLEDTask */
 }
@@ -160,7 +160,7 @@ void StartFlashYellowLEDTask(void *argument)
     {
         HAL_GPIO_TogglePin(YELLOW_LED_GPIO_Port, YELLOW_LED_Pin);
 
-        HAL_Delay(500);
+        vTaskDelay(500);
     }
     /* USER CODE END FlashYellowLEDTask */
 }
@@ -180,7 +180,7 @@ void StartFlashRedLEDTask(void *argument)
     {
         HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
         
-        HAL_Delay(500);
+        vTaskDelay(500);
     }
     /* USER CODE END FlashRedLEDTask */
 }

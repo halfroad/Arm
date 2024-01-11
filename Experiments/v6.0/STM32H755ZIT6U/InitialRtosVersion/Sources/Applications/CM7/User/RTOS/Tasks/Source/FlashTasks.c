@@ -130,7 +130,7 @@ void StartFlashGreenLEDTask(void *argument)
     {
         HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
 
-        HAL_Delay(500);
+        vTaskDelay(1000);
     }
     /* USER CODE END FlashGreenLEDTask */
 }
@@ -150,7 +150,7 @@ void StartFlashRedLEDTask(void *argument)
     {
         HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
         
-        HAL_Delay(500);
+        vTaskDelay(500);
     }
     /* USER CODE END FlashRedLEDTask */
 }
