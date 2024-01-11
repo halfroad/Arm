@@ -19,7 +19,8 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "../../User/Peripherals/Include/gpio.h"
-#include "../../User/RTOS/Tasks/Include/FlashLEDTasks.h"
+#include "../../../Shared/User/RTOS/Include/TasksWrapper.h"
+
 #include "../Include/main.h"
 
 /* Private includes ----------------------------------------------------------*/

@@ -1,56 +1,25 @@
-/* USER CODE BEGIN Header */
-/**
- ******************************************************************************
- * File Name          : freertos.c
- * Description        : Code for freertos applications
- ******************************************************************************
- * @attention
- *
- * Copyright (c) 2024 STMicroelectronics.
- * All rights reserved.
- *
- * This software is licensed under terms that can be found in the LICENSE file
- * in the root directory of this software component.
- * If no LICENSE file comes with this software, it is provided AS-IS.
- *
- ******************************************************************************
- */
-/* USER CODE END Header */
-
-/* Includes ------------------------------------------------------------------*/
-
-#include <stm32h7xx.h>
+#include "../../../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h"
+#include "../../../Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
 
 #include "../Include/TasksWrapper.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
 
-/* USER CODE END Includes */
+#define SCHEDULE_TASKS_TASK_STACK_DEPTH             128
+#define SCHEDULE_TASKS_PRIORY                       15
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
+extern void ScheduleTasks(void *argument);
 
-/* USER CODE END PTD */
+void InitRtos(void)
+{
+    /* Start scheduler if initialized and not started before */
+    
+    TaskHandle_t ScheduleTasksHandle;
+    
+    if (pdPASS == xTaskCreate(ScheduleTasks, "ScheduleTasksName", SCHEDULE_TASKS_TASK_STACK_DEPTH, NULL, SCHEDULE_TASKS_PRIORY, &ScheduleTasksHandle))
+        vTaskStartScheduler();
+}
 
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN Variables */
-
-/* USER CODE END Variables */
-
-/* Private function prototypes -----------------------------------------------*/
-
-/* USER CODE BEGIN FunctionPrototypes */
+/* USER CODE BEGIN 2 */
 
 #if defined(SysTick)
 #undef SysTick_Handler
@@ -79,6 +48,11 @@ void SysTick_Handler (void) {
 }
 #endif
 #endif /* SysTick */
+
+/* USER CODE END 3 */
+
+/* Private application code --------------------------------------------------*/
+/* USER CODE BEGIN Application */
 
 /**
   Dummy implementation of the callback function vApplicationIdleHook().
@@ -120,11 +94,6 @@ __WEAK void vApplicationStackOverflowHook (TaskHandle_t xTask, signed char *pcTa
 }
 #endif
 
-/* USER CODE END 3 */
-
-/* Private application code --------------------------------------------------*/
-/* USER CODE BEGIN Application */
-
 /*---------------------------------------------------------------------------*/
 #if (configSUPPORT_STATIC_ALLOCATION == 1)
 /* External Idle and Timer task static memory allocation functions */
@@ -163,4 +132,3 @@ __WEAK void vApplicationGetTimerTaskMemory (StaticTask_t **ppxTimerTaskTCBBuffer
 #endif
 
 /* USER CODE END Application */
-

@@ -18,10 +18,12 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+
+
 #include "../../../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h"
 #include "../../../Middlewares/Third_Party/FreeRTOS/Source/include/task.h"
 #include "../../RTOS/Include/TasksWrapper.h"
-#include "../../User/Periperhals/Include/gpio.h"
+#include "../../Peripherals/Include/gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -41,14 +43,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
-#define START_FLASH_GREEN_LED_TASK_STACK_DEPTH          128
-#define START_FLASH_GREEN_LED_TASK_PRIORY               7
-
 #define START_FLASH_YELLOW_LED_TASK_STACK_DEPTH         128
 #define START_FLASH_YELLOW_LED_TASK_PRIORY              7
-
-#define START_FLASH_RED_LED_TASK_STACK_DEPTH            128
-#define START_FLASH_RED_LED_TASK_PRIORY                 7
 
 /* USER CODE END PM */
 
@@ -57,21 +53,13 @@
 
 /* USER CODE END Variables */
 
-/* Definitions for FlashGreenLEDTask */
-TaskHandle_t StartFlashGreenLEDTaskHandle;
-
 /* Definitions for FlashYellowLEDTask */
 TaskHandle_t StartFlashYellowLEDTaskHandle;
-
-/* Definitions for FlashRedLEDTask */
-TaskHandle_t StartFlashRedLEDTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 
-static void StartFlashGreenLEDTask(void *argument);
 static void StartFlashYellowLEDTask(void *argument);
-static void StartFlashRedLEDTask(void *argument);
 
 /* USER CODE END FunctionPrototypes */
 
@@ -103,14 +91,9 @@ void ScheduleTasks(void)
     /* USER CODE BEGIN RTOS_QUEUES */
     /* add queues, ... */
     /* USER CODE END RTOS_QUEUES */
-    /* creation of FlashGreenLEDTask */
-    xTaskCreate(StartFlashGreenLEDTask, "StartFlashGreenLEDTaskName", START_FLASH_GREEN_LED_TASK_STACK_DEPTH, NULL, START_FLASH_GREEN_LED_TASK_PRIORY, &StartFlashGreenLEDTaskHandle);
-    
+
     /* creation of FlashYellowLEDTask */
     xTaskCreate(StartFlashYellowLEDTask, "StartFlashYellowLEDTaskName", START_FLASH_YELLOW_LED_TASK_STACK_DEPTH, NULL, START_FLASH_YELLOW_LED_TASK_PRIORY, &StartFlashYellowLEDTaskHandle);
-
-    /* creation of FlashRedLEDTask */
-    xTaskCreate(StartFlashRedLEDTask, "StartFlashRedLEDTaskName", START_FLASH_RED_LED_TASK_STACK_DEPTH, (void *)1, START_FLASH_RED_LED_TASK_PRIORY, &StartFlashRedLEDTaskHandle);
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
@@ -124,25 +107,6 @@ void ScheduleTasks(void)
     
     vPortExitCritical();
 
-}
-/* USER CODE BEGIN Header_StartFlashGreenLEDTask */
-/**
- * @brief Function implementing the FlashGreenLEDTask thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartFlashGreenLEDTask */
-void StartFlashGreenLEDTask(void *argument)
-{
-    /* USER CODE BEGIN FlashGreenLEDTask */
-    /* Infinite loop */
-    for (;;)
-    {
-        HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
-
-        HAL_Delay(500);
-    }
-    /* USER CODE END FlashGreenLEDTask */
 }
 
 /* USER CODE BEGIN Header_StartFlashYellowLEDTask */
@@ -163,26 +127,6 @@ void StartFlashYellowLEDTask(void *argument)
         HAL_Delay(500);
     }
     /* USER CODE END FlashYellowLEDTask */
-}
-
-/* USER CODE BEGIN Header_StartFlashRedLEDTask */
-/**
- * @brief Function implementing the FlashRedLEDTask thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartFlashRedLEDTask */
-void StartFlashRedLEDTask(void *argument)
-{
-    /* USER CODE BEGIN FlashRedLEDTask */
-    /* Infinite loop */
-    for (;;)
-    {
-        HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
-        
-        HAL_Delay(500);
-    }
-    /* USER CODE END FlashRedLEDTask */
 }
 
 /* Private application code --------------------------------------------------*/

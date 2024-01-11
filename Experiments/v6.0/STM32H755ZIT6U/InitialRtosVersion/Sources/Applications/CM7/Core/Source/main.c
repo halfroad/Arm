@@ -20,7 +20,7 @@
 
 #include "../../Initializers/Include/SystemInitializer.h"
 #include "../../User/Peripherals/Include/gpio.h"
-#include "../../User/RTOS/Tasks/Include/FlashLEDTasks.h"
+#include "../../User/RTOS/Tasks/Include/FlashTasks.h"
 
 #include <EventRecorder.h>
 

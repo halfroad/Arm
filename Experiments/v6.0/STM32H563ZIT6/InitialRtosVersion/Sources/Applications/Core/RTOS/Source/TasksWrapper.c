@@ -17,9 +17,8 @@ void InitRtos(void)
     
     TaskHandle_t ScheduleTasksHandle;
     
-    xTaskCreate(ScheduleTasks, "ScheduleTasksName", SCHEDULE_TASKS_TASK_STACK_DEPTH, NULL, SCHEDULE_TASKS_PRIORY, &ScheduleTasksHandle);
-    
-    vTaskStartScheduler();
+    if (pdPASS == xTaskCreate(ScheduleTasks, "ScheduleTasksName", SCHEDULE_TASKS_TASK_STACK_DEPTH, NULL, SCHEDULE_TASKS_PRIORY, &ScheduleTasksHandle))
+        vTaskStartScheduler();
 }
 
 /* USER CODE BEGIN 2 */
