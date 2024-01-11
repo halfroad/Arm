@@ -22,6 +22,8 @@
 #include "../../User/Peripherals/Include/gpio.h"
 #include "../../User/RTOS/Tasks/Include/FlashLEDTasks.h"
 
+#include <EventRecorder.h>
+
 #include "main.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -94,6 +96,10 @@ int main(void)
     /* USER CODE END Boot_Mode_Sequence_2 */
 
     /* USER CODE BEGIN SysInit */
+    
+    EventRecorderInitialize(EventRecordAll, 1U);
+    
+    EventRecorderStart();
 
     /* USER CODE END SysInit */
 

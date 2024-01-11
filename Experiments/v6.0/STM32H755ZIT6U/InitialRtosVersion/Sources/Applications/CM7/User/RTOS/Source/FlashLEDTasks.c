@@ -79,6 +79,8 @@ static void StartFlashGreenLEDTask(void *argument)
     {
         HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
         
+        printf("Hello, world!\r\n");
+        
         vTaskDelay(500);
     }
     /* USER CODE END StartFlashGreenLEDTask */

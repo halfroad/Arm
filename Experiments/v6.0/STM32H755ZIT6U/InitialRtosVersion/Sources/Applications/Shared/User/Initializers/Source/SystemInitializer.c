@@ -72,8 +72,6 @@ void SystemClock_Config(void)
     {
         Error_Handler();
     }
-    
-    SysTick_Config(480000);
 }
 
 /* USER CODE BEGIN 4 */
