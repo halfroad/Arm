@@ -440,9 +440,9 @@
           <GroupName>Applications/CM4/User/RTOS/Tasks</GroupName>
           <Files>
             <File>
-              <FileName>FlashTasks.c</FileName>
+              <FileName>TasksScheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Applications\CM4\User\RTOS\Tasks\Source\FlashTasks.c</FilePath>
+              <FilePath>..\Sources\Applications\CM4\User\RTOS\Tasks\Source\TasksScheduler.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -850,9 +850,9 @@
           </GroupOption>
           <Files>
             <File>
-              <FileName>FlashTasks.c</FileName>
+              <FileName>TasksScheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Applications\CM7\User\RTOS\Tasks\Source\FlashTasks.c</FilePath>
+              <FilePath>..\Sources\Applications\CM7\User\RTOS\Tasks\Source\TasksScheduler.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1770,9 +1770,9 @@
           </GroupOption>
           <Files>
             <File>
-              <FileName>FlashTasks.c</FileName>
+              <FileName>TasksScheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Applications\CM4\User\RTOS\Tasks\Source\FlashTasks.c</FilePath>
+              <FilePath>..\Sources\Applications\CM4\User\RTOS\Tasks\Source\TasksScheduler.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1835,9 +1835,9 @@
           <GroupName>Applications/CM7/User/RTOS/Tasks</GroupName>
           <Files>
             <File>
-              <FileName>FlashTasks.c</FileName>
+              <FileName>TasksScheduler.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Applications\CM7\User\RTOS\Tasks\Source\FlashTasks.c</FilePath>
+              <FilePath>..\Sources\Applications\CM7\User\RTOS\Tasks\Source\TasksScheduler.c</FilePath>
             </File>
           </Files>
         </Group>
