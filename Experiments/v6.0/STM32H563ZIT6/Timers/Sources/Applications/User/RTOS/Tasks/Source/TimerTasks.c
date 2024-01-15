@@ -165,17 +165,17 @@ void TimerControlsTask(void *argument)
     {
        /* printf("Timer Controls Task is running.\n"); */
         
-        eTaskState taskState = eTaskGetState(TimerControlsTaskHandle);
-        
         if (GPIO_PIN_SET == HAL_GPIO_ReadPin(PUSH_BUTTON_GPIO_Port, PUSH_BUTTON_Pin))
         {
-            xTimerStart(OneTimeTimerHandle, portMAX_DELAY);
-            xTimerStart(PeriodicTimerHandle, portMAX_DELAY);
-        }
-        else
-        {
-           // xTimerStop(OneTimeTimerHandle, portMAX_DELAY);
-           // xTimerStop(PeriodicTimerHandle, portMAX_DELAY);
+            BaseType_t baseType = xTimerIsTimerActive( OneTimeTimerHandle );
+            
+            if (baseType == pdFALSE)
+                xTimerStart(OneTimeTimerHandle, portMAX_DELAY);
+            
+            baseType = xTimerIsTimerActive( PeriodicTimerHandle );
+            
+            if (baseType == pdFALSE)
+                xTimerStart(PeriodicTimerHandle, portMAX_DELAY);
         }
             
         vTaskDelay(10);
