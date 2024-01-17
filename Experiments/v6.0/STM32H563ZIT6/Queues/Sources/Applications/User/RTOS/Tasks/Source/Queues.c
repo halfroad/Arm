@@ -46,13 +46,13 @@
 /* USER CODE BEGIN PM */
 
 #define START_ENQUEUE_TASK_STACK_DEPTH                      128
-#define START_ENQUEUE_TASK_PRIORY                           2
+#define START_ENQUEUE_TASK_PRIORITY                           2
 
 #define START_DEQUEUE_TASK_STACK_DEPTH                      1024
-#define START_DEQUEUE_TASK_PRIORY                           3
+#define START_DEQUEUE_TASK_PRIORITY                           3
 
 #define START_DEQUEUE_ADDRESS_TASK_STACK_DEPTH              128
-#define START_DEQUEUE_ADDRESS_TASK_PRIORY                   4
+#define START_DEQUEUE_ADDRESS_TASK_PRIORITY                   4
 
 #define NUMBERS_QUEUE_LENGTH                                2
 #define POINTERS_QUEUE_LENGTH                               1
@@ -125,13 +125,13 @@ void ScheduleTasks(void)
     
     /* USER CODE END RTOS_QUEUES */
     /* creation of StartEnqueueTask */
-    xTaskCreate(StartEnqueueTask, "StartEnqueueTaskName", START_ENQUEUE_TASK_STACK_DEPTH, NULL, START_ENQUEUE_TASK_PRIORY, &startEnqueueTaskHandle);
+    xTaskCreate(StartEnqueueTask, "StartEnqueueTaskName", START_ENQUEUE_TASK_STACK_DEPTH, NULL, START_ENQUEUE_TASK_PRIORITY, &startEnqueueTaskHandle);
 
     /* creation of StartDequeueTask */
-    xTaskCreate(StartDequeueTask, "StartDequeueTaskName", START_DEQUEUE_TASK_STACK_DEPTH, (void *)1, START_DEQUEUE_TASK_PRIORY, &startDequeueTaskHandle);
+    xTaskCreate(StartDequeueTask, "StartDequeueTaskName", START_DEQUEUE_TASK_STACK_DEPTH, (void *)1, START_DEQUEUE_TASK_PRIORITY, &startDequeueTaskHandle);
     
     /* creation of StartDequeueAddressTask */
-    xTaskCreate(StartDequeueAddressTask, "StartDequeueAddressTaskName", START_DEQUEUE_ADDRESS_TASK_STACK_DEPTH, (void *)1, START_DEQUEUE_ADDRESS_TASK_PRIORY, &startDequeueAddressTaskHandle);
+    xTaskCreate(StartDequeueAddressTask, "StartDequeueAddressTaskName", START_DEQUEUE_ADDRESS_TASK_STACK_DEPTH, (void *)1, START_DEQUEUE_ADDRESS_TASK_PRIORITY, &startDequeueAddressTaskHandle);
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */

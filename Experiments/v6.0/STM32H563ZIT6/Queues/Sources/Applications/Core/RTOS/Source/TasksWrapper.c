@@ -121,7 +121,7 @@ __WEAK void vApplicationGetTimerTaskMemory (StaticTask_t **ppxTimerTaskTCBBuffer
 /* USER CODE END Application */
 
 #define SCHEDULE_TASKS_TASK_STACK_DEPTH             128
-#define SCHEDULE_TASKS_PRIORY                       15
+#define SCHEDULE_TASKS_PRIORITY                       15
 
 TaskHandle_t ScheduleTasksHandle;
 StackType_t ScheduleTasksStack[SCHEDULE_TASKS_TASK_STACK_DEPTH];
@@ -143,20 +143,20 @@ void InitRtos(void)
                                     "ScheduleTasksName", /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
                                     SCHEDULE_TASKS_TASK_STACK_DEPTH,
                                     NULL,
-                                    SCHEDULE_TASKS_PRIORY,
+                                    SCHEDULE_TASKS_PRIORITY,
                                     ScheduleTasksStack,
                                     &ScheduleTasksTaskControlBlock );
     if (ScheduleTasksHandle)
         vTaskStartScheduler();
 #else
-    if (pdPASS == xTaskCreate(ScheduleTasks, "ScheduleTasksName", SCHEDULE_TASKS_TASK_STACK_DEPTH, NULL, SCHEDULE_TASKS_PRIORY, &ScheduleTasksHandle))
+    if (pdPASS == xTaskCreate(ScheduleTasks, "ScheduleTasksName", SCHEDULE_TASKS_TASK_STACK_DEPTH, NULL, SCHEDULE_TASKS_PRIORITY, &ScheduleTasksHandle))
         vTaskStartScheduler();
     
 #endif
     
 #else
         
-    if (pdPASS == xTaskCreate(ScheduleTasks, "ScheduleTasksName", SCHEDULE_TASKS_TASK_STACK_DEPTH, NULL, SCHEDULE_TASKS_PRIORY, &ScheduleTasksHandle))
+    if (pdPASS == xTaskCreate(ScheduleTasks, "ScheduleTasksName", SCHEDULE_TASKS_TASK_STACK_DEPTH, NULL, SCHEDULE_TASKS_PRIORITY, &ScheduleTasksHandle))
         vTaskStartScheduler();
 #endif
 

@@ -44,13 +44,13 @@
 /* USER CODE BEGIN PM */
 
 #define START_TASK1_STACK_DEPTH             128
-#define START_TASK1_PRIORY                  5
+#define START_TASK1_PRIORITY                  5
 
 #define START_TASK2_STACK_DEPTH             128
-#define START_TASK2_PRIORY                  5
+#define START_TASK2_PRIORITY                  5
 
 #define START_TASK3_STACK_DEPTH             128
-#define START_TASK3_PRIORY                  5
+#define START_TASK3_PRIORITY                  5
 
 /* USER CODE END PM */
 
@@ -119,14 +119,14 @@ void ScheduleTasks(void)
                                     "StartTask1Name", /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
                                     START_TASK1_STACK_DEPTH,
                                     NULL,
-                                    START_TASK1_PRIORY,
+                                    START_TASK1_PRIORITY,
                                     StartTask1Stack,
                                     &StartTask1TaskControlBlock );
     StartTask2Handle = xTaskCreateStatic(StartTask2,
                                     "StartTask2Name", /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
                                     START_TASK2_STACK_DEPTH,
                                     NULL,
-                                    START_TASK2_PRIORY,
+                                    START_TASK2_PRIORITY,
                                     StartTask2Stack,
                                     &StartTask2TaskControlBlock );
                                     
@@ -134,7 +134,7 @@ void ScheduleTasks(void)
                                     "StartTask3Name", /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
                                     START_TASK3_STACK_DEPTH,
                                     NULL,
-                                    START_TASK3_PRIORY,
+                                    START_TASK3_PRIORITY,
                                     StartTask3Stack,
                                     &StartTask3TaskControlBlock );
     

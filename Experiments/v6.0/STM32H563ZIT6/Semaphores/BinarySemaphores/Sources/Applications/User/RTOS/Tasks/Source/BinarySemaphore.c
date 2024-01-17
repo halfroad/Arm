@@ -46,10 +46,10 @@
 /* USER CODE BEGIN PM */
 
 #define START_GIVE_REASOURCE_TO_SEMAPHORE_TASK_STACK_DEPTH              128
-#define START_GIVE_REASOURCE_TO_SEMAPHORE_TASK_PRIORY                   2
+#define START_GIVE_REASOURCE_TO_SEMAPHORE_TASK_PRIORITY                 2
 
 #define START_TAKE_REASOURCE_FROM_SEMAPHORE_TASK_STACK_DEPTH            128
-#define START_TAKE_REASOURCE_FROM_SEMAPHORE_TASK_PRIORY                 3
+#define START_TAKE_REASOURCE_FROM_SEMAPHORE_TASK_PRIORITY               3
 
 /* USER CODE END PM */
 
@@ -111,10 +111,10 @@ void ScheduleTasks(void)
     
     /* USER CODE END RTOS_QUEUES */
     /* creation of StartGiveReasourceToSemaphoreTask */
-    xTaskCreate(StartGiveReasourceToSemaphoreTask, "StartGiveReasourceToSemaphoreTaskTaskName", START_GIVE_REASOURCE_TO_SEMAPHORE_TASK_STACK_DEPTH, NULL, START_GIVE_REASOURCE_TO_SEMAPHORE_TASK_PRIORY, &StartGiveReasourceToSemaphoreTaskHandle);
+    xTaskCreate(StartGiveReasourceToSemaphoreTask, "StartGiveReasourceToSemaphoreTaskTaskName", START_GIVE_REASOURCE_TO_SEMAPHORE_TASK_STACK_DEPTH, NULL, START_GIVE_REASOURCE_TO_SEMAPHORE_TASK_PRIORITY, &StartGiveReasourceToSemaphoreTaskHandle);
 
     /* creation of StartTakeReasourceFromSemaphoreTask */
-    xTaskCreate(StartTakeReasourceFromSemaphoreTask, "StartTakeReasourceFromSemaphoreTaskName", START_TAKE_REASOURCE_FROM_SEMAPHORE_TASK_STACK_DEPTH, (void *)1, START_TAKE_REASOURCE_FROM_SEMAPHORE_TASK_PRIORY, &StartTakeReasourceFromSemaphoreTaskkHandle);
+    xTaskCreate(StartTakeReasourceFromSemaphoreTask, "StartTakeReasourceFromSemaphoreTaskName", START_TAKE_REASOURCE_FROM_SEMAPHORE_TASK_STACK_DEPTH, (void *)1, START_TAKE_REASOURCE_FROM_SEMAPHORE_TASK_PRIORITY, &StartTakeReasourceFromSemaphoreTaskkHandle);
     
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */

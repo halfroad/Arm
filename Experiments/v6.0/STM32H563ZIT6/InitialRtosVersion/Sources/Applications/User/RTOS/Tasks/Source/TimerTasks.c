@@ -45,7 +45,7 @@
 /* USER CODE BEGIN PM */
 
 #define TIMER_CONTROLS_TASK_STACK_DEPTH             128
-#define TIMER_CONTROLS_TASK_PRIORY                  2
+#define TIMER_CONTROLS_TASK_PRIORITY                  2
 
 /* USER CODE END PM */
 
@@ -113,7 +113,7 @@ void ScheduleTasks(void)
     /* add queues, ... */
     /* USER CODE END RTOS_QUEUES */
     /* creation of StartTask1 */
-    xTaskCreate(TimerControlsTask, "TimerControlsTaskName", TIMER_CONTROLS_TASK_STACK_DEPTH, NULL, TIMER_CONTROLS_TASK_PRIORY, &TimerControlsTaskHandle);
+    xTaskCreate(TimerControlsTask, "TimerControlsTaskName", TIMER_CONTROLS_TASK_STACK_DEPTH, NULL, TIMER_CONTROLS_TASK_PRIORITY, &TimerControlsTaskHandle);
     
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */

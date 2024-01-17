@@ -44,13 +44,13 @@
 /* USER CODE BEGIN PM */
 
 #define START_TASK1_STACK_DEPTH             128
-#define START_TASK1_PRIORY                  2
+#define START_TASK1_PRIORITY                  2
 
 #define START_TASK2_STACK_DEPTH             128
-#define START_TASK2_PRIORY                  3
+#define START_TASK2_PRIORITY                  3
 
 #define START_TASK3_STACK_DEPTH             128
-#define START_TASK3_PRIORY                  4
+#define START_TASK3_PRIORITY                  4
 
 /* USER CODE END PM */
 
@@ -106,13 +106,13 @@ void ScheduleTasks(void)
     /* add queues, ... */
     /* USER CODE END RTOS_QUEUES */
     /* creation of StartTask1 */
-    xTaskCreate(StartTask1, "StartTask1Name", START_TASK1_STACK_DEPTH, NULL, START_TASK1_PRIORY, &StartTask1Handle);
+    xTaskCreate(StartTask1, "StartTask1Name", START_TASK1_STACK_DEPTH, NULL, START_TASK1_PRIORITY, &StartTask1Handle);
     
     /* creation of StartTask2 */
-    xTaskCreate(StartTask2, "StartTask2Name", START_TASK2_STACK_DEPTH, NULL, START_TASK2_PRIORY, &StartTask2Handle);
+    xTaskCreate(StartTask2, "StartTask2Name", START_TASK2_STACK_DEPTH, NULL, START_TASK2_PRIORITY, &StartTask2Handle);
 
     /* creation of StartTask3 */
-    xTaskCreate(StartTask3, "StartTask3Name", START_TASK3_STACK_DEPTH, (void *)1, START_TASK3_PRIORY, &StartTask3Handle);
+    xTaskCreate(StartTask3, "StartTask3Name", START_TASK3_STACK_DEPTH, (void *)1, START_TASK3_PRIORITY, &StartTask3Handle);
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */

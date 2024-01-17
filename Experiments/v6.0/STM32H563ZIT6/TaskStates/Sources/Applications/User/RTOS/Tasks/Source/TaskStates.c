@@ -48,7 +48,7 @@
 /*
 #define START_FLASH_LEDS_TASK_STACK_DEPTH                   30
 */
-#define START_FLASH_LEDS_TASK_PRIORY                        2
+#define START_FLASH_LEDS_TASK_PRIORITY                        2
 
 /*
 vTaskList(buffer);
@@ -58,7 +58,7 @@ vTaskList(buffer);
 #define TASK_STATES_QUERY_TASK_STACK_DEPTH                  128
 */
 
-#define TASK_STATES_QUERY_TASK_PRIORY                        3
+#define TASK_STATES_QUERY_TASK_PRIORITY                        3
 
 /* USER CODE END PM */
 
@@ -111,10 +111,10 @@ void ScheduleTasks(void)
     /* add queues, ... */
     /* USER CODE END RTOS_QUEUES */
     /* creation of StartFlashLEDsTask */
-    xTaskCreate(StartFlashLEDsTask, "StartFlashLEDsTaskName", START_FLASH_LEDS_TASK_STACK_DEPTH, NULL, START_FLASH_LEDS_TASK_PRIORY, &StartFlashLEDsTaskHandle);
+    xTaskCreate(StartFlashLEDsTask, "StartFlashLEDsTaskName", START_FLASH_LEDS_TASK_STACK_DEPTH, NULL, START_FLASH_LEDS_TASK_PRIORITY, &StartFlashLEDsTaskHandle);
 
     /* creation of StartLTaskStatesQueryTask */
-    xTaskCreate(StartLTaskStatesQueryTask, "StartLTaskStatesQueryTaskName", TASK_STATES_QUERY_TASK_STACK_DEPTH, (void *)1, TASK_STATES_QUERY_TASK_PRIORY, &TaskStatesQueryTaskHandle);
+    xTaskCreate(StartLTaskStatesQueryTask, "StartLTaskStatesQueryTaskName", TASK_STATES_QUERY_TASK_STACK_DEPTH, (void *)1, TASK_STATES_QUERY_TASK_PRIORITY, &TaskStatesQueryTaskHandle);
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */

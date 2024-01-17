@@ -46,13 +46,13 @@
 /* USER CODE BEGIN PM */
 
 #define START_HIGH_PRIORTY_TASK_STACK_DEPTH         128
-#define START_HIGH_PRIORTY_TASK_PRIORY              4
+#define START_HIGH_PRIORTY_TASK_PRIORITY            4
 
 #define START_MEDIUM_PRIORTY_TASK_STACK_DEPTH       128
-#define START_MEDIUM_PRIORTY_TASK_PRIORY            3
+#define START_MEDIUM_PRIORTY_TASK_PRIORITY          3
 
 #define START_LOW_PRIORTY_TASK_STACK_DEPTH          128
-#define START_LOW_PRIORTY_TASK_PRIORY               2
+#define START_LOW_PRIORTY_TASK_PRIORITY             2
 
 /* USER CODE END PM */
 
@@ -118,13 +118,13 @@ void ScheduleTasks(void)
     
     /* USER CODE END RTOS_QUEUES */
     /* creation of StartHighPriorityTask */
-    xTaskCreate(StartHighPriorityTask, "StartHighPriorityTaskName", START_HIGH_PRIORTY_TASK_STACK_DEPTH, NULL, START_HIGH_PRIORTY_TASK_PRIORY, &highPriorityTaskHandle);
+    xTaskCreate(StartHighPriorityTask, "StartHighPriorityTaskName", START_HIGH_PRIORTY_TASK_STACK_DEPTH, NULL, START_HIGH_PRIORTY_TASK_PRIORITY, &highPriorityTaskHandle);
 
     /* creation of StartMediumPriorityTask */
-    xTaskCreate(StartMediumPriorityTask, "StartMediumPriorityTaskName", START_MEDIUM_PRIORTY_TASK_STACK_DEPTH, NULL, START_MEDIUM_PRIORTY_TASK_PRIORY, &mediumPriorityTaskHandle);
+    xTaskCreate(StartMediumPriorityTask, "StartMediumPriorityTaskName", START_MEDIUM_PRIORTY_TASK_STACK_DEPTH, NULL, START_MEDIUM_PRIORTY_TASK_PRIORITY, &mediumPriorityTaskHandle);
 
     /* creation of StartLowPriorityTask */
-    xTaskCreate(StartLowPriorityTask, "StartLowPriorityTaskName", START_LOW_PRIORTY_TASK_STACK_DEPTH, NULL, START_LOW_PRIORTY_TASK_PRIORY, &lowPriorityTaskHandle);
+    xTaskCreate(StartLowPriorityTask, "StartLowPriorityTaskName", START_LOW_PRIORTY_TASK_STACK_DEPTH, NULL, START_LOW_PRIORTY_TASK_PRIORITY, &lowPriorityTaskHandle);
     
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
