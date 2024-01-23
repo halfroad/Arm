@@ -35,6 +35,8 @@ void InitDigitalAnalogyConversion(void)
         01: General purpose output mode
         10: Alternate function mode
         11: Analog mode (reset state)
+        
+        PA4 on NUCLEO-H755 CN7 pin number 2 from bottom to top.
     
     */
     GPIOA -> MODER |= 0x03 << (4 * 2);
