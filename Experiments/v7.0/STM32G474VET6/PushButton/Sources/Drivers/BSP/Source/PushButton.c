@@ -38,7 +38,7 @@ void InitPushButtons(void)
     HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
     
     uint32_t precaler = __HAL_TIM_CALC_PSC(SystemCoreClock, 1e3);
-    uint32_t period = __HAL_TIM_CALC_PERIOD(SystemCoreClock, precaler, 4);
+    uint32_t period = __HAL_TIM_CALC_PERIOD(SystemCoreClock, precaler, 10);
     
     InitBasicTimer(precaler, period);
 }
@@ -135,18 +135,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     
     if (GPIO_Pin == PUSH_BUTTON_0_GPIO_PIN)
     {
-        if ((StateFlags | 0x01U << 0) == 0x01U)
+        if ((StateFlags & 0x01U << 0) == 0x00U)
         {
             StateFlags &= ~(0x01U << 0);
+            StateFlags |= 0x01U << 0;
             
             HAL_TIM_Base_Start_IT(&TIM_Handle);
         }
     }
     if (GPIO_Pin == PUSH_BUTTON_1_GPIO_PIN)
     {
-        if ((StateFlags | 0x02U << 1) == 0x02U)
+        if ((StateFlags & 0x02U << 1) == 0x00U)
         {
             StateFlags &= ~(0x01U << 1);
+            StateFlags |= 0x01U << 1;
             
             HAL_TIM_Base_Start_IT(&TIM_Handle);
         }
@@ -154,9 +156,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     
     if (GPIO_Pin == PUSH_BUTTON_2_GPIO_PIN)
     {
-        if ((StateFlags | 0x02U << 2) == 0x02U)
+        if ((StateFlags & 0x02U << 2) == 0x00U)
         {
             StateFlags &= ~(0x01U << 2);
+            StateFlags |= 0x01U << 2;
             
             HAL_TIM_Base_Start_IT(&TIM_Handle);
         }
@@ -168,8 +171,6 @@ void TimerPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim -> Instance == BASIC_TIMER_INSTANCE)
     {
-        StateFlags = 0x00U;
-        
         if (GPIO_PIN_RESET == HAL_GPIO_ReadPin(PUSH_BUTTON_GPIO_PORT, PUSH_BUTTON_0_GPIO_PIN))
         {
             StateFlags |= 0x01U << 0;
@@ -192,23 +193,29 @@ void TimerPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 PushButtonPressStates ScanButton(void)
 {
+    PushButtonPressStates state = PUSH_BUTTON_NONE_PRESSED;
+    
     switch (StateFlags)
     {
         case 0x01U:
-            return PUSH_BUTTON_0_PRESSED;
+            state = PUSH_BUTTON_0_PRESSED;
         break;
         
         case 0x02U:
-            return PUSH_BUTTON_1_PRESSED;
+            state = PUSH_BUTTON_1_PRESSED;
         break;
         
         case 0x04U:
-            return PUSH_BUTTON_2_PRESSED;
+            state = PUSH_BUTTON_2_PRESSED;
         break;
         
         default:
-            return PUSH_BUTTON_NONE_PRESSED;
+            state = PUSH_BUTTON_NONE_PRESSED;
         break;
             
     }
+    
+    StateFlags = 0x00U;
+      
+    return state;
 }

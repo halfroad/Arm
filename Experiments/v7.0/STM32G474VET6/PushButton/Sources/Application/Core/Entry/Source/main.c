@@ -146,19 +146,23 @@ int main(void)
         {
             case PUSH_BUTTON_0_PRESSED:
             {
-                    uint8_t i = 1;
+                HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
+                
+                HAL_Delay(250);
             }
                 break;
             
             case PUSH_BUTTON_1_PRESSED:
             {
-                uint8_t i = 2;
+                HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
+                
+                HAL_Delay(250);
             }
                 break;
             
             case PUSH_BUTTON_2_PRESSED:
             {
-                uint8_t i = 3;
+                uint8_t i = 1;
             }
                 break;
             
