@@ -1,5 +1,12 @@
 #include "../Include/AdvancedTimer.h"
 
+/*
+
+PC6             AF4_TIM8_CH1                PM2_PWM_UH, Upper bridge of phase U.
+PC10            AF4_TIM8_CH1N               PM2_PWM_UL, Lower bridge of phase U.
+
+*/
+
 #define TIMER_CHANNEL_GPIO_CLOCK_ENABLE()                   							do { __HAL_RCC_GPIOC_CLK_ENABLE(); } while(0)
 
 #define TIMER_CHANNEL_GPIO_PORT                             							GPIOC

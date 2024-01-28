@@ -1,310 +1,0 @@
-Dependencies for Project 'SystemTicks', Target 'STM32H563ZITx': (DO NOT MODIFY !)
-CompilerVersion: 6190000::V6.19::ARMCLANG
-F (.\Sources\Application\Core\Entry\Src\main.c)(0x655DC4D9)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/main.o -MD)
-I (Sources\Application\Core\Initializers\Inc\cache.h)(0x655DA18A)
-I (Sources\Application\Core\Periphes\Inc\gpio.h)(0x6556FA88)
-I (Sources\Application\Core\Entry\Inc\main.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x6556FA8C)
-I (Sources\Application\Core\Initializers\Inc\stm32h5xx_hal_conf.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_def.h)(0x6556FA8D)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x6556FA8B)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio_ex.h)(0x6556FA8E)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_cortex.h)(0x6556FA8C)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_icache.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_pwr.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_crs.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_rcc.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_bus.h)(0x6556FA91)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_system.h)(0x6556FA94)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_exti.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_cortex.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_utils.h)(0x6556FA94)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_dma.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_gpio.h)(0x6556FA92)
-F (.\Sources\Application\Core\Initializers\Src\stm32h5xx_hal_msp.c)(0x6556FA87)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/stm32h5xx_hal_msp.o -MD)
-I (Sources\Application\Core\Entry\Inc\main.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x6556FA8C)
-I (Sources\Application\Core\Initializers\Inc\stm32h5xx_hal_conf.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_def.h)(0x6556FA8D)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x6556FA8B)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio_ex.h)(0x6556FA8E)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_cortex.h)(0x6556FA8C)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_icache.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_pwr.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_crs.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_rcc.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_bus.h)(0x6556FA91)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_system.h)(0x6556FA94)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_exti.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_cortex.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_utils.h)(0x6556FA94)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_dma.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_gpio.h)(0x6556FA92)
-F (.\Sources\Application\Core\Initializers\Src\cache.c)(0x655DA189)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/cache.o -MD)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Application\Core\Initializers\Inc\cache.h)(0x655DA18A)
-F (.\Sources\Application\Core\Interrupts\Src\stm32h5xx_it.c)(0x6556FA88)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/stm32h5xx_it.o -MD)
-I (Sources\Application\Core\Entry\Inc\main.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x6556FA8C)
-I (Sources\Application\Core\Initializers\Inc\stm32h5xx_hal_conf.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_def.h)(0x6556FA8D)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x6556FA8B)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio_ex.h)(0x6556FA8E)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_cortex.h)(0x6556FA8C)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_icache.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_pwr.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_crs.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_rcc.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_bus.h)(0x6556FA91)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_system.h)(0x6556FA94)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_exti.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_cortex.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_utils.h)(0x6556FA94)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_dma.h)(0x6556FA92)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_gpio.h)(0x6556FA92)
-I (Sources\Application\Core\Interrupts\Inc\stm32h5xx_it.h)(0x6556FA87)
-F (.\Sources\Application\Core\Periphes\Src\gpio.c)(0x6556FA88)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/gpio.o -MD)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Application\Core\Periphes\Inc\gpio.h)(0x6556FA88)
-F (.\Sources\Application\Core\Periphes\Src\usart.c)(0x655708C8)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/usart.o -MD)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Application\Core\Periphes\Inc\usart.h)(0x65570542)
-F (.\Sources\Application\Core\Periphes\Src\delay.c)(0x655D958D)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/delay.o -MD)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Application\Core\Periphes\Inc\delay.h)(0x6557213E)
-F (.\Sources\Application\Startups\startup_stm32h563xx.s)(0x6556FA88)(--target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -masm=auto  -Wa,armasm,--diag_suppress=A1950W -c-gdwarf-4-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-Wa,armasm,--pd,"__UVISION_VERSION SETA 538" -Wa,armasm,--pd,"STM32H563xx SETA 1"-o ./compilations/startup_stm32h563xx.o)
-F (.\Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Source\system_stm32h5xx.c)(0x6556FA8B)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/system_stm32h5xx.o -MD)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-F (.\Sources\Drivers\STM32H5xx_HAL_Driver\Src\stm32h5xx_ll_utils.c)(0x6556FA9C)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/stm32h5xx_ll_utils.o -MD)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_utils.h)(0x6556FA94)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_rcc.h)(0x6556FA93)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_system.h)(0x6556FA94)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_ll_pwr.h)(0x6556FA93)
-F (.\Sources\Drivers\STM32H5xx_HAL_Driver\Src\stm32h5xx_hal.c)(0x6556FA94)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/stm32h5xx_hal.o -MD)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x6556FA8C)
-I (Sources\Application\Core\Initializers\Inc\stm32h5xx_hal_conf.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_def.h)(0x6556FA8D)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x6556FA8B)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio_ex.h)(0x6556FA8E)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_cortex.h)(0x6556FA8C)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x6556FA8D)
-F (.\Sources\Drivers\STM32H5xx_HAL_Driver\Src\stm32h5xx_hal_cortex.c)(0x6556FA94)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/stm32h5xx_hal_cortex.o -MD)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x6556FA8C)
-I (Sources\Application\Core\Initializers\Inc\stm32h5xx_hal_conf.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_def.h)(0x6556FA8D)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x6556FA8B)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio_ex.h)(0x6556FA8E)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_cortex.h)(0x6556FA8C)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x6556FA8D)
-F (.\Sources\Drivers\STM32H5xx_HAL_Driver\Src\stm32h5xx_hal_rcc.c)(0x6556FA98)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/stm32h5xx_hal_rcc.o -MD)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x6556FA8C)
-I (Sources\Application\Core\Initializers\Inc\stm32h5xx_hal_conf.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_def.h)(0x6556FA8D)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x6556FA8B)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio_ex.h)(0x6556FA8E)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_cortex.h)(0x6556FA8C)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x6556FA8D)
-F (.\Sources\Drivers\STM32H5xx_HAL_Driver\Src\stm32h5xx_hal_gpio.c)(0x6556FA96)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O0 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ./Sources/Application/Core/Entry/Inc -I ./Sources/Application/Core/Initializers/Inc -I ./Sources/Application/Core/Interrupts/Inc -I ./Sources/Application/Core/Periphes/Inc -I ./Sources/Drivers/CMSIS/Core/Include -I ./Sources/Drivers/CMSIS/Device/ST/STM32H5xx/Include -I ./Sources/Drivers/CMSIS/Include -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc -I ./Sources/Drivers/STM32H5xx_HAL_Driver/Inc/Legacy-I"D:/Program Files/Arm/Keil_v5/Packs/Keil/STM32H5xx_DFP/1.2.0/Drivers/CMSIS/Device/ST/STM32H5xx/Include"-D__UVISION_VERSION="538" -DSTM32H563xx-o ./compilations/stm32h5xx_hal_gpio.o -MD)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal.h)(0x6556FA8C)
-I (Sources\Application\Core\Initializers\Inc\stm32h5xx_hal_conf.h)(0x6556FA87)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_def.h)(0x6556FA8D)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h)(0x6556FA8A)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\math.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h563xx.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Core\Include\core_cm33.h)(0x6556FA89)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stdint.h)(0x63884908)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_version.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_compiler.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\cmsis_armclang.h)(0x6556FA88)
-I (Sources\Drivers\CMSIS\Core\Include\mpu_armv8.h)(0x6556FA8A)
-I (Sources\Drivers\CMSIS\Device\ST\STM32H5xx\Include\system_stm32h5xx.h)(0x6556FA8A)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h)(0x6556FA8B)
-I (d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\include\stddef.h)(0x63884908)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_rcc_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_gpio_ex.h)(0x6556FA8E)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_dma_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_cortex.h)(0x6556FA8C)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_flash_ex.h)(0x6556FA8D)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_pwr_ex.h)(0x6556FA8F)
-I (Sources\Drivers\STM32H5xx_HAL_Driver\Inc\stm32h5xx_hal_exti.h)(0x6556FA8D)

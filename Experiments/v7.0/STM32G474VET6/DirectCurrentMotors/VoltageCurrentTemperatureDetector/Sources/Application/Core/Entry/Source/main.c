@@ -18,11 +18,16 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <EventRecorder.h>
+
 #include "../../Initializers/Include/SystemInitializer.h"
 #include "../../../User/RTOS/Tasks/Include/TasksWrapper.h"
 #include "../../../User/Peripherals/Include/gpio.h"
 #include "../../../User/Peripherals/Include/AdvancedTimer.h"
 #include "../../../User/Peripherals/Include/DirectCurrenBrushedtMotor.h"
+#include "../../../User/Peripherals/Include/AnalogyDigitalConversion.h"
 #include "../../../Drivers/BSP/Include/PushButton.h"
 
 #include "../Include/main.h"
@@ -50,6 +55,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
+extern uint16_t averageConversions[ADC_CHANNELS_NUMBER];
 
 /* USER CODE END PV */
 
@@ -95,7 +102,13 @@ int main(void)
     
     InitAdvancedTimer(0, 8500 - 1, 0x00);
     InitDirectCurrenBrushedtMotor();
+    
+    InitEmientSensors();
+    
     InitPushButtons();
+    
+    EventRecorderInitialize(EventRecordAll, 1U);
+    EventRecorderStart();
     
     /*
     
@@ -115,8 +128,19 @@ int main(void)
     /* We should never get here as control is now taken by the scheduler */
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
+    
+    uint16_t initialCurrent = 0;
+    
+    for (uint16_t i = 0; i < ADC_GATHER_TIMES_PER_CHANNEL; i ++)
+    {
+        initialCurrent += averageConversions[2];
+        initialCurrent /= 2.0f;
+        
+        HAL_Delay(1);
+    }
 
     PushButtonPressStates state;
+    
     uint8_t i = 0;
     int32_t pwm = 0;
     
@@ -170,8 +194,18 @@ int main(void)
         
         HAL_Delay(10);
         
-        if ( i++ % 20 == 0)
+        if ( i++ % 100 == 0)
+        {
             HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
+            
+            printf("Press button 0 to raise the compare value.\n");
+            printf("Press button 1 to demilish the compare value.\n");
+            printf("Press button 2 to stop the motor.\n");
+            
+            printf("Voltage on VBUS is %.1fV.\n", averageConversions[0] * ADC_TO_VOLTAGE);
+            printf("Temperature is %.1fC.\n", AcquireTemperature(averageConversions[1]));
+            printf("Current is %.1fmA.\n", abs(averageConversions[2] - initialCurrent) * ADC_TO_CURRENT);
+        }
         
         /* USER CODE END WHILE */
 
