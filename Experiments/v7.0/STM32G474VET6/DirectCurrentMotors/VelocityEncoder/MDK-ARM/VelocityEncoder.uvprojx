@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>BrushedMotor</TargetName>
+      <TargetName>VelocityEncoder</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>6210000::V6.21::ARMCLANG</pCCUsed>
@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Compilations\Objects\</OutputDirectory>
-          <OutputName>BrushedMotor</OutputName>
+          <OutputName>VelocityEncoder</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -190,7 +190,7 @@
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -450,14 +450,19 @@
               <FilePath>..\Sources\Application\User\Peripherals\Source\AdvancedTimer.c</FilePath>
             </File>
             <File>
-              <FileName>DirectCurrenBrushedtMotor.c</FileName>
+              <FileName>BrushedMotor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Application\User\Peripherals\Source\DirectCurrenBrushedtMotor.c</FilePath>
+              <FilePath>..\Sources\Application\User\Peripherals\Source\BrushedMotor.c</FilePath>
             </File>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\User\Peripherals\Source\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>VelocityEncoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\User\Peripherals\Source\VelocityEncoder.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -601,14 +606,39 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>::Compiler</GroupName>
+        </Group>
       </Groups>
     </Target>
   </Targets>
 
   <RTE>
     <apis/>
-    <components/>
-    <files/>
+    <components>
+      <component Cbundle="ARM Compiler" Cclass="Compiler" Cgroup="Event Recorder" Cvariant="DAP" Cvendor="Keil" Cversion="1.5.1" condition="Cortex-M Device">
+        <package name="ARM_Compiler" schemaVersion="1.7.7" url="https://www.keil.com/pack/" vendor="Keil" version="1.7.2"/>
+        <targetInfos>
+          <targetInfo name="VelocityEncoder"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="ARM Compiler" Cclass="Compiler" Cgroup="I/O" Csub="STDOUT" Cvariant="EVR" Cvendor="Keil" Cversion="1.2.0" condition="ARMCC Cortex-M with EVR">
+        <package name="ARM_Compiler" schemaVersion="1.7.7" url="https://www.keil.com/pack/" vendor="Keil" version="1.7.2"/>
+        <targetInfos>
+          <targetInfo name="VelocityEncoder"/>
+        </targetInfos>
+      </component>
+    </components>
+    <files>
+      <file attr="config" category="header" name="Config\EventRecorderConf.h" version="1.1.0">
+        <instance index="0">RTE\Compiler\EventRecorderConf.h</instance>
+        <component Cbundle="ARM Compiler" Cclass="Compiler" Cgroup="Event Recorder" Cvariant="DAP" Cvendor="Keil" Cversion="1.5.1" condition="Cortex-M Device"/>
+        <package name="ARM_Compiler" schemaVersion="1.7.7" url="https://www.keil.com/pack/" vendor="Keil" version="1.7.2"/>
+        <targetInfos>
+          <targetInfo name="VelocityEncoder"/>
+        </targetInfos>
+      </file>
+    </files>
   </RTE>
 
   <LayerInfo>

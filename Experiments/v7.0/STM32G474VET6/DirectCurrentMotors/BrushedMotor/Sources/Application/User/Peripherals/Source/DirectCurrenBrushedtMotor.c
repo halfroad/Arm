@@ -18,7 +18,7 @@ typedef enum
     
 } MotorRotationDirections;
 
-extern TIM_HandleTypeDef TIM6_Handle;
+extern TIM_HandleTypeDef TIM8_Handle;
 
 static void ChangeMotorDirection(MotorRotationDirections direction);
 static void SetMotorSpeed(uint16_t compare);
@@ -50,27 +50,27 @@ void StartMotor(void)
 
 void StopMotor(void)
 {
-    HAL_TIM_PWM_Stop(&TIM6_Handle, ADVANCE_TIMER_CHANNEL);
-    HAL_TIMEx_PWMN_Stop(&TIM6_Handle, ADVANCE_TIMER_CHANNEL);
+    HAL_TIM_PWM_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
+    HAL_TIMEx_PWMN_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
     
     DISABLE_MOTOR;
 }
 
 static void ChangeMotorDirection(MotorRotationDirections direction)
 {
-    HAL_TIM_PWM_Stop(&TIM6_Handle, ADVANCE_TIMER_CHANNEL);
-    HAL_TIMEx_PWMN_Stop(&TIM6_Handle, ADVANCE_TIMER_CHANNEL);
+    HAL_TIM_PWM_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
+    HAL_TIMEx_PWMN_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
     
     if (direction == MotorRotationDirectionClockwise)
-        HAL_TIM_PWM_Start(&TIM6_Handle, ADVANCE_TIMER_CHANNEL);
+        HAL_TIM_PWM_Start(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
     else if (direction == MotorRotationDirectionClockwise)
-        HAL_TIMEx_PWMN_Start(&TIM6_Handle, ADVANCE_TIMER_CHANNEL);
+        HAL_TIMEx_PWMN_Start(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
 }
 
 static void SetMotorSpeed(uint16_t compare)
 {
-    if (compare < __HAL_TIM_GetAutoreload(&TIM6_Handle) - 0x0F)
-        __HAL_TIM_SetCompare(&TIM6_Handle, ADVANCE_TIMER_CHANNEL, compare);    
+    if (compare < __HAL_TIM_GetAutoreload(&TIM8_Handle) - 0x0F)
+        __HAL_TIM_SetCompare(&TIM8_Handle, ADVANCE_TIMER_CHANNEL, compare);    
 }
 
 void AdaptMotorSpeedDirection(float compare)
