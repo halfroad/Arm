@@ -1,4 +1,0 @@
-#ifndef __SERIAL_COMMUNICATIONS_H
-#define __SERIAL_COMMUNICATIONS_H
-
-#endif
