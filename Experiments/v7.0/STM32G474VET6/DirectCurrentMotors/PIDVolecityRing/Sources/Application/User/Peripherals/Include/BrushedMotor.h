@@ -3,17 +3,6 @@
 
 #include <stm32g4xx.h>
 
-typedef struct
-{
-    uint8_t state;      /* Motor state. */
-    float current;      /* Motor current. */
-    float voltage;      /* Voltage on VBUS. */
-    float power;
-    float velocity;
-    int32_t pulseWidthModulation;
-    
-} Motor_TypeDef;
-
 void InitDirectCurrenBrushedtMotor(void);
 
 void StartMotor(void);

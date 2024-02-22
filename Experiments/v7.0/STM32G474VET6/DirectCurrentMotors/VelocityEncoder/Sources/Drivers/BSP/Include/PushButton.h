@@ -3,14 +3,14 @@
 
 typedef enum
 {
-    PUSH_BUTTON_NONE_PRESSED = 0x00U,
-    PUSH_BUTTON_0_PRESSED,
-    PUSH_BUTTON_1_PRESSED,
-    PUSH_BUTTON_2_PRESSED,
+    KEY_NONE_PRESSED = 0x00U,
+    KEY_0_PRESSED,
+    KEY_1_PRESSED,
+    KEY_2_PRESSED,
     
-} PushButtonPressStates; 
+} KeyPressStates; 
 
 void InitPushButtons(void);
-PushButtonPressStates ScanButton(void);
+KeyPressStates ScanButton(void);
 
 #endif /* #ifndef __INIT_PUSH_BUTTONS_H */

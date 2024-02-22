@@ -59,7 +59,7 @@
 
 /* USER CODE BEGIN PFP */
 
-extern Motor_TypeDef Motor_Type;
+extern MotorTypeDef motorType;
 
 /* USER CODE END PFP */
 
@@ -127,7 +127,7 @@ int main(void)
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
 
-    PushButtonPressStates state;
+    KeyPressStates state;
     uint8_t i = 0;
     int32_t pwm = 0;
     
@@ -135,48 +135,48 @@ int main(void)
     {
         state = ScanButton();
         
-        if (state == PUSH_BUTTON_0_PRESSED)
+        if (state == KEY_0_PRESSED)
         {
             pwm += 400;
             
             if (pwm == 0)
-                StopMotor();
+                DeactivateMotor();
             else
             {
-                StartMotor();
+                ActivateMotor();
                 
                 if (pwm > 8400)
                     pwm = 8400;
             }
             
-            AdaptMotorVelocityDirection(pwm);
+            RotateMotor(pwm);
             
         }
-        else if (state == PUSH_BUTTON_1_PRESSED)
+        else if (state == KEY_1_PRESSED)
         {
             pwm -= 400;
             
             if (pwm == 0)
-                StopMotor();
+                DeactivateMotor();
             else
             {
-                StartMotor();
+                ActivateMotor();
                 
                 if (pwm < -8400)
                     pwm = -8400;
             }
             
-            AdaptMotorVelocityDirection(pwm);
+            RotateMotor(pwm);
         }
-        else if (state == PUSH_BUTTON_2_PRESSED)
+        else if (state == KEY_2_PRESSED)
         {
             HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
             
-            StopMotor();
+            DeactivateMotor();
             
             pwm = 0;
             
-            AdaptMotorVelocityDirection(pwm);
+            RotateMotor(pwm);
         }
         
         HAL_Delay(10);
@@ -185,7 +185,7 @@ int main(void)
         {
             HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
             
-            printf("The velocity of motor now is %.1f RPM.\n", Motor_Type.velocity);
+            printf("The velocity of motor now is %.1f RPM.\n", motorType.velocity);
         }
         
         /* USER CODE END WHILE */

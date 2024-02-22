@@ -12,13 +12,13 @@ typedef struct
     float velocity;
     int32_t pulseWidthModulation;
     
-} Motor_TypeDef;
+} MotorTypeDef;
 
 void InitDirectCurrenBrushedtMotor(void);
 
-void StartMotor(void);
-void StopMotor(void);
+void ActivateMotor(void);
+void DeactivateMotor(void);
 
-void AdaptMotorVelocityDirection(float compare);
+void RotateMotor(int32_t compare);
 
 #endif /* #ifndef __DIRECT_CURREN_BRUSHEDT_MOTOR_H */

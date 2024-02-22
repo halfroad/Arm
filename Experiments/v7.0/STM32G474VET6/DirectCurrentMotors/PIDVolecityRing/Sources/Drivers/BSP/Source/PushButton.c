@@ -65,15 +65,15 @@ HAL_StatusTypeDef InitBasicTimer(uint32_t prescaler, uint32_t autoReload)
 {
   HAL_StatusTypeDef     status;
 
-  /* Enable TIM6 clock */
+  /* Enable TIM7 clock */
   TIMER_CLOCK_ENABLE();
 
-  /* Initialize TIM6 */
+  /* Initialize TIM7 */
   TIM7_Handle.Instance = BASIC_TIMER_INSTANCE;
 
   /* Initialize TIMx peripheral as follow:
 
-  + Period = [(TIM6CLK/1000) - 1]. to have a (1/1000) s time base.
+  + Period = [(TIM7CLK/1000) - 1]. to have a (1/1000) s time base.
   + Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
   + ClockDivision = 0
   + Counter direction = Up

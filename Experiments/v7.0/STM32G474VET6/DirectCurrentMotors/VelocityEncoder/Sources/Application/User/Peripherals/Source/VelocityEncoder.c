@@ -32,10 +32,15 @@
 TIM_HandleTypeDef Encoder_TIM_HandleType = { 0 };
 TIM_HandleTypeDef Calculator_TIM_HandleType = { 0 };
 
-uint16_t encoderCountOverflow = 0;
+__IO int32_t encoderCountOverflow = 0;
 
 extern void Error_Handler(void);
-extern void ComputeVelocity(int32_t code, uint8_t milliseconds);
+extern void EstimateVelocity(int32_t code, uint8_t milliseconds);
+
+void Encoder_MspInitCallback(TIM_HandleTypeDef *htim);
+void EncoderPeriodElapsedCallback(TIM_HandleTypeDef *htim);
+void Base_MspInitCallback(TIM_HandleTypeDef *htim);
+uint32_t GetEncoderCounter(void);
 
 void InitGPIOPs(void)
 {
@@ -57,65 +62,25 @@ void InitGPIOPs(void)
     HAL_GPIO_Init(ENCODER_GPIO_PORT, &GPIO_InitType);
 }
 
-uint32_t AcquireCounterNumber(void)
+void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload)
 {
-    uint32_t counterNumber = (uint32_t)__HAL_TIM_GET_COUNTER(&Encoder_TIM_HandleType) + encoderCountOverflow * 65535;
+    /* TIM_HandleTypeDef Calculator_TIM_HandleType = { 0 }; */
     
-    return counterNumber;
-}
-
-/**
-  * @brief  Initializes the TIM Encoder Interface MSP.
-  * @param  htim TIM Encoder Interface handle
-  * @retval None
-  */
-void Encoder_MspInitCallback(TIM_HandleTypeDef *htim)
-{
-  /* Prevent unused argument(s) compilation warning
-  UNUSED(htim);
-    */
-  /* NOTE : This function should not be modified, when the callback is needed,
-            the HAL_TIM_Encoder_MspInit could be implemented in the user file
-   */
+    Calculator_TIM_HandleType.Instance = CALCULATOR_TIMER;
     
-    if (htim -> Instance == ENCODER_TIMER)
-    {
-        InitGPIOPs();
-               
-        HAL_NVIC_SetPriority(ENCODER_TIMER_IRQN, 2, 0);
-        HAL_NVIC_EnableIRQ(ENCODER_TIMER_IRQN);
-    }
-}
-
-/**
- * @brief  Period elapsed callback in non blocking mode
- * @note   This function is called  when TIM6 interrupt took place, inside
- * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
- * a global variable "uwTick" used as application time base.
- * @param  htim : TIM handle
- * @retval None
- */
-void EncoderPeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-    /* USER CODE BEGIN Callback 0 */
-
-    /* USER CODE END Callback 0 */
-    if (htim ->Instance == ENCODER_TIMER)
-    {
-        if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&Encoder_TIM_HandleType))
-            encoderCountOverflow --;
-        else
-            encoderCountOverflow ++;
-    }
-    else if (htim -> Instance == CALCULATOR_TIMER)
-    {
-        uint32_t counterNumber = AcquireCounterNumber();
-        
-        ComputeVelocity(counterNumber, 10);
-    }
-    /* USER CODE BEGIN Callback 1 */
-
-    /* USER CODE END Callback 1 */
+    Calculator_TIM_HandleType.Init.Prescaler = prescaler;
+    Calculator_TIM_HandleType.Init.CounterMode = TIM_COUNTERMODE_UP;
+    Calculator_TIM_HandleType.Init.Period = autoReload;
+    Calculator_TIM_HandleType.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    
+    Calculator_TIM_HandleType.Base_MspInitCallback = Base_MspInitCallback;
+    Calculator_TIM_HandleType.PeriodElapsedCallback = EncoderPeriodElapsedCallback;
+    
+    HAL_TIM_Base_Init(&Calculator_TIM_HandleType);
+    
+    HAL_TIM_Base_Start_IT(&Calculator_TIM_HandleType);
+    
+    __HAL_TIM_CLEAR_IT(&Calculator_TIM_HandleType, TIM_IT_UPDATE);
 }
 
 void InitVelocityEncoder(uint32_t prescaler, uint32_t autoReload)
@@ -128,7 +93,7 @@ void InitVelocityEncoder(uint32_t prescaler, uint32_t autoReload)
     Encoder_TIM_HandleType.Init.Prescaler = prescaler;
     Encoder_TIM_HandleType.Init.Period = autoReload;
     Encoder_TIM_HandleType.Init.ClockDivision= TIM_CLOCKDIVISION_DIV1;
-    
+    /* Encoder_TIM_HandleType.Init.CounterMode = TIM_COUNTERMODE_UP; */
     Encoder_TIM_HandleType.Encoder_MspInitCallback = Encoder_MspInitCallback;
     Encoder_TIM_HandleType.PeriodElapsedCallback = EncoderPeriodElapsedCallback;
        
@@ -263,14 +228,59 @@ void InitVelocityEncoder(uint32_t prescaler, uint32_t autoReload)
     __HAL_TIM_ENABLE_IT(&Encoder_TIM_HandleType, TIM_IT_UPDATE);
 }
 
-void VELOCITY_ENCODER_TIMER_IRQHANDLER(void)
+
+/**
+  * @brief  Initializes the TIM Encoder Interface MSP.
+  * @param  htim TIM Encoder Interface handle
+  * @retval None
+  */
+void Encoder_MspInitCallback(TIM_HandleTypeDef *htim)
 {
-    HAL_TIM_IRQHandler(&Encoder_TIM_HandleType);
+  /* Prevent unused argument(s) compilation warning
+  UNUSED(htim);
+    */
+  /* NOTE : This function should not be modified, when the callback is needed,
+            the HAL_TIM_Encoder_MspInit could be implemented in the user file
+   */
+    
+    if (htim -> Instance == ENCODER_TIMER)
+    {
+        InitGPIOPs();
+               
+        HAL_NVIC_SetPriority(ENCODER_TIMER_IRQN, 2, 0);
+        HAL_NVIC_EnableIRQ(ENCODER_TIMER_IRQN);
+    }
 }
 
-void VELOCITY_CALCULATOR_TIMER_IRQHANDLER(void)
+/**
+ * @brief  Period elapsed callback in non blocking mode
+ * @note   This function is called  when TIM6 interrupt took place, inside
+ * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ * a global variable "uwTick" used as application time base.
+ * @param  htim : TIM handle
+ * @retval None
+ */
+void EncoderPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-    HAL_TIM_IRQHandler(&Calculator_TIM_HandleType);
+    /* USER CODE BEGIN Callback 0 */
+
+    /* USER CODE END Callback 0 */
+    if (htim ->Instance == ENCODER_TIMER)
+    {
+        if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&Encoder_TIM_HandleType))
+            encoderCountOverflow --;
+        else
+            encoderCountOverflow ++;
+    }
+    else if (htim -> Instance == CALCULATOR_TIMER)
+    {
+        uint32_t counter = GetEncoderCounter();
+        
+        EstimateVelocity(counter, 10);
+    }
+    /* USER CODE BEGIN Callback 1 */
+
+    /* USER CODE END Callback 1 */
 }
 
 /**
@@ -296,23 +306,19 @@ void Base_MspInitCallback(TIM_HandleTypeDef *htim)
     }
 }
 
-void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload)
+void VELOCITY_ENCODER_TIMER_IRQHANDLER(void)
 {
-    /* TIM_HandleTypeDef Calculator_TIM_HandleType = { 0 }; */
+    HAL_TIM_IRQHandler(&Encoder_TIM_HandleType);
+}
+
+void VELOCITY_CALCULATOR_TIMER_IRQHANDLER(void)
+{
+    HAL_TIM_IRQHandler(&Calculator_TIM_HandleType);
+}
+
+uint32_t GetEncoderCounter(void)
+{
+    uint32_t counter = (uint32_t)__HAL_TIM_GET_COUNTER(&Encoder_TIM_HandleType) + encoderCountOverflow * 65536;
     
-    Calculator_TIM_HandleType.Instance = CALCULATOR_TIMER;
-    
-    Calculator_TIM_HandleType.Init.Prescaler = prescaler;
-    Calculator_TIM_HandleType.Init.CounterMode = TIM_COUNTERMODE_UP;
-    Calculator_TIM_HandleType.Init.Period = autoReload;
-    Calculator_TIM_HandleType.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-    
-    Calculator_TIM_HandleType.Base_MspInitCallback = Base_MspInitCallback;
-    Calculator_TIM_HandleType.PeriodElapsedCallback = EncoderPeriodElapsedCallback;
-    
-    HAL_TIM_Base_Init(&Calculator_TIM_HandleType);
-    
-    HAL_TIM_Base_Start_IT(&Calculator_TIM_HandleType);
-    
-    __HAL_TIM_CLEAR_IT(&Calculator_TIM_HandleType, TIM_IT_UPDATE);
+    return counter;
 }

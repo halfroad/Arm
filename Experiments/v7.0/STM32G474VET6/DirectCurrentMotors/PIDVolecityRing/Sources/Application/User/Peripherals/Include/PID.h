@@ -3,6 +3,22 @@
 
 #include <stm32g4xx.h>
 
+#define USE_POSITIONAL_PID
+
+#ifdef USE_POSITIONAL_PID
+
+#define KP                      8.50f
+#define KI                      5.00f
+#define KD                      0.10f
+
+#else
+
+#define KP                      10.00f
+#define KI                      6.00f
+#define KD                      0.50f
+
+#endif
+
 typedef struct
 {
     __IO float TargetValue;

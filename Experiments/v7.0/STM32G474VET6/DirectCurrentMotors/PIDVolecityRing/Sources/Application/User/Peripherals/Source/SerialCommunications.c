@@ -116,7 +116,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *husart)
         __HAL_UART_ENABLE_IT(husart, UART_IT_RXNE);
         
         HAL_NVIC_EnableIRQ(USARTX_IRQN);
-        HAL_NVIC_SetPriority(USARTX_IRQN, 0, 3);
+        HAL_NVIC_SetPriority(USARTX_IRQN, 3, 0);
 #endif
         
     }
@@ -134,9 +134,9 @@ void USARTX_IRQHANDLER(void)
     if (__HAL_UART_GET_FLAG(&UART_HandleType, UART_FLAG_RXNE) == SET)
     {
         HAL_UART_Receive(&UART_HandleType, &byte, 1, 1000);
+        __HAL_UART_CLEAR_FLAG(&UART_HandleType, UART_FLAG_RXNE);
         
         if (OnByteReceived)
             OnByteReceived(&byte);
     }
 }
-

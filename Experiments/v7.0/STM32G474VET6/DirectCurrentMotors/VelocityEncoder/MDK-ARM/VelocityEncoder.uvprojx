@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>VelocityEncoder</TargetName>
+      <TargetName>STM32G474VETx</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>6210000::V6.21::ARMCLANG</pCCUsed>
@@ -49,10 +49,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Compilations\Objects\</OutputDirectory>
-          <OutputName>VelocityEncoder</OutputName>
+          <OutputName>PIDVolecityRing</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Compilations\Listings\</ListingPath>
@@ -619,13 +619,13 @@
       <component Cbundle="ARM Compiler" Cclass="Compiler" Cgroup="Event Recorder" Cvariant="DAP" Cvendor="Keil" Cversion="1.5.1" condition="Cortex-M Device">
         <package name="ARM_Compiler" schemaVersion="1.7.7" url="https://www.keil.com/pack/" vendor="Keil" version="1.7.2"/>
         <targetInfos>
-          <targetInfo name="VelocityEncoder"/>
+          <targetInfo name="STM32G474VETx"/>
         </targetInfos>
       </component>
       <component Cbundle="ARM Compiler" Cclass="Compiler" Cgroup="I/O" Csub="STDOUT" Cvariant="EVR" Cvendor="Keil" Cversion="1.2.0" condition="ARMCC Cortex-M with EVR">
         <package name="ARM_Compiler" schemaVersion="1.7.7" url="https://www.keil.com/pack/" vendor="Keil" version="1.7.2"/>
         <targetInfos>
-          <targetInfo name="VelocityEncoder"/>
+          <targetInfo name="STM32G474VETx"/>
         </targetInfos>
       </component>
     </components>
@@ -635,7 +635,7 @@
         <component Cbundle="ARM Compiler" Cclass="Compiler" Cgroup="Event Recorder" Cvariant="DAP" Cvendor="Keil" Cversion="1.5.1" condition="Cortex-M Device"/>
         <package name="ARM_Compiler" schemaVersion="1.7.7" url="https://www.keil.com/pack/" vendor="Keil" version="1.7.2"/>
         <targetInfos>
-          <targetInfo name="VelocityEncoder"/>
+          <targetInfo name="STM32G474VETx"/>
         </targetInfos>
       </file>
     </files>

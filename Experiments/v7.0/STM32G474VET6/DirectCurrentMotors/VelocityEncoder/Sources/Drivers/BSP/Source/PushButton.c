@@ -168,7 +168,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             HAL_TIM_Base_Start_IT(&TIM7_Handle);
         }
     }
-    
 }
 
 void TimerPeriodElapsedCallback(TIM_HandleTypeDef *htim)
@@ -195,26 +194,26 @@ void TimerPeriodElapsedCallback(TIM_HandleTypeDef *htim)
     }
 }
 
-PushButtonPressStates ScanButton(void)
+KeyPressStates ScanButton(void)
 {
-    PushButtonPressStates state = PUSH_BUTTON_NONE_PRESSED;
+    KeyPressStates state = KEY_NONE_PRESSED;
     
     switch (StateFlags)
     {
         case 0x01U:
-            state = PUSH_BUTTON_0_PRESSED;
+            state = KEY_0_PRESSED;
         break;
         
         case 0x02U:
-            state = PUSH_BUTTON_1_PRESSED;
+            state = KEY_1_PRESSED;
         break;
         
         case 0x04U:
-            state = PUSH_BUTTON_2_PRESSED;
+            state = KEY_2_PRESSED;
         break;
         
         default:
-            state = PUSH_BUTTON_NONE_PRESSED;
+            state = KEY_NONE_PRESSED;
         break;
             
     }

@@ -1,6 +1,7 @@
 #include "../Include/AdvancedTimer.h"
 #include "../Include/VelocityEncoder.h"
 #include "../Include/BrushedMotor.h"
+#include "../../../Middlewares/Third_Party/UpperHostCommunications/Include/UpperHostCommunications.h"
 
 #define ADVANCE_TIMER_CHANNEL                           TIM_CHANNEL_1
 
@@ -24,15 +25,19 @@ typedef enum
 } MotorRotationDirections;
 
 extern TIM_HandleTypeDef TIM8_Handle;
+extern MotorControlProtocol motorControlProtocol;
+
+VelocityEncoderTypeDef VelocityEncoderType = { 0 };
 
 static void ChangeMotorDirection(MotorRotationDirections direction);
 static void SetMotorVelocity(uint16_t compare);
 
-VelocityEncoder_TypeDef VelocityEncoder_Type = { 0 };
-Motor_TypeDef Motor_Type = { 0 };
-
 void InitDirectCurrenBrushedtMotor(void)
 {
+    InitAdvancedTimer(0, 8500 - 1, 0x00);
+    InitVelocityEncoder(0, 0xFFFF);
+    InitCalculatorTimer(170 - 1, 1000 - 1);
+    
     CONNECTOR_1_STOP_GPIO_PORT_CLOCK_ENABLE();
     
     GPIO_InitTypeDef GPIO_InitType = { 0 };
@@ -118,10 +123,10 @@ void ComputeVelocity(int32_t counterNumber, uint8_t iterations)
         Step #4: divide the Gear Ratio to acquire the final velocity of the motor.
         
         */
-        VelocityEncoder_Type.counterNumber = counterNumber;
-        VelocityEncoder_Type.delta = VelocityEncoder_Type.counterNumber - VelocityEncoder_Type.previousCounterNumber;
-        velocities[filters ++] = (float)(VelocityEncoder_Type.delta * (1000 / iterations * 60.0) / (GEAR_RATIO * FREQUENCY_MULTIPLIER * PULSES_PER_ROUND));
-        VelocityEncoder_Type.previousCounterNumber = VelocityEncoder_Type.counterNumber;  /* Persist the curent Counter Number. */
+        VelocityEncoderType.counterNumber = counterNumber;
+        VelocityEncoderType.delta = VelocityEncoderType.counterNumber - VelocityEncoderType.previousCounterNumber;
+        velocities[filters ++] = (float)(VelocityEncoderType.delta * (1000 / iterations * 60.0) / (GEAR_RATIO * FREQUENCY_MULTIPLIER * PULSES_PER_ROUND));
+        VelocityEncoderType.previousCounterNumber = VelocityEncoderType.counterNumber;  /* Persist the curent Counter Number. */
         
         /* Filter after 10 consecutive velocities. */
         if (filters == 10)
@@ -157,7 +162,7 @@ void ComputeVelocity(int32_t counterNumber, uint8_t iterations)
             
             */
             
-            Motor_Type.velocity = (float)(0.52f * Motor_Type.velocity + (1.0f - .052f) * cursor);
+            motorControlProtocol.velocity = 0.52f * motorControlProtocol.velocity + (1.0f - 0.52f) * cursor;
             
             filters = 0;
         }

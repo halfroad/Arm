@@ -1,6 +1,7 @@
 #include "../Include/BrushedMotor.h"
 #include "../Include/PID.h"
 #include "../Include/VelocityEncoder.h"
+#include "../../../Middlewares/Third_Party/UpperHostCommunications/Include/UpperHostCommunications.h"
 
 /*
 
@@ -32,25 +33,23 @@
 #define VELOCITY_CALCULATOR_TIMER_IRQHANDLER                TIM5_IRQHandler
 
 #define SAMPLING_CYCLE                                      50
-#define MOTOR_PEAK_SPEED                                    8200
+#define MOTOR_PEAK_SPEED                                    8400
+
+extern PIDTypeDef PIDType;
+extern MotorControlProtocol motorControlProtocol;
 
 TIM_HandleTypeDef Encoder_TIM_HandleType = { 0 };
 TIM_HandleTypeDef Calculator_TIM_HandleType = { 0 };
 
 uint16_t encoderCountOverflow = 0;
 
-extern Motor_TypeDef Motor_Type;
-extern PIDTypeDef PIDType;
-
 extern void Error_Handler(void);
 extern void ComputeVelocity(int32_t code, uint8_t milliseconds);
 
-static uint32_t AcquireCounterNumber(void);
-
 void EncoderMspInitCallback(TIM_HandleTypeDef *htim);
 void CalculatorTimerMspInitCallback(TIM_HandleTypeDef *htim);
-
 void PeriodElapsedCallback(TIM_HandleTypeDef *htim);
+static uint32_t AcquireCounterNumber(void);
 
 void InitGPIOPs(void)
 {
@@ -322,18 +321,29 @@ void PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         
         ComputeVelocity(counterNumber, 5);
         
+        motorControlProtocol.state = PIDType.TargetValue == 0 ? MotorStateIdle: MotorStateRun;
+        
         static uint8_t i = 0;
         
         if (i % SAMPLING_CYCLE == 0)
         {
-            if (Motor_Type.state)
+            if (motorControlProtocol.state == MotorStateRun)
             {
-                Motor_Type.pulseWidthModulation = ComposePID(&PIDType, Motor_Type.velocity);
+                motorControlProtocol.pulseWidthModulation = ComposePID(&PIDType, motorControlProtocol.velocity);
                 
-                if (Motor_Type.pulseWidthModulation >= MOTOR_PEAK_SPEED)
-                    Motor_Type.pulseWidthModulation = MOTOR_PEAK_SPEED;
-                else if (Motor_Type.pulseWidthModulation <= -MOTOR_PEAK_SPEED)
-                    Motor_Type.pulseWidthModulation = -MOTOR_PEAK_SPEED;
+                if (motorControlProtocol.pulseWidthModulation >= MOTOR_PEAK_SPEED - 200)
+                    motorControlProtocol.pulseWidthModulation = MOTOR_PEAK_SPEED - 200;
+                else if (motorControlProtocol.pulseWidthModulation <= -(MOTOR_PEAK_SPEED - 200))
+                    motorControlProtocol.pulseWidthModulation = -(MOTOR_PEAK_SPEED - 200);
+                
+                AdaptMotorVelocityDirection(motorControlProtocol.pulseWidthModulation);
+                
+#ifdef UPPER_HOST_COMMUNICATIONS_ENABLED
+                
+                ReportWave(1, motorControlProtocol.velocity);
+                ReportWave(2, PIDType.TargetValue);
+                ReportWave(3, motorControlProtocol.pulseWidthModulation * 100 / MOTOR_PEAK_SPEED);
+#endif
             }
         }
     }

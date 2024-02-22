@@ -18,18 +18,18 @@
 
 typedef enum
 {
-    MotorRotationDirectionClockwise,
-    MotorRotationDirectionAnticlockwise,
+    MotorRotationDirectionClockwise         = 0x00,
+    MotorRotationDirectionAnticlockwise     = 0x01,
     
 } MotorRotationDirections;
 
 extern TIM_HandleTypeDef TIM8_Handle;
 
-static void ChangeMotorDirection(MotorRotationDirections direction);
-static void SetMotorVelocity(uint16_t compare);
+static void DivertMotor(MotorRotationDirections direction);
+static void RegulateMotor(uint32_t compare);
 
-VelocityEncoder_TypeDef VelocityEncoder_Type = { 0 };
-Motor_TypeDef Motor_Type = { 0 };
+VelocityEncoderTypeDef VelocityEncoderType = { 0 };
+MotorTypeDef motorType = { 0 };
 
 void InitDirectCurrenBrushedtMotor(void)
 {
@@ -45,18 +45,18 @@ void InitDirectCurrenBrushedtMotor(void)
     HAL_GPIO_Init(CONNECTOR_1_STOP_GPIO_PORT, &GPIO_InitType);
     HAL_GPIO_WritePin(CONNECTOR_1_STOP_GPIO_PORT, CONNECTOR_1_STOP_GPIO_PIN, GPIO_PIN_RESET);
     
-    StopMotor();
-    ChangeMotorDirection(MotorRotationDirectionClockwise);
-    SetMotorVelocity(0);
-    StartMotor();
+    DeactivateMotor();
+    DivertMotor(MotorRotationDirectionClockwise);
+    RegulateMotor(0);
+    ActivateMotor();
 }
 
-void StartMotor(void)
+void ActivateMotor(void)
 {
     ENABLE_MOTOR;
 }
 
-void StopMotor(void)
+void DeactivateMotor(void)
 {
     HAL_TIM_PWM_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
     HAL_TIMEx_PWMN_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
@@ -64,47 +64,45 @@ void StopMotor(void)
     DISABLE_MOTOR;
 }
 
-static void ChangeMotorDirection(MotorRotationDirections direction)
+static void DivertMotor(MotorRotationDirections direction)
 {
     HAL_TIM_PWM_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
     HAL_TIMEx_PWMN_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
     
     if (direction == MotorRotationDirectionClockwise)
         HAL_TIM_PWM_Start(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
-    else if (direction == MotorRotationDirectionClockwise)
+    else if (direction == MotorRotationDirectionAnticlockwise)
         HAL_TIMEx_PWMN_Start(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
 }
 
-static void SetMotorVelocity(uint16_t compare)
+static void RegulateMotor(uint32_t compare)
 {
     if (compare < __HAL_TIM_GetAutoreload(&TIM8_Handle) - 0x0F)
         __HAL_TIM_SetCompare(&TIM8_Handle, ADVANCE_TIMER_CHANNEL, compare);    
 }
 
-void AdaptMotorVelocityDirection(float compare)
-{
-    uint32_t speed = (uint32_t)compare;
-    
+void RotateMotor(int32_t compare)
+{   
     if (compare >= 0)
     {
-        ChangeMotorDirection(MotorRotationDirectionClockwise);
-        SetMotorVelocity(speed);
+        DivertMotor(MotorRotationDirectionClockwise);
+        RegulateMotor(compare);
     }
     else
     {
-        ChangeMotorDirection(MotorRotationDirectionAnticlockwise);
-        SetMotorVelocity(-speed);
+        DivertMotor(MotorRotationDirectionAnticlockwise);
+        RegulateMotor(-compare);
     }
 }
 
-void ComputeVelocity(int32_t counterNumber, uint8_t iterations)
+void EstimateVelocity(int32_t counter, uint8_t iterations)
 {
     static uint8_t times = 0, filters = 0;
-    static float velocities [100] = { 0.0 };
+    static float velocities [10] = { 0.0 };
     
     uint8_t m, n;
     
-    float cursor = 0.0f;
+    float total = 0.0f;
     
     if (times == iterations)
     {
@@ -118,13 +116,13 @@ void ComputeVelocity(int32_t counterNumber, uint8_t iterations)
         Step #4: divide the Gear Ratio to acquire the final velocity of the motor.
         
         */
-        VelocityEncoder_Type.counterNumber = counterNumber;
-        VelocityEncoder_Type.delta = VelocityEncoder_Type.counterNumber - VelocityEncoder_Type.previousCounterNumber;
-        velocities[filters ++] = (float)(VelocityEncoder_Type.delta * (1000 / iterations * 60.0) / (GEAR_RATIO * FREQUENCY_MULTIPLIER * PULSES_PER_ROUND));
-        VelocityEncoder_Type.previousCounterNumber = VelocityEncoder_Type.counterNumber;  /* Persist the curent Counter Number. */
+        VelocityEncoderType.counterNumber = counter;
+        VelocityEncoderType.delta = VelocityEncoderType.counterNumber - VelocityEncoderType.previousCounterNumber;
+        velocities[filters ++] = (float)(VelocityEncoderType.delta * (1000 / iterations * 60.0) / (GEAR_RATIO * FREQUENCY_MULTIPLIER * PULSES_PER_ROUND));
+        VelocityEncoderType.previousCounterNumber = VelocityEncoderType.counterNumber;  /* Persist the curent Counter Number. */
         
         /* Filter after 10 consecutive velocities. */
-        if (filters == 10)
+        if (filters >= 10)
         {
             /* Bubble sorting. */
             for (m = 10; m >= 1; m --)
@@ -133,19 +131,19 @@ void ComputeVelocity(int32_t counterNumber, uint8_t iterations)
                 {
                     if (velocities[n] > velocities[n + 1])
                     {
-                        cursor = velocities[n];
+                        total = velocities[n];
                         velocities[n] = velocities[n + 1];
-                        velocities[n + 1] = cursor;
+                        velocities[n + 1] = total;
                     }
                 }
             }
             
-            cursor = 0.0f;
+            total = 0.0f;
             
             for (m = 2; m < 8; m ++)
-                cursor += velocities[m];
+                total += velocities[m];
             
-            cursor = (float)(cursor / 6.0f);
+            total = total / 6.0f;
             
             /*
             
@@ -157,7 +155,7 @@ void ComputeVelocity(int32_t counterNumber, uint8_t iterations)
             
             */
             
-            Motor_Type.velocity = (float)(0.52f * Motor_Type.velocity + (1.0f - .052f) * cursor);
+            motorType.velocity = (float)(0.52f * motorType.velocity + (1.0f - 0.52f) * total);
             
             filters = 0;
         }

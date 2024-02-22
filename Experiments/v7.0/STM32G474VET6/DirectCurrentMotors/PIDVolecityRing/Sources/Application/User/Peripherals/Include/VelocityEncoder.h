@@ -9,7 +9,7 @@ typedef struct
     uint32_t counterNumber;
     float delta;
     
-} VelocityEncoder_TypeDef;
+} VelocityEncoderTypeDef;
 
 void InitVelocityEncoder(uint32_t prescaler, uint32_t autoReload);
 void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload);

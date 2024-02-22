@@ -24,8 +24,7 @@
 #include "../../../User/Peripherals/Include/AdvancedTimer.h"
 #include "../../../User/Peripherals/Include/BrushedMotor.h"
 #include "../../../User/Peripherals/Include/VelocityEncoder.h"
-//#include "../../../Middlewares/Third_Party/UpperHostCommunications/Include/UpperHostCommunications.h"
-#include "../../../Application/User/Peripherals/Include/SerialCommunications.h"
+#include "../../../Middlewares/Third_Party/UpperHostCommunications/Include/UpperHostCommunications.h"
 #include "../../../Drivers/BSP/Include/PushButton.h"
 
 #include "../Include/main.h"
@@ -60,17 +59,13 @@
 
 /* USER CODE BEGIN PFP */
 
-extern Motor_TypeDef Motor_Type;
+extern MotorControlProtocol motorControlProtocol;
+extern PIDTypeDef PIDType;
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-static void HandleUpperHostPayload(uint8_t *payload)
-{
-    uint8_t i = 0;
-}
 
 /* USER CODE END 0 */
 
@@ -103,21 +98,10 @@ int main(void)
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
     
-    InitAdvancedTimer(0, 8500 - 1, 0x00);
     InitDirectCurrenBrushedtMotor();
-    
-    InitVelocityEncoder(0, 0xFFFF);
-    InitCalculatorTimer(170 - 1, 1000 - 1);
-    InitSerialCommunications(115200, HandleUpperHostPayload);
-   // InitUpperHostCommunications();
-    
+    InitUpperHostCommunications();
+
     InitPushButtons();
-    
-    /*
-    
-   Auto Reload Duration = 170 000 000 / 85 00 = 20 000, Cycle Duration = 1 / 20 000 seconds = 50 us.
-    */
-    //InitDirectCurrenBrushedtMotor();
     
     /* USER CODE BEGIN 2 */
 
@@ -134,62 +118,24 @@ int main(void)
 
     PushButtonPressStates state;
     uint8_t i = 0;
-    int32_t pwm = 0;
     
     while (1)
     {
         state = ScanButton();
         
         if (state == PUSH_BUTTON_0_PRESSED)
-        {
-            pwm += 400;
-            
-            if (pwm == 0)
-                StopMotor();
-            else
-            {
-                StartMotor();
-                
-                if (pwm > 8400)
-                    pwm = 8400;
-            }
-            
-            AdaptMotorVelocityDirection(pwm);
-            
-        }
+            PIDType.TargetValue += 30;
         else if (state == PUSH_BUTTON_1_PRESSED)
-        {
-            pwm -= 400;
-            
-            if (pwm == 0)
-                StopMotor();
-            else
-            {
-                StartMotor();
-                
-                if (pwm < -8400)
-                    pwm = -8400;
-            }
-            
-            AdaptMotorVelocityDirection(pwm);
-        }
+            PIDType.TargetValue += -30;
         else if (state == PUSH_BUTTON_2_PRESSED)
         {
+            PIDType.TargetValue = 0;
+            
             HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
-            
-            StopMotor();
-            
-            pwm = 0;
-            
-            AdaptMotorVelocityDirection(pwm);
         }
-        
-        if (i++ % 50 == 0)
-        {
+               
+        if (++i % 20 == 0)
             HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
-            
-            printf("The velocity of motor now is %.1f RPM.\n", Motor_Type.velocity);
-        }
         
         HAL_Delay(10);
         
