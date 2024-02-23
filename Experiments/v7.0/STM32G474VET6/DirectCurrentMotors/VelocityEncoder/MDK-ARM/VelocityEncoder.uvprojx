@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Compilations\Objects\</OutputDirectory>
-          <OutputName>PIDVolecityRing</OutputName>
+          <OutputName>PIDVolecityControlRing</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>STM32G474xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Sources\Application\Core\Configurations\Include;..\Sources\Application\Core\Entry\Include;..\Sources\Application\Core\Initializers\Include;..\Sources\Application\Core\Interrutps\Include;..\Sources\Application\User\Peripherals\Include;..\Sources\Application\User\RTOS\Tasks\Include;..\Sources\Drivers\CMSIS\Include;..\Sources\Drivers\STM32G4xx_HAL_Driver\Inc;..\Sources\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\Sources\Middlewares\Third_Party\FreeRTOS\Source\include;..\Sources\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F</IncludePath>
+              <IncludePath>..\Sources\Application\Core\Configurations\Include;..\Sources\Application\Core\Entry\Include;..\Sources\Application\Core\Initializers\Include;..\Sources\Application\Core\Interrutps\Include;..\Sources\Application\User\Peripherals\Include;..\Sources\Application\User\RTOS\Tasks\Include;..\Sources\Application\User\Utils\Include;..\Sources\Drivers\CMSIS\Include;..\Sources\Drivers\STM32G4xx_HAL_Driver\Inc;..\Sources\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\Sources\Middlewares\Third_Party\FreeRTOS\Source\include;..\Sources\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F;..\Sources\Middlewares\Third_Party\UpperHostCommunications\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -482,6 +482,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Application/Core/Utils</GroupName>
+          <Files>
+            <File>
+              <FileName>CyclicRedundancyCheck.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\User\Utils\Source\CyclicRedundancyCheck.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Drivers/BSP</GroupName>
           <Files>
             <File>
@@ -543,6 +553,16 @@
               <FileName>stm32g4xx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Drivers\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_tim_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g4xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Drivers\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32g4xx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Drivers\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_uart_ex.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -22,9 +22,7 @@
 
 #include "../../Initializers/Include/SystemInitializer.h"
 #include "../../../User/Peripherals/Include/gpio.h"
-#include "../../../User/Peripherals/Include/AdvancedTimer.h"
 #include "../../../User/Peripherals/Include/BrushedMotor.h"
-#include "../../../User/Peripherals/Include/VelocityEncoder.h"
 #include "../../../Drivers/BSP/Include/PushButton.h"
 
 #include "../Include/main.h"
@@ -97,11 +95,7 @@ int main(void)
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
     
-    InitAdvancedTimer(0, 8500 - 1, 0x00);
-    InitDirectCurrenBrushedtMotor();
-    
-    InitVelocityEncoder(0, 0xFFFF);
-    InitCalculatorTimer(170 - 1, 1000 - 1);
+    InitDirectCurrenBrushedMotor();
     
     InitPushButtons();
     
@@ -112,7 +106,7 @@ int main(void)
     
    Auto Reload Duration = 170 000 000 / 85 00 = 20 000, Cycle Duration = 1 / 20 000 seconds = 50 us.
     */
-    //InitDirectCurrenBrushedtMotor();
+    //InitDirectCurrenBrushedMotor();
     
     /* USER CODE BEGIN 2 */
 
@@ -137,23 +131,6 @@ int main(void)
         
         if (state == KEY_0_PRESSED)
         {
-            pwm += 400;
-            
-            if (pwm == 0)
-                DeactivateMotor();
-            else
-            {
-                ActivateMotor();
-                
-                if (pwm > 8400)
-                    pwm = 8400;
-            }
-            
-            RotateMotor(pwm);
-            
-        }
-        else if (state == KEY_1_PRESSED)
-        {
             pwm -= 400;
             
             if (pwm == 0)
@@ -162,8 +139,25 @@ int main(void)
             {
                 ActivateMotor();
                 
-                if (pwm < -8400)
+                if (pwm <= -8400)
                     pwm = -8400;
+            }
+            
+            RotateMotor(pwm);
+            
+        }
+        else if (state == KEY_1_PRESSED)
+        {
+            pwm += 400;
+            
+            if (pwm == 0)
+                DeactivateMotor();
+            else
+            {
+                ActivateMotor();
+                
+                if (pwm >= 8400)
+                    pwm = 8400;
             }
             
             RotateMotor(pwm);
