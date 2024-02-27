@@ -19,10 +19,12 @@
 
 #endif
 
+#define PID_SAMPLING_CYCLE      50
+
 typedef struct
 {
     __IO float TargetValue;
-    __IO float ActualValue;
+    __IO float NextExpectedValue;
     
     __IO float ProportionalFactor;
     __IO float IntegralFactor;
@@ -30,8 +32,8 @@ typedef struct
     
     __IO float AccumulativeErrors;
     
-    __IO float LastSecondError;
-    __IO float LastFirstError;
+    __IO float PreviousError;
+    __IO float LastError;
     __IO float Error;
 
     

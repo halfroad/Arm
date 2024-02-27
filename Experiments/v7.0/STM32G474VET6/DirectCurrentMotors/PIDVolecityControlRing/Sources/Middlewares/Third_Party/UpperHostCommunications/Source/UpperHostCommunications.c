@@ -26,7 +26,8 @@ typedef struct
     
 } UpperHostDispatchedParameters;
 
-PIDTypeDef PIDType = { 0 };
+extern PIDTypeDef PIDType;
+
 __IO uint8_t receivedBytes[MAXIMUM_RECEIVE_BUFFER_LENGTH];
 __IO uint8_t receivedBytesAddressOffset = 0;
 
@@ -40,19 +41,15 @@ static HAL_StatusTypeDef Report(MotorControlProtocol *protocol, MotorDriveBoardR
 void InitUpperHostCommunications(void)
 {
     InitSerialCommunications(115200, HandleUpperHostPayload);
-    InitMotorControlProtocol(&motorControlProtocol);
     
     InitPID();
     
-#ifdef UPPER_HOST_COMMUNICATIONS_ENABLED
+    InitMotorControlProtocol(&motorControlProtocol);
     
     ReconcileInitialPIDs(MotorDriveBoardReportTypePID1, (float *)(&PIDType.TargetValue), KP, KI, KD);
 
     ReportCategory(MotorCategoryDirectCurrentMotor);
     ReportState(MotorStateIdle);
-
-#endif
-    
 }
 
 static void InitMotorControlProtocol(MotorControlProtocol *motorControlProtocol)
@@ -60,27 +57,6 @@ static void InitMotorControlProtocol(MotorControlProtocol *motorControlProtocol)
     size_t size = sizeof(MotorControlProtocol);
     
     memset(motorControlProtocol, 0, size);
-}
-
-void InitPID(void)
-{
-    PIDType.TargetValue = 0.0f;
-    PIDType.ActualValue = 0.0f;
-    
-    PIDType.ProportionalFactor = KP;
-    PIDType.IntegralFactor = KI;
-    PIDType.DerivativeFactor = KD;
-    
-    PIDType.LastSecondError = 0.0f;
-    PIDType.LastFirstError = 0.0f;
-    PIDType.Error = 0.0f;
-    
-    PIDType.AccumulativeErrors = 0.0f;
-    
-    /*
-    Use Encoder instead.
-    InitUpdateTimer(prescaler, period);
-    */
 }
 
 void ReconcileInitialPIDs(MotorDriveBoardReportTypes motorDriveBoardReportType, float *targetValue, float proportionalFactor, float integralFactor, float derivativeFactor)

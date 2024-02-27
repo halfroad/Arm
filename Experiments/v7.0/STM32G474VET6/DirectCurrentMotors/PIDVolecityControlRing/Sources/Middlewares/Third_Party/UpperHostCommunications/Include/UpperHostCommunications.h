@@ -5,7 +5,7 @@
 
 #include "../../../Application/User/Peripherals/Include/PID.h"
 
-#define UPPER_HOST_COMMUNICATIONS_ENABLED                   1
+#define UPPER_HOST_COMMUNICATIONS_ENABLED
 
 typedef enum
 {
@@ -14,9 +14,16 @@ typedef enum
     MotorStateError                                         = 0x02,
     MotorStateRotorLockedOrTimeout                          = 0x03,
     MotorStateBraked                                        = 0x04,
-    /* MotorStateStopped                                       = 0x05,  */
     
 } MotorStates;
+
+typedef enum
+{
+    MotorRotationDirectionNeutral                           = 0x00,
+    MotorRotationDirectionClockwise                         = 0x01,
+    MotorRotationDirectionAntiClockwise                     = 0x02,
+    
+} MotorRotationDirections;
 
 typedef struct
 {
@@ -32,6 +39,7 @@ typedef struct
 typedef struct
 {
     MotorStates state;
+    MotorRotationDirections direction;
     int16_t velocity;
     int32_t pulseWidthModulation;
     uint64_t travelDistance;

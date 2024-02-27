@@ -29,18 +29,24 @@
 #define CALCULATOR_TIMER_IRQN                               TIM5_IRQn
 #define VELOCITY_CALCULATOR_TIMER_IRQHANDLER                TIM5_IRQHandler
 
+extern MotorControlProtocol motorControlProtocol;
+extern PIDTypeDef PIDType;
+
 TIM_HandleTypeDef Encoder_TIM_HandleType = { 0 };
 TIM_HandleTypeDef Calculator_TIM_HandleType = { 0 };
 
-__IO int8_t encoderCountOverflow = 0;
+__IO int16_t encoderCountOverflow = 0;
 
 extern void Error_Handler(void);
-extern void EstimateVelocity(int32_t code, uint8_t milliseconds);
+void EstimateVelocity(int32_t counter, uint8_t iterations);
 
 void Encoder_MspInitCallback(TIM_HandleTypeDef *htim);
 void EncoderPeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void Base_MspInitCallback(TIM_HandleTypeDef *htim);
+
 int32_t GetEncoderCounter(void);
+
+void (* onPIDComposed) (float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType);
 
 void InitGPIOPs(void)
 {
@@ -62,7 +68,7 @@ void InitGPIOPs(void)
     HAL_GPIO_Init(ENCODER_GPIO_PORT, &GPIO_InitType);
 }
 
-void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload)
+void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload, void (* onPIDComposedHandler)(float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType))
 {
     /* TIM_HandleTypeDef Calculator_TIM_HandleType = { 0 }; */
     
@@ -75,6 +81,9 @@ void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload)
     
     Calculator_TIM_HandleType.Base_MspInitCallback = Base_MspInitCallback;
     Calculator_TIM_HandleType.PeriodElapsedCallback = EncoderPeriodElapsedCallback;
+    
+    if (onPIDComposedHandler)
+        onPIDComposed = onPIDComposedHandler;
     
     HAL_TIM_Base_Init(&Calculator_TIM_HandleType);
     
@@ -268,14 +277,7 @@ void EncoderPeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim ->Instance == ENCODER_TIMER)
     {
         if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&Encoder_TIM_HandleType))
-        {
-            static uint8_t firstOverflow = 0;
-            
-            if (firstOverflow)
-                encoderCountOverflow --;
-            else
-                firstOverflow = 1;
-        }
+            encoderCountOverflow --;
         else
             encoderCountOverflow ++;
     }
@@ -284,6 +286,17 @@ void EncoderPeriodElapsedCallback(TIM_HandleTypeDef *htim)
         int32_t counter = GetEncoderCounter();
         
         EstimateVelocity(counter, 10);
+
+        static uint8_t i = 0;
+        float newPulseWidthModulation = 0.0f;
+        
+        if (i ++ % PID_SAMPLING_CYCLE == 0)
+        {
+            newPulseWidthModulation = ComposePID(&PIDType, motorControlProtocol.velocity);
+            
+            if (onPIDComposed)
+                onPIDComposed(newPulseWidthModulation, motorControlProtocol.velocity, &PIDType);
+        }
     }
     /* USER CODE BEGIN Callback 1 */
 

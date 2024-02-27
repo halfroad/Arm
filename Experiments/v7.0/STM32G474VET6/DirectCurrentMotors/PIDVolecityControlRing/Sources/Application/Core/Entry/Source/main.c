@@ -52,13 +52,14 @@
 
 /* USER CODE BEGIN PV */
 
+extern MotorControlProtocol motorControlProtocol;
+extern PIDTypeDef PIDType;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN PFP */
-
-extern MotorTypeDef motorType;
 
 /* USER CODE END PFP */
 
@@ -96,7 +97,7 @@ int main(void)
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
     
-    InitDirectCurrenBrushedMotor();
+    InitMotor();
     InitUpperHostCommunications();
     
     InitPushButtons();
@@ -108,7 +109,7 @@ int main(void)
     
    Auto Reload Duration = 170 000 000 / 85 00 = 20 000, Cycle Duration = 1 / 20 000 seconds = 50 us.
     */
-    //InitDirectCurrenBrushedMotor();
+    //InitMotor();
     
     /* USER CODE BEGIN 2 */
 
@@ -125,7 +126,6 @@ int main(void)
 
     KeyPressStates state;
     uint8_t i = 0;
-    int32_t pwm = 0;
     
     while (1)
     {
@@ -133,46 +133,23 @@ int main(void)
         
         if (state == KEY_0_PRESSED)
         {
-            pwm -= 400;
+            PIDType.TargetValue += 10;
             
-            if (pwm == 0)
-                DeactivateMotor();
-            else
-            {
-                ActivateMotor();
-                
-                if (pwm <= -8400)
-                    pwm = -8400;
-            }
-            
-            RotateMotor(pwm);
-            
+            if (PIDType.TargetValue >= MOTOR_PEAK_SPEED)
+                PIDType.TargetValue = MOTOR_PEAK_SPEED;            
         }
         else if (state == KEY_1_PRESSED)
         {
-            pwm += 400;
+            PIDType.TargetValue -= 10;
             
-            if (pwm == 0)
-                DeactivateMotor();
-            else
-            {
-                ActivateMotor();
-                
-                if (pwm >= 8400)
-                    pwm = 8400;
-            }
-            
-            RotateMotor(pwm);
+            if (PIDType.TargetValue <= -MOTOR_PEAK_SPEED)
+                PIDType.TargetValue = -MOTOR_PEAK_SPEED;
         }
         else if (state == KEY_2_PRESSED)
         {
+            PIDType.TargetValue = 0;
+            
             HAL_GPIO_TogglePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin);
-            
-            DeactivateMotor();
-            
-            pwm = 0;
-            
-            RotateMotor(pwm);
         }
         
         HAL_Delay(10);
@@ -181,7 +158,7 @@ int main(void)
         {
             HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
             
-            printf("The velocity of motor now is %.1f RPM.\n", motorType.velocity);
+            /*  printf("The velocity of motor now is %.1f RPM.\n", motorControlProtocol.velocity);   */
         }
         
         /* USER CODE END WHILE */
@@ -190,4 +167,3 @@ int main(void)
     }
     /* USER CODE END 3 */
 }
-

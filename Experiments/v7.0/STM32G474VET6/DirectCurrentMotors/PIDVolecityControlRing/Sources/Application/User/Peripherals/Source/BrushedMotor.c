@@ -1,5 +1,7 @@
 #include "../Include/AdvancedTimer.h"
 #include "../Include/VelocityEncoder.h"
+#include "../Include/UpperHostCommunications.h"
+
 #include "../Include/BrushedMotor.h"
 
 #define ADVANCE_TIMER_CHANNEL                           TIM_CHANNEL_1
@@ -16,36 +18,29 @@
 #define PULSES_PER_ROUND                                11  /* Pulses per Round. */
 #define GEAR_RATIO                                      30  /* Ratio of Velocity Reduction.*/
 
-typedef enum
-{
-    MotorRotationDirectionClockwise         = 0x00,
-    MotorRotationDirectionAnticlockwise     = 0x01,
-    
-} MotorRotationDirections;
-
 extern TIM_HandleTypeDef TIM8_Handle;
+extern MotorControlProtocol motorControlProtocol;
+extern PIDTypeDef PIDType;
 
 VelocityEncoderTypeDef velocityEncoderType = { 0 };
-MotorTypeDef motorType = { 0 };
 
 static void InitGPIOs(void);
 
 static void DivertMotor(MotorRotationDirections direction);
 static void RegulateMotor(uint32_t compare);
 
-void InitDirectCurrenBrushedMotor(void)
+static void onVelocityRenewedHandler (int32_t newVelocity);
+static void onPIDComposedHandler (float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType);
+
+void InitMotor()
 {
     InitGPIOs();
     InitAdvancedTimer(0, 8500 - 1, 0x00);
     InitVelocityEncoder(0, ENCODER_AUTO_RELOAD);
-    InitCalculatorTimer(170 - 1, 1000 - 1);
+    InitCalculatorTimer(170 - 1, 1000 - 1, onPIDComposedHandler);
     
     DeactivateMotor();
-    DivertMotor(MotorRotationDirectionClockwise);
-    RegulateMotor(0);
     ActivateMotor();
-    
-    
 }
 
 static void InitGPIOs(void)
@@ -66,6 +61,9 @@ static void InitGPIOs(void)
 void ActivateMotor(void)
 {
     ENABLE_MOTOR;
+    
+    motorControlProtocol.state = MotorStateIdle;
+    motorControlProtocol.direction = MotorRotationDirectionNeutral;
 }
 
 void DeactivateMotor(void)
@@ -78,13 +76,18 @@ void DeactivateMotor(void)
 
 static void DivertMotor(MotorRotationDirections direction)
 {
-    HAL_TIM_PWM_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
-    HAL_TIMEx_PWMN_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
+    if (direction != motorControlProtocol.direction)
+    {
+        motorControlProtocol.direction = direction;
     
-    if (direction == MotorRotationDirectionClockwise)
-        HAL_TIM_PWM_Start(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
-    else if (direction == MotorRotationDirectionAnticlockwise)
-        HAL_TIMEx_PWMN_Start(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
+        HAL_TIM_PWM_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
+        HAL_TIMEx_PWMN_Stop(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
+        
+        if (direction == MotorRotationDirectionClockwise)
+            HAL_TIM_PWM_Start(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
+        else if (direction == MotorRotationDirectionAntiClockwise)
+            HAL_TIMEx_PWMN_Start(&TIM8_Handle, ADVANCE_TIMER_CHANNEL);
+    }
 }
 
 static void RegulateMotor(uint32_t compare)
@@ -94,16 +97,26 @@ static void RegulateMotor(uint32_t compare)
 }
 
 void RotateMotor(int32_t compare)
-{   
-    if (compare >= 0)
+{
+    if (compare == 0)
     {
-        DivertMotor(MotorRotationDirectionClockwise);
-        RegulateMotor(compare);
+        if (motorControlProtocol.state == MotorStateRun)
+            motorControlProtocol.state = MotorStateBraked;
     }
     else
     {
-        DivertMotor(MotorRotationDirectionAnticlockwise);
-        RegulateMotor(-compare);
+        motorControlProtocol.state = MotorStateRun;
+        
+        if (compare > 0)
+        {            
+            DivertMotor(MotorRotationDirectionClockwise);
+            RegulateMotor(compare);
+        }
+        else
+        {
+            DivertMotor(MotorRotationDirectionAntiClockwise);
+            RegulateMotor(-compare);
+        }
     }
 }
 
@@ -114,7 +127,7 @@ void EstimateVelocity(int32_t counter, uint8_t iterations)
     
     uint8_t m, n;
     
-    float total = 0.0f;
+    float each = 0.0f;
     
     if (times == iterations)
     {
@@ -129,10 +142,12 @@ void EstimateVelocity(int32_t counter, uint8_t iterations)
         
         */
         velocityEncoderType.counterNumber = counter;
-        velocityEncoderType.delta = velocityEncoderType.counterNumber - velocityEncoderType.previousCounterNumber;
+        velocityEncoderType.delta = velocityEncoderType.counterNumber - velocityEncoderType.lastCounterNumber;
         velocities[filters ++] = (float)(velocityEncoderType.delta * (1000.0f / iterations * 60.0) / (GEAR_RATIO * FREQUENCY_MULTIPLIER * PULSES_PER_ROUND));
+
+        int32_t a = velocityEncoderType.lastCounterNumber;
         
-        velocityEncoderType.previousCounterNumber = velocityEncoderType.counterNumber;  /* Persist the curent Counter Number. */
+        velocityEncoderType.lastCounterNumber = velocityEncoderType.counterNumber;  /* Persist the curent Counter Number. */
         
         /* Filter after 10 consecutive velocities. */
         if (filters >= 10)
@@ -144,19 +159,19 @@ void EstimateVelocity(int32_t counter, uint8_t iterations)
                 {
                     if (velocities[n] > velocities[n + 1])
                     {
-                        total = velocities[n];
+                        each = velocities[n];
                         velocities[n] = velocities[n + 1];
-                        velocities[n + 1] = total;
+                        velocities[n + 1] = each;
                     }
                 }
             }
             
-            total = 0.0f;
+            each = 0.0f;
             
             for (m = 2; m < 8; m ++)
-                total += velocities[m];
+                each += velocities[m];
             
-            total = total / 6.0f;
+            each = each / 6.0f;
             
             /*
             
@@ -168,7 +183,7 @@ void EstimateVelocity(int32_t counter, uint8_t iterations)
             
             */
             
-            motorType.velocity = (float)(0.52f * motorType.velocity + (1.0f - 0.52f) * total);
+            motorControlProtocol.velocity = (float)(0.52f * motorControlProtocol.velocity + (1.0f - 0.52f) * each);
             
             filters = 0;
         }
@@ -177,4 +192,29 @@ void EstimateVelocity(int32_t counter, uint8_t iterations)
     }
     
     times ++;
+}
+
+static void onPIDComposedHandler (float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType)
+{
+    if ( motorControlProtocol.state <= MotorStateRun)
+    {
+        if (newPulseWidthModulation >= ENCODER_PEAK_PULSE_WIDTH_MODULAION)
+            motorControlProtocol.pulseWidthModulation = ENCODER_PEAK_PULSE_WIDTH_MODULAION;
+        else if (newPulseWidthModulation <= -ENCODER_PEAK_PULSE_WIDTH_MODULAION)
+            motorControlProtocol.pulseWidthModulation = -ENCODER_PEAK_PULSE_WIDTH_MODULAION;
+        else
+            motorControlProtocol.pulseWidthModulation = (int32_t)newPulseWidthModulation;
+        
+        RotateMotor(motorControlProtocol.pulseWidthModulation);
+        
+#ifdef UPPER_HOST_COMMUNICATIONS_ENABLED
+        
+        ReportWave(1, velocity);
+        ReportWave(2, PIDType -> TargetValue);
+        ReportWave(3, motorControlProtocol.pulseWidthModulation * 100 / MOTOR_PEAK_SPEED);
+
+#endif
+        
+    }
+    
 }
