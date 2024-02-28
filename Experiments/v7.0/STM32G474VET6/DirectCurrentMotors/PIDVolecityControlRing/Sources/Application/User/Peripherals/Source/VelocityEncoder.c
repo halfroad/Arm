@@ -46,7 +46,7 @@ void Base_MspInitCallback(TIM_HandleTypeDef *htim);
 
 int32_t GetEncoderCounter(void);
 
-void (* onPIDComposed) (float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType);
+void (* onPIDComposed) (float newPulseWidthModulation, int16_t velocity, PIDTypeDef *PIDType);
 
 void InitGPIOPs(void)
 {
@@ -68,7 +68,7 @@ void InitGPIOPs(void)
     HAL_GPIO_Init(ENCODER_GPIO_PORT, &GPIO_InitType);
 }
 
-void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload, void (* onPIDComposedHandler)(float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType))
+void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload, void (* onPIDComposedHandler)(float newPulseWidthModulation, int16_t velocity, PIDTypeDef *PIDType))
 {
     /* TIM_HandleTypeDef Calculator_TIM_HandleType = { 0 }; */
     

@@ -19,6 +19,6 @@ typedef struct
 } VelocityEncoderTypeDef;
 
 void InitVelocityEncoder(uint32_t prescaler, uint32_t autoReload);
-void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload, void (* onPIDComposedHandler)(float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType));
+void InitCalculatorTimer(uint32_t prescaler, uint32_t autoReload, void (* onPIDComposedHandler)(float newPulseWidthModulation, int16_t velocity, PIDTypeDef *PIDType));
 
 #endif  /* #ifndef __VELOCITY_ENCODER_H */

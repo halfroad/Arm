@@ -46,10 +46,9 @@ void InitUpperHostCommunications(void)
     
     InitMotorControlProtocol(&motorControlProtocol);
     
-    ReconcileInitialPIDs(MotorDriveBoardReportTypePID1, (float *)(&PIDType.TargetValue), KP, KI, KD);
-
     ReportCategory(MotorCategoryDirectCurrentMotor);
     ReportState(MotorStateIdle);
+    ReconcileInitialPIDs(MotorDriveBoardReportTypePID1, (float *)(&PIDType.TargetValue), KP, KI, KD);
 }
 
 static void InitMotorControlProtocol(MotorControlProtocol *motorControlProtocol)
@@ -464,7 +463,7 @@ void ReportPower(float power)
 
 void ReportVelocity(float velocity)
 {
-    motorControlProtocol.velocity = velocity;
+    motorControlProtocol.velocity = (int16_t)velocity;
     
     Report(&motorControlProtocol, MotorDriveBoardReportTypeVelocity);
 }

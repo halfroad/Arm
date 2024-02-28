@@ -30,7 +30,7 @@ static void DivertMotor(MotorRotationDirections direction);
 static void RegulateMotor(uint32_t compare);
 
 static void onVelocityRenewedHandler (int32_t newVelocity);
-static void onPIDComposedHandler (float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType);
+static void onPIDComposedHandler (float newPulseWidthModulation, int16_t velocity, PIDTypeDef *PIDType);
 
 void InitMotor()
 {
@@ -194,7 +194,7 @@ void EstimateVelocity(int32_t counter, uint8_t iterations)
     times ++;
 }
 
-static void onPIDComposedHandler (float newPulseWidthModulation, int32_t velocity, PIDTypeDef *PIDType)
+static void onPIDComposedHandler (float newPulseWidthModulation, int16_t velocity, PIDTypeDef *PIDType)
 {
     if ( motorControlProtocol.state <= MotorStateRun)
     {
@@ -209,9 +209,12 @@ static void onPIDComposedHandler (float newPulseWidthModulation, int32_t velocit
         
 #ifdef UPPER_HOST_COMMUNICATIONS_ENABLED
         
-        ReportWave(1, velocity);
-        ReportWave(2, PIDType -> TargetValue);
-        ReportWave(3, motorControlProtocol.pulseWidthModulation * 100 / MOTOR_PEAK_SPEED);
+        ReportState(motorControlProtocol.state);
+        ReconcileInitialPIDs(MotorDriveBoardReportTypePID1, (float *)(&PIDType -> TargetValue), PIDType -> ProportionalFactor, PIDType -> IntegralFactor, PIDType -> DerivativeFactor);
+        ReportVelocity(velocity);
+        
+      //  ReportWave(2, PIDType -> TargetValue);
+       // ReportWave(3, motorControlProtocol.pulseWidthModulation * 100 / MOTOR_PEAK_SPEED);
 
 #endif
         
