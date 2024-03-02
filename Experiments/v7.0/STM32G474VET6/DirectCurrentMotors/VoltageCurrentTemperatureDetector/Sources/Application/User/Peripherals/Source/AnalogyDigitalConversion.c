@@ -267,9 +267,9 @@ static void ComputeAnalogyDigitalConversions(uint16_t *conversions)
         averages[2] += gatheredConversions[2 + i * ADC_CHANNELS_NUMBER];    /* Gathered currents. */
     }
     
-    averages[0] /= ADC_CHANNELS_NUMBER;
-    averages[1] /= ADC_CHANNELS_NUMBER;
-    averages[2] /= ADC_CHANNELS_NUMBER;
+    averages[0] /= ADC_GATHER_TIMES_PER_CHANNEL;
+    averages[1] /= ADC_GATHER_TIMES_PER_CHANNEL;
+    averages[2] /= ADC_GATHER_TIMES_PER_CHANNEL;
     
     conversions[0] = averages[0];
     conversions[1] = averages[1];

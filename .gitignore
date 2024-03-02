@@ -58,6 +58,7 @@ dkms.conf
 *.o
 *.d
 *.scvd
+.zip
 
 # Folders
 DebugConfig/
