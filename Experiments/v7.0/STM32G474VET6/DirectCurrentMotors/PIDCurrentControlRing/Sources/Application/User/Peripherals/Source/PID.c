@@ -8,7 +8,7 @@ void InitPID(PIDTypeDef *PIDType)
     
 #elif RING_PID_CONTROL == 1
     
-    PIDType -> TargetValue              = 40.0f;    /*  Intial current to launch the motor  */
+    PIDType -> TargetValue              = 20.0f;    /*  Intial current to launch the motor  */
     
 #endif
     

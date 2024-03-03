@@ -26,7 +26,7 @@
 #include "../../../User/RTOS/Tasks/Include/TasksWrapper.h"
 #include "../../../User/Peripherals/Include/gpio.h"
 #include "../../../User/Peripherals/Include/AdvancedTimer.h"
-#include "../../../User/Peripherals/Include/DirectCurrenBrushedtMotor.h"
+#include "../../../User/Peripherals/Include/DirectCurrentBrushedMotor.h"
 #include "../../../User/Peripherals/Include/AnalogyDigitalConversion.h"
 #include "../../../Drivers/BSP/Include/PushButton.h"
 

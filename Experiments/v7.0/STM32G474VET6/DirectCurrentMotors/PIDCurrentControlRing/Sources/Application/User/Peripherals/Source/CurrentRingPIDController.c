@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 
 #include "../Include/BrushedMotor.h"
 #include "../Include/CurrentVoltageTemperatureGatherer.h"
@@ -81,8 +82,12 @@ static void OnConversionCompletedHandler(float voltage, float current, float tem
 {
     static uint8_t i = 0;
     
-    if ( i ++ % 100 == 0)
-        printf("Voltage = %.1f, current = %.1f, temperature = %.1f.\n", voltage, current, temperature);
+    motorControlProtocol.currents[0] = current;
+    
+    if (i ++ % 20 == 0)
+    {
+        printf("Voltage = %.1fV, current = %.1fmA, temperature = %.1fC.\n", voltage, current, temperature);
+    }
 }
 
 static void OnPIDComposedHandler (float newPulseWidthModulation)
@@ -100,9 +105,9 @@ static void OnPIDComposedHandler (float newPulseWidthModulation)
         
 #ifdef UPPER_HOST_COMMUNICATIONS_ENABLED
         
-        ReportState(&motorControlProtocol, motorControlProtocol.state);
-        ReconcileInitialPIDs(&motorControlProtocol, MotorDriveBoardReportTypePID1, (float *)(&PIDType.TargetValue), PIDType.ProportionalFactor, PIDType.IntegralFactor, PIDType.DerivativeFactor);
-        ReportVelocity(&motorControlProtocol, motorControlProtocol.velocity);
+       // ReportState(&motorControlProtocol, motorControlProtocol.state);
+       // ReconcileInitialPIDs(&motorControlProtocol, MotorDriveBoardReportTypePID1, (float *)(&PIDType.TargetValue), PIDType.ProportionalFactor, PIDType.IntegralFactor, PIDType.DerivativeFactor);
+       // ReportVelocity(&motorControlProtocol, motorControlProtocol.velocity);
         
       //  ReportWave(2, PIDType -> TargetValue);
        // ReportWave(3, motorControlProtocol.pulseWidthModulation * 100 / MOTOR_PEAK_SPEED);

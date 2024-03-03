@@ -43,15 +43,21 @@
 #define ADC_CHANNELS_NUMBER                                                     3
 #define ADC_GATHER_TIMES_PER_CHANNEL                                            1000
 
+#define ADC_TO_VOLTAGE                                                          (float)(3.3f * 25 / 4096)
+
+/*
+    I = £¨ADC_Now - Initial_ADC£©* £¨3.3 / 4.096 / 0.12£©
+ */
+#define ADC_TO_CURRENT                                                          (float)(3.3f / 4.096 / 0.12f)
+    
 DMA_HandleTypeDef DMA_HandleType = { 0 };
 ADC_HandleTypeDef ADC_HandleType = { 0 };
 
 uint16_t gatheredConversions[ADC_CHANNELS_NUMBER * ADC_GATHER_TIMES_PER_CHANNEL] = { 0 };
-uint16_t averageConversions[ADC_CHANNELS_NUMBER] = { 0 };
 
 const float Rp = 10000.0f;
-const float Ka = 273.15;
-const float T2 = Ka + 25.0f;
+const float Ka = 273.15f;
+const float T2 = 273.15f + 25.0f;
 const float Bx = 3380.0f;
 
 extern void Error_Handler(void);
@@ -65,7 +71,8 @@ static void MspInitCallback(ADC_HandleTypeDef *hadc);
 static void ConversionsCompletionCallback(ADC_HandleTypeDef *hadc);
 
 static void ConfigureAnalogyDigitalConverterChannel(uint32_t channel, uint32_t rank, uint32_t samplingTime);
-static void ComputeAnalogyDigitalConversions(uint16_t *conversions);
+static void ComputeAnalogyDigitalConversions(void);
+static float AcquireTemperature(uint16_t conversion);
 
 void InitCurrentVoltageTemperatureGatherer(void (*onConversionCompletionHandler)(float voltage, float current, float temperature))
 {
@@ -193,7 +200,7 @@ static void ConversionsCompletionCallback(ADC_HandleTypeDef *hadc)
         if (HAL_OK != HAL_ADC_Stop_DMA(hadc))
             Error_Handler();
         
-        ComputeAnalogyDigitalConversions(averageConversions);
+        ComputeAnalogyDigitalConversions();
         
         if (HAL_OK != HAL_ADC_Start_DMA(hadc, (uint32_t *)gatheredConversions, ADC_CHANNELS_NUMBER * ADC_GATHER_TIMES_PER_CHANNEL))
             Error_Handler();
@@ -215,7 +222,7 @@ static void ConfigureAnalogyDigitalConverterChannel(uint32_t channel, uint32_t r
         Error_Handler();
 }
 
-static float AcquireTemperature(uint32_t conversion)
+float AcquireTemperature(uint16_t conversion)
 {
     float Rt = 3.3f * 4700.0f / (conversion * 3.3f / 4096.0f) - 4700.0f;
     float temperarture = Rt / Rp;
@@ -229,9 +236,10 @@ static float AcquireTemperature(uint32_t conversion)
     return (uint8_t)temperarture;
 }
 
-static void ComputeAnalogyDigitalConversions(uint16_t *conversions)
-{
-    static uint32_t totals [ADC_CHANNELS_NUMBER] = {0 ,0 , };
+static void ComputeAnalogyDigitalConversions(void)
+{  
+    static int32_t totals[ADC_CHANNELS_NUMBER] = {0.0f, 0.0f, 0.0f};
+    static int32_t initialCurrentADC = 0;
     
     for (uint16_t i = 0; i < ADC_GATHER_TIMES_PER_CHANNEL; i ++)
     {
@@ -240,16 +248,14 @@ static void ComputeAnalogyDigitalConversions(uint16_t *conversions)
         totals [2] += gatheredConversions [2 + i * ADC_CHANNELS_NUMBER];
     }
     
+    if (initialCurrentADC == 0)
+        initialCurrentADC = totals [1] / ADC_GATHER_TIMES_PER_CHANNEL;
+
     totals[0] /= ADC_GATHER_TIMES_PER_CHANNEL;
     totals[1] /= ADC_GATHER_TIMES_PER_CHANNEL;
     totals[2] /= ADC_GATHER_TIMES_PER_CHANNEL;
     
-    conversions[0] = totals[0];
-    conversions[1] = totals[1];
-    conversions[2] = totals[2];
-    
     if (conversionCompletedCallback)
-        conversionCompletedCallback(totals[0], AcquireTemperature(conversions[1]), conversions[2]);
+        conversionCompletedCallback(ADC_TO_VOLTAGE * totals [0], (totals[1] - initialCurrentADC) * ADC_TO_CURRENT, AcquireTemperature(totals[2]));
 }
-
-
+        

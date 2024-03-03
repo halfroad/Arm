@@ -3,7 +3,7 @@
 
 #include <stm32g4xx.h>
 
-#define RING_PID_CONTROL                0   /*  0: Velocity PID, 1: Current PID. */
+#define RING_PID_CONTROL                1   /*  0: Velocity PID, 1: Current PID. */
 #define USE_POSITIONAL_PID              1
 
 #if RING_PID_CONTROL == 0

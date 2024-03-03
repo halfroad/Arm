@@ -455,9 +455,9 @@
               <FilePath>..\Sources\Application\User\Peripherals\Source\AnalogyDigitalConversion.c</FilePath>
             </File>
             <File>
-              <FileName>DirectCurrenBrushedtMotor.c</FileName>
+              <FileName>DirectCurrentBrushedMotor.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Application\User\Peripherals\Source\DirectCurrenBrushedtMotor.c</FilePath>
+              <FilePath>..\Sources\Application\User\Peripherals\Source\DirectCurrentBrushedMotor.c</FilePath>
             </File>
             <File>
               <FileName>gpio.c</FileName>

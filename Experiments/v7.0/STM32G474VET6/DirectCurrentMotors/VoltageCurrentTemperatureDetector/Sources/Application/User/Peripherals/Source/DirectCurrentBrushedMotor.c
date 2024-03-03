@@ -1,5 +1,5 @@
 #include "../Include/AdvancedTimer.h"
-#include "../Include/DirectCurrenBrushedtMotor.h"
+#include "../Include/DirectCurrentBrushedMotor.h"
 
 #define ADVANCE_TIMER_CHANNEL                           TIM_CHANNEL_1
 
