@@ -22,6 +22,8 @@ void InitCurrentRingPIDController(void)
 {
     InitMotor();
     
+    /*  PIDType.OnPIDComposedHandler = OnPIDComposedHandler;    */
+    
     InitPID(&PIDType);
     InitTickTimer(170 - 1, 1000 - 1);
     
@@ -49,6 +51,8 @@ void TickTimerPeriodElapsedHandler(TIM_HandleTypeDef *htim)
 #else
         newPulseWidthModulation = ComposePID(&PIDType, motorControlProtocol.velocity);
 #endif
+        /*  PIDType.OnPIDComposedHandler(newPulseWidthModulation);  */
+
         OnPIDComposedHandler(newPulseWidthModulation);
     }
 }

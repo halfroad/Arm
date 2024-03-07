@@ -56,6 +56,8 @@ typedef struct
     __IO float PreviousError;
     __IO float LastError;
     __IO float Error;
+    
+    void (* OnPIDComposedHandler)(float newPulseWidthModulation);
 
     
 } PIDTypeDef;
