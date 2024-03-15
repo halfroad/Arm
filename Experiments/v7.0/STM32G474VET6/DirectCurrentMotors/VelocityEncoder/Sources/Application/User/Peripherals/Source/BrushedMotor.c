@@ -44,8 +44,6 @@ void InitDirectCurrenBrushedMotor(void)
     DivertMotor(MotorRotationDirectionClockwise);
     RegulateMotor(0);
     ActivateMotor();
-    
-    
 }
 
 static void InitGPIOs(void)

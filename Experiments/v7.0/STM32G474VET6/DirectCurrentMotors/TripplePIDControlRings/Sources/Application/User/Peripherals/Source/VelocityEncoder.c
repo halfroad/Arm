@@ -1,0 +1,352 @@
+#include "../Include/VelocityEncoder.h"
+
+/*
+
+    PD12    TIM4_CH1    PM2_ENCA    AF2     TIM4_CH1
+    PD13    TIM4_CH2    PM2_ENCB    AF2     TIM4_CH2
+
+*/
+
+#define ENCODER_GPIO_PORT                                   GPIOD
+#define ENCODER_GPIO_PORT_CLOCK_ENABLE()                    do { __HAL_RCC_GPIOD_CLK_ENABLE(); } while (0)
+#define ENCODER_GPIO_PIN_A                                  GPIO_PIN_12
+#define ENCODER_GPIO_PIN_B                                  GPIO_PIN_13
+
+
+#define ENCODER_TIMER                                       TIM4
+#define ENCODER_TIMER_CLOCK_ENABLE()                        do { __HAL_RCC_TIM4_CLK_ENABLE(); } while (0)
+#define ENCODER_GPIO_PIN_A_ALTERNATE_FUNCTION               GPIO_AF2_TIM4
+#define ENCODER_GPIO_PIN_A_CHANNEL                          TIM_CHANNEL_1
+
+#define ENCODER_GPIO_PIN_B_ALTERNATE_FUNCTION               GPIO_AF2_TIM4
+#define ENCODER_GPIO_PIN_B_CHANNEL                          TIM_CHANNEL_2
+
+#define ENCODER_TIMER_IRQN                                  TIM4_IRQn
+#define VELOCITY_ENCODER_TIMER_IRQHANDLER                   TIM4_IRQHandler
+
+#define FREQUENCY_MULTIPLIER                                4   /* Sampling multiplier. */
+#define PULSES_PER_ROUND                                    11  /* Pulses per Round. */
+#define GEAR_RATIO                                          30  /* Ratio of Velocity Reduction.*/
+
+typedef struct
+{
+    int32_t lastCounterNumber;
+    int32_t counterNumber;
+    float delta;
+    
+} VelocityEncoderTypeDef;
+
+TIM_HandleTypeDef Encoder_TIM_HandleType = { 0 };
+VelocityEncoderTypeDef velocityEncoderType = { 0 };
+
+__IO int16_t encoderCountOverflow = 0;
+
+extern void Error_Handler(void);
+
+void Encoder_MspInitCallback(TIM_HandleTypeDef *htim);
+void EncoderPeriodElapsedCallback(TIM_HandleTypeDef *htim);
+void Base_MspInitCallback(TIM_HandleTypeDef *htim);
+
+int32_t GetEncoderCounter(void);
+
+void InitGPIOPs(void)
+{
+    GPIO_InitTypeDef GPIO_InitType = { 0 };
+    
+    ENCODER_GPIO_PORT_CLOCK_ENABLE();
+    
+    GPIO_InitType.Pin = ENCODER_GPIO_PIN_A;
+    GPIO_InitType.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitType.Pull = GPIO_NOPULL;
+    GPIO_InitType.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitType.Alternate = ENCODER_GPIO_PIN_A_ALTERNATE_FUNCTION;
+    
+    HAL_GPIO_Init(ENCODER_GPIO_PORT, &GPIO_InitType);
+    
+    GPIO_InitType.Pin = ENCODER_GPIO_PIN_B;
+    GPIO_InitType.Alternate = ENCODER_GPIO_PIN_B_ALTERNATE_FUNCTION;
+    
+    HAL_GPIO_Init(ENCODER_GPIO_PORT, &GPIO_InitType);
+}
+
+void InitVelocityEncoder(uint32_t prescaler, uint32_t autoReload)
+{
+    ENCODER_TIMER_CLOCK_ENABLE();
+    
+    TIM_Encoder_InitTypeDef TIM_Encoder_InitType = { 0 };
+
+    Encoder_TIM_HandleType.Instance = ENCODER_TIMER;
+    Encoder_TIM_HandleType.Init.Prescaler = prescaler;
+    Encoder_TIM_HandleType.Init.Period = autoReload;
+    Encoder_TIM_HandleType.Init.ClockDivision= TIM_CLOCKDIVISION_DIV1;
+    /* Encoder_TIM_HandleType.Init.CounterMode = TIM_COUNTERMODE_UP; */
+    Encoder_TIM_HandleType.Encoder_MspInitCallback = Encoder_MspInitCallback;
+    /*  Encoder_TIM_HandleType.PeriodElapsedCallback = EncoderPeriodElapsedCallback;    */
+       
+    /*
+    
+    Bits 16, 2, 1, 0 SMS[3:0]: Slave mode selection
+    When external signals are selected the active edge of the trigger signal (tim_trgi) is linked to
+    the polarity selected on the external input (see Input Control register and Control Register
+    description.
+    0000: Slave mode disabled - if CEN = ¡®1¡¯ then the prescaler is clocked directly by the
+    internal clock.
+        0001: Reserved
+        0010: Reserved
+        0011: Reserved
+        0100: Reset Mode - Rising edge of the selected trigger input (tim_trgi) reinitializes the
+        counter and generates an update of the registers.
+        0101: Gated Mode - The counter clock is enabled when the trigger input (tim_trgi) is high.
+        The counter stops (but is not reset) as soon as the trigger becomes low. Both start
+        and stop of the counter are controlled.
+        0110: Trigger Mode - The counter starts at a rising edge of the trigger tim_trgi (but it is not
+        reset). Only the start of the counter is controlled.
+        0111: External Clock Mode 1 - Rising edges of the selected trigger (tim_trgi) clock the
+        counter.
+        1000: Combined reset + trigger mode - Rising edge of the selected trigger input (tim_trgi)
+        reinitializes the counter, generates an update of the registers and starts the counter.
+        1001: Combined gated + reset mode - The counter clock is enabled when the trigger input
+    (tim_trgi) is high. The counter stops and is reset) as soon as the trigger becomes low.
+    Both start and stop of the counter are controlled.
+    Others: Reserved.
+    Note: The gated mode must not be used if tim_ti1f_ed is selected as the trigger input
+    (TS=¡¯00100¡¯). Indeed, tim_ti1f_ed outputs 1 pulse for each transition on tim_ti1f,
+    whereas the gated mode checks the level of the trigger signal.
+    Note: The clock of the slave peripherals (timer, ADC, ...) receiving the tim_trgo signal must be
+    enabled prior to receive events from the master timer, and the clock frequency
+    (prescaler) must not be changed on-the-fly while triggers are received from the master
+    timer.
+    
+    */
+    
+    TIM_Encoder_InitType.EncoderMode = TIM_ENCODERMODE_TI12;    /* Both TI1 and TI2 triggered. */
+    
+    TIM_Encoder_InitType.IC1Polarity = TIM_ICPOLARITY_RISING;
+    /* TIM_Encoder_InitType.IC1Polarity = TIM_ICPOLARITY_BOTHEDGE; */
+    
+    /*
+    
+    Bits 1:0 CC1S[1:0]: Capture/compare 1 Selection
+    This bit-field defines the direction of the channel (input/output) as well as the used input.
+        00: CC1 channel is configured as output
+        01: CC1 channel is configured as input, tim_ic1 is mapped on tim_ti1
+        10: CC1 channel is configured as input, tim_ic1 is mapped on tim_ti2
+        11: CC1 channel is configured as input, tim_ic1 is mapped on tim_trc. This mode is working only if an
+    internal trigger input is selected through TS bit (TIMx_SMCR register)
+    Note: CC1S bits are writable only when the channel is OFF (CC1E = ¡®0¡¯ in TIMx_CCER).
+    
+    */
+    TIM_Encoder_InitType.IC1Selection = TIM_ICSELECTION_DIRECTTI;
+    TIM_Encoder_InitType.IC1Prescaler = TIM_ICPSC_DIV1;
+    TIM_Encoder_InitType.IC1Filter = 0x0A;
+    
+    TIM_Encoder_InitType.IC2Polarity = TIM_ICPOLARITY_RISING;
+    /*  TIM_Encoder_InitType.IC2Polarity = TIM_ICPOLARITY_BOTHEDGE;  */
+    TIM_Encoder_InitType.IC2Selection = TIM_ICSELECTION_DIRECTTI;
+    TIM_Encoder_InitType.IC2Prescaler = TIM_ICPSC_DIV1;
+    TIM_Encoder_InitType.IC2Filter = 10;
+       
+    if (HAL_OK != HAL_TIM_Encoder_Init(&Encoder_TIM_HandleType, &TIM_Encoder_InitType))
+        Error_Handler();
+    
+    /*  HAL_TIM_RegisterCallback(&Encoder_TIM_HandleType, HAL_TIM_PERIOD_ELAPSED_CB_ID, EncoderPeriodElapsedCallback);  */
+    
+    /**
+      * @brief  Starts the TIM Encoder Interface.
+      * @param  htim TIM Encoder Interface handle
+      * @param  Channel TIM Channels to be enabled
+      *          This parameter can be one of the following values:
+      *            @arg TIM_CHANNEL_1: TIM Channel 1 selected
+      *            @arg TIM_CHANNEL_2: TIM Channel 2 selected
+      *            @arg TIM_CHANNEL_ALL: TIM Channel 1 and TIM Channel 2 are selected
+      * @retval HAL status
+      */
+    if (HAL_OK != HAL_TIM_Encoder_Start(&Encoder_TIM_HandleType, ENCODER_GPIO_PIN_A_CHANNEL))
+        Error_Handler();
+    
+    if (HAL_OK != HAL_TIM_Encoder_Start(&Encoder_TIM_HandleType, ENCODER_GPIO_PIN_B_CHANNEL))
+        Error_Handler();
+    
+    /** @brief  Clear the specified TIM interrupt flag.
+      * @param  __HANDLE__ specifies the TIM Handle.
+      * @param  __FLAG__ specifies the TIM interrupt flag to clear.
+      *        This parameter can be one of the following values:
+      *            @arg TIM_FLAG_UPDATE: Update interrupt flag
+      *            @arg TIM_FLAG_CC1: Capture/Compare 1 interrupt flag
+      *            @arg TIM_FLAG_CC2: Capture/Compare 2 interrupt flag
+      *            @arg TIM_FLAG_CC3: Capture/Compare 3 interrupt flag
+      *            @arg TIM_FLAG_CC4: Capture/Compare 4 interrupt flag
+      *            @arg TIM_FLAG_CC5: Compare 5 interrupt flag
+      *            @arg TIM_FLAG_CC6: Compare 6 interrupt flag
+      *            @arg TIM_FLAG_COM:  Commutation interrupt flag
+      *            @arg TIM_FLAG_TRIGGER: Trigger interrupt flag
+      *            @arg TIM_FLAG_BREAK: Break interrupt flag
+      *            @arg TIM_FLAG_BREAK2: Break 2 interrupt flag
+      *            @arg TIM_FLAG_SYSTEM_BREAK: System Break interrupt flag
+      *            @arg TIM_FLAG_CC1OF: Capture/Compare 1 overcapture flag
+      *            @arg TIM_FLAG_CC2OF: Capture/Compare 2 overcapture flag
+      *            @arg TIM_FLAG_CC3OF: Capture/Compare 3 overcapture flag
+      *            @arg TIM_FLAG_CC4OF: Capture/Compare 4 overcapture flag
+      *            @arg TIM_FLAG_IDX: Index interrupt flag
+      *            @arg TIM_FLAG_DIR: Direction change interrupt flag
+      *            @arg TIM_FLAG_IERR: Index error interrupt flag
+      *            @arg TIM_FLAG_TERR: Transition error interrupt flag
+      * @retval The new state of __FLAG__ (TRUE or FALSE).
+      */
+      __HAL_TIM_CLEAR_FLAG(&Encoder_TIM_HandleType, TIM_IT_UPDATE);
+    
+    /** @brief  Enable the specified TIM interrupt.
+      * @param  __HANDLE__ specifies the TIM Handle.
+      * @param  __INTERRUPT__ specifies the TIM interrupt source to enable.
+      *          This parameter can be one of the following values:
+      *            @arg TIM_IT_UPDATE: Update interrupt
+      *            @arg TIM_IT_CC1:   Capture/Compare 1 interrupt
+      *            @arg TIM_IT_CC2:  Capture/Compare 2 interrupt
+      *            @arg TIM_IT_CC3:  Capture/Compare 3 interrupt
+      *            @arg TIM_IT_CC4:  Capture/Compare 4 interrupt
+      *            @arg TIM_IT_COM:   Commutation interrupt
+      *            @arg TIM_IT_TRIGGER: Trigger interrupt
+      *            @arg TIM_IT_BREAK: Break interrupt
+      *            @arg TIM_IT_IDX: Index interrupt
+      *            @arg TIM_IT_DIR: Direction change interrupt
+      *            @arg TIM_IT_IERR: Index error interrupt
+      *            @arg TIM_IT_TERR: Transition error interrupt
+      * @retval None
+      */
+    __HAL_TIM_ENABLE_IT(&Encoder_TIM_HandleType, TIM_IT_UPDATE);
+}
+
+
+/**
+  * @brief  Initializes the TIM Encoder Interface MSP.
+  * @param  htim TIM Encoder Interface handle
+  * @retval None
+  */
+void Encoder_MspInitCallback(TIM_HandleTypeDef *htim)
+{
+  /* Prevent unused argument(s) compilation warning
+  UNUSED(htim);
+    */
+  /* NOTE : This function should not be modified, when the callback is needed,
+            the HAL_TIM_Encoder_MspInit could be implemented in the user file
+   */
+    
+    if (htim -> Instance == ENCODER_TIMER)
+    {
+        InitGPIOPs();
+               
+        HAL_NVIC_SetPriority(ENCODER_TIMER_IRQN, 2U, 2U);
+        HAL_NVIC_EnableIRQ(ENCODER_TIMER_IRQN);
+    }
+}
+
+/**
+ * @brief  Period elapsed callback in non blocking mode
+ * @note   This function is called  when TIM6 interrupt took place, inside
+ * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ * a global variable "uwTick" used as application time base.
+ * @param  htim : TIM handle
+ * @retval None
+ */
+void EncoderPeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+    /* USER CODE BEGIN Callback 0 */
+
+    /* USER CODE END Callback 0 */
+    if (htim ->Instance == ENCODER_TIMER)
+    {
+        if (__HAL_TIM_IS_TIM_COUNTING_DOWN(&Encoder_TIM_HandleType))
+            encoderCountOverflow --;
+        else
+            encoderCountOverflow ++;
+    }
+    /* USER CODE BEGIN Callback 1 */
+
+    /* USER CODE END Callback 1 */
+}
+
+void VELOCITY_ENCODER_TIMER_IRQHANDLER(void)
+{
+    HAL_TIM_IRQHandler(&Encoder_TIM_HandleType);
+}
+
+int32_t GetEncoderCounter(void)
+{
+    int32_t counter = (int32_t)__HAL_TIM_GET_COUNTER(&Encoder_TIM_HandleType) + encoderCountOverflow * ENCODER_AUTO_RELOAD;
+    
+    return counter;
+}
+
+void EvaluateVelocity(int32_t counter, uint8_t iterations, int16_t *velocity)
+{
+    static uint8_t times = 0, filters = 0;
+    static float velocities [10] = { 0.0 };
+    
+    uint8_t m, n;
+    
+    float each = 0.0f;
+    
+    if (times == iterations)
+    {
+        /*
+        
+        Steps to compute the Rounds per Minute:
+        
+        Step #1: calculate the delta (increments or decrements) of counter within [iterations] times (Milliseconds).
+        Step #2: calculate the delta (increments or decrements) of counter within one minite.
+        Step #3: divide the counter number when the encoder rotates per round.
+        Step #4: divide the Gear Ratio to acquire the final velocity of the motor.
+        
+        */
+        velocityEncoderType.counterNumber = counter;
+        velocityEncoderType.delta = velocityEncoderType.counterNumber - velocityEncoderType.lastCounterNumber;
+        velocities[filters ++] = (float)(velocityEncoderType.delta * (1000.0f / iterations * 60.0) / (GEAR_RATIO * FREQUENCY_MULTIPLIER * PULSES_PER_ROUND));
+
+        int32_t a = velocityEncoderType.lastCounterNumber;
+        
+        velocityEncoderType.lastCounterNumber = velocityEncoderType.counterNumber;  /* Persist the curent Counter Number. */
+        
+        /* Filter after 10 consecutive velocities. */
+        if (filters >= 10)
+        {
+            /* Bubble sorting. */
+            for (m = 10; m >= 1; m --)
+            {
+                for (n = 0; n < m - 1; n ++)
+                {
+                    if (velocities[n] > velocities[n + 1])
+                    {
+                        each = velocities[n];
+                        velocities[n] = velocities[n + 1];
+                        velocities[n + 1] = each;
+                    }
+                }
+            }
+            
+            each = 0.0f;
+            
+            for (m = 2; m < 8; m ++)
+                each += velocities[m];
+            
+            each = each / 6.0f;
+            
+            /*
+            
+            First order low pass filter: Y(n)= qX(n) + (1-q)Y(n-1),
+            
+            X(n): Current sampling value.
+            Y(n-1): Previous filter output.
+            Y(n): Current filter output.
+            
+            */
+            
+            *velocity = (float)(0.52f * (*velocity) + (1.0f - 0.52f) * each);
+            
+            filters = 0;
+        }
+        
+        times = 0;
+    }
+    
+    times ++;
+}
