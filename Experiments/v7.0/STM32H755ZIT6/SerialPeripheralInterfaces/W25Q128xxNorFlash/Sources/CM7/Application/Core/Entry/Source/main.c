@@ -41,6 +41,7 @@ int main(void)
     
     uint8_t receivedByte;
     char *bytes = { "Hello, world!" };
+    uint8_t length = sizeof bytes;
     
     uint8_t i = 0;
     
@@ -50,14 +51,15 @@ int main(void)
         
         if (0x2000 == (GPIOC -> IDR & 0x2000))
         {
-            DelayMs(10);
+            DelayMs(20);
             
             if (0x2000 == (GPIOC -> IDR & 0x2000))
             {
                 while (0x2000 == (GPIOC -> IDR & 0x2000))
                     ;
                 
-                Transceive(0xAA);
+                //while (length --)
+                    Transceive(8, 0xDD);
             }
         }
         

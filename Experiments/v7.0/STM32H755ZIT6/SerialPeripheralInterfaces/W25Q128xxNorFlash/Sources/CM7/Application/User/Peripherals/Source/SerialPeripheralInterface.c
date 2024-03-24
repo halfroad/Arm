@@ -20,7 +20,7 @@
 #define CRC_SIZE                                                            SPI_CFG1_CRCSIZE
 
 #define MASTER_BAUD_RATE_MASK                                               SPI_CFG1_MBR_Msk
-#define MASTER_BAUD_RATE                                                    (SPI_CFG1_MBR_0 | SPI_CFG1_MBR_1 | SPI_CFG1_MBR_2)
+#define MASTER_BAUD_RATE                                                    SPI_CFG1_MBR_1
 
 /*  Configuration Register 2.  */
 #define CONFIGURATION_REGISTER2                                             CFG2
@@ -45,13 +45,14 @@
 #define INTERNAL_SLAVE_SELECT_MASK                                          SPI_CR1_SSI_Msk
 #define INTERNAL_SLAVE_SELECT                                               SPI_CR1_SSI
 #define SERIAL_PERIPHERAL_ENABLE                                            SPI_CR1_SPE
+#define MASTER_TRANSFER_START                                               SPI_CR1_CSTART
 
-#define INTERRUPTS_ENABLED                                                  1
+#define INTERRUPTS_ENABLED                                                  0
 
 /*  Interrupts Enablement Register.     */
 #define INTERRUPTS_ENABLEMENT_REGISTER                                      IER
 
-#define EOT_SUSP_TXC_INTERRUPT_ENABLE                                       SPI_IER_EOTIE
+#define EOT_SUSP_TXC_INTERRUPT_ENABLE                                       (SPI_IER_RXPIE | SPI_IER_TXPIE | SPI_IER_EOTIE | SPI_IER_TXTFIE | SPI_IER_MODFIE)
 #define SPI_IRQN                                                            SPI1_IRQn
 #define SPI_IRQ_HANDLER                                                     SPI1_IRQHandler
 
@@ -189,10 +190,10 @@ void InitSerialPeripheralInterface(void)
         11111: 32-bits
     Note: The most significant bit at DSIZE bit field is reserved at the peripheral instances where
     data size is limited to 16-bit.
-    
     */
     SPI -> CONFIGURATION_REGISTER1 &= ~DATA_SIZE_MASK; 
     SPI -> CONFIGURATION_REGISTER1 |= DATA_SIZE;
+    
     
     /*
     
@@ -249,6 +250,8 @@ void InitSerialPeripheralInterface(void)
     SPI -> CONFIGURATION_REGISTER1 &= ~ MASTER_BAUD_RATE_MASK; 
     SPI -> CONFIGURATION_REGISTER1 |= MASTER_BAUD_RATE;
     
+    SPI -> CONFIGURATION_REGISTER1 |= SPI_CR1_HDDIR;
+    
     /*
     
     Bits 18:17 COMM[1:0]: SPI communication mode
@@ -277,8 +280,9 @@ void InitSerialPeripheralInterface(void)
         1: LSB transmitted first
     Note: This bit can be also used in PCM and I2S modes
     
+    SPI -> CONFIGURATION_REGISTER2 &= ~LSB_FRST_DATA_FRAME_FORMAT;
+    
     */
-    SPI -> CONFIGURATION_REGISTER2 |= LSB_FRST_DATA_FRAME_FORMAT;
     
     /*
     
@@ -365,6 +369,8 @@ void InitSerialPeripheralInterface(void)
     
 #if INTERRUPTS_ENABLED
 
+    SetNestedVectoredInterruptPriorty(SPI_IRQN, 2, 2);
+
     /*
 
     Bit 3 EOTIE: EOT, SUSP and TXC interrupt enable
@@ -374,8 +380,6 @@ void InitSerialPeripheralInterface(void)
     */
 
     SPI -> INTERRUPTS_ENABLEMENT_REGISTER |= EOT_SUSP_TXC_INTERRUPT_ENABLE;
-    
-    SetNestedVectoredInterruptPriorty(SPI_IRQN, 2, 2);
 
 #endif  /*  #if INTERRUPTS_ENABLED  */
     
@@ -392,7 +396,24 @@ void InitSerialPeripheralInterface(void)
     SPE cannot be set when MODF error flag is active.
     
     */
-    SPI -> CONTROL_REGISTER1 |= SERIAL_PERIPHERAL_ENABLE ;
+    SPI -> CONTROL_REGISTER1 |= SERIAL_PERIPHERAL_ENABLE;
+    
+     /*
+    
+    Bit 9 CSTART: master transfer start
+    This bit is set by software to start an SPI or I2S/PCM communication. In SPI mode, it is
+    cleared by hardware when End Of Transfer (EOT) flag is set or when a transaction suspend
+    request is accepted. In I2S/PCM mode, it is also cleared by hardware as described in the
+    section stop sequence.
+        0: master transfer is at idle
+        1: master transfer is on-going or temporary suspended by automatic suspend
+    In SPI mode, CSTART can be set only when SPE=1 and MASTER=1.
+    In SPI mode, In case of master transmission is enabled, communication starts or continues
+    only if any data is available in the transmission FIFO.
+    In I2S/PCM mode, CSTART can be set when SPE = 1
+    
+    */
+    SPI -> CONTROL_REGISTER1 |= MASTER_TRANSFER_START;
 }
 
 static void InitGPIOs(void)
@@ -465,7 +486,7 @@ static void InitGPIOs(void)
     
     */
     SCK_GPIO_PORT -> PUPDR &= ~SCK_GPIO_PULL_UP_DOWN_MASK;
-    SCK_GPIO_PORT -> PUPDR |= SCK_GPIO_PULL_UP_DOWN;
+    //SCK_GPIO_PORT -> PUPDR |= SCK_GPIO_PULL_UP_DOWN;
     
     /*
     
@@ -540,7 +561,7 @@ static void InitGPIOs(void)
     MISO_GPIO_PORT -> OSPEEDR |= MISO_GPIO_OUTPUT_SPEED;
     
     MISO_GPIO_PORT -> PUPDR &= ~MISO_GPIO_PULL_UP_DOWN_MASK;
-    MISO_GPIO_PORT -> PUPDR |= MISO_GPIO_PULL_UP_DOWN;
+    //MISO_GPIO_PORT -> PUPDR |= MISO_GPIO_PULL_UP_DOWN;
     
     MISO_GPIO_PORT -> AFR[MISO_GPIO_PIN_ALTERNATE_FUNCTION_REGISTERS_ARRAY_INDEX] &= ~MISO_GPIO_ALTERNATE_FUNCTIOM_SELECTOR_MASK;
     MISO_GPIO_PORT -> AFR[MISO_GPIO_PIN_ALTERNATE_FUNCTION_REGISTERS_ARRAY_INDEX] |= MISO_GPIO_ALTERNATE_FUNCTIOM_SELECTOR;
@@ -557,7 +578,7 @@ static void InitGPIOs(void)
     MOSI_GPIO_PORT -> OSPEEDR |= MOSI_GPIO_OUTPUT_SPEED;
     
     MOSI_GPIO_PORT -> PUPDR &= ~MOSI_GPIO_PULL_UP_DOWN_MASK;
-    MOSI_GPIO_PORT -> PUPDR |= MOSI_GPIO_PULL_UP_DOWN;
+   // MOSI_GPIO_PORT -> PUPDR |= MOSI_GPIO_PULL_UP_DOWN;
     
     MOSI_GPIO_PORT -> AFR[MOSI_GPIO_PIN_ALTERNATE_FUNCTION_REGISTERS_ARRAY_INDEX] &= ~MOSI_GPIO_ALTERNATE_FUNCTIOM_SELECTOR_MASK;
     MOSI_GPIO_PORT -> AFR[MOSI_GPIO_PIN_ALTERNATE_FUNCTION_REGISTERS_ARRAY_INDEX] |= MOSI_GPIO_ALTERNATE_FUNCTIOM_SELECTOR;
@@ -574,7 +595,7 @@ static void InitGPIOs(void)
     NSS_GPIO_PORT -> OSPEEDR |= NSS_GPIO_OUTPUT_SPEED;
     
     NSS_GPIO_PORT -> PUPDR &= ~NSS_GPIO_PULL_UP_DOWN_MASK;
-    NSS_GPIO_PORT -> PUPDR |= NSS_GPIO_PULL_UP_DOWN;
+   // NSS_GPIO_PORT -> PUPDR |= NSS_GPIO_PULL_UP_DOWN;
     
     /*
     https://controllerstech.com/spi-using-registers-in-stm32/
@@ -582,7 +603,7 @@ static void InitGPIOs(void)
     */
 }
 
-void Transceive(uint8_t byte)
+void Transceive(uint8_t bitsNumber, uint32_t bytes)
 {
     IssueSelectSlaveSignal(SlaveSelected);
     
@@ -600,49 +621,27 @@ void Transceive(uint8_t byte)
     can be written by single access
     
     */
-    SPI -> TXDR = byte;
     
-    /*
-    
-    Bits 15:0 TSIZE[15:0]: number of data at current transfer
-    When these bits are changed by software, the SPI must be disabled. The field can be
-    updated by hardware optionally, too, to be reloaded by the TSER value if applicable.
-    Endless transaction is initialized when CSTART is set while zero value is stored at TSIZE.
-    TSIZE cannot be set to 0xFFFF value when CRC is enabled.
-    
-    When TSIZE is reached, transmission stops until you clear the EOT flag and re-start it. Additional info in the reference manual.
+    while ((SPI -> SR & SPI_SR_TXP) == 0)
+        ;
         
-    SPI -> CONTROL_REGISTER2 &= ~NUMBER_OF_DATA_AT_CURRENT_TRANSFER_MASK;
-    SPI -> CONTROL_REGISTER2 |= NUMBER_OF_DATA_AT_CURRENT_TRANSFER;
-    
-    */
+    if (bitsNumber > 15)
+        *((__IO uint32_t *)&SPI -> TXDR) = bytes;
+    else if (bitsNumber > 7)
+        *((__IO uint16_t *)&SPI -> TXDR) = bytes;
+    else
+        *((__IO uint8_t *)&SPI -> TXDR) = bytes;
     
     /*
     
     https://community.st.com/t5/stm32-mcus-products/spi-not-sending/td-p/394883
     https://www.mikrocontroller.net/attachment/545366/H750_SPI1.c
-
-    while (!(SPI -> SR & SPI_SR_TXC))
+http://m.eeworld.com.cn/bbs_thread-1118514-1-1.html
+    */
+    while ((SPI -> SR & SPI_SR_TXC) == 0)
         ;
-        
-    */
     
-    /*
-    
-    Bit 9 CSTART: master transfer start
-    This bit is set by software to start an SPI or I2S/PCM communication. In SPI mode, it is
-    cleared by hardware when End Of Transfer (EOT) flag is set or when a transaction suspend
-    request is accepted. In I2S/PCM mode, it is also cleared by hardware as described in the
-    section stop sequence.
-        0: master transfer is at idle
-        1: master transfer is on-going or temporary suspended by automatic suspend
-    In SPI mode, CSTART can be set only when SPE=1 and MASTER=1.
-    In SPI mode, In case of master transmission is enabled, communication starts or continues
-    only if any data is available in the transmission FIFO.
-    In I2S/PCM mode, CSTART can be set when SPE = 1
-    
-    */
-    SPI -> CONTROL_REGISTER1 |= SPI_CR1_CSTART;
+    SPI -> IFCR = SPI_IFCR_EOTC | SPI_IFCR_TXTFC;
     
     IssueSelectSlaveSignal(SlaveUnselected);
 }
