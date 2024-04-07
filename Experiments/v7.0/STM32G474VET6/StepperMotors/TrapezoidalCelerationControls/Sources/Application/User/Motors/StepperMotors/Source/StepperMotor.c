@@ -134,7 +134,7 @@ void InitStepperMotor(void)
 
 void StartMotor(ConnectorNumbers number, RotaryDirections rotationDirection)
 {
-   // ENABLE_MOTOR(number, Enabled);
+    ENABLE_MOTOR(number, Enabled);
     DIVERT_MOTOR(number, rotationDirection);
     
     switch (number)

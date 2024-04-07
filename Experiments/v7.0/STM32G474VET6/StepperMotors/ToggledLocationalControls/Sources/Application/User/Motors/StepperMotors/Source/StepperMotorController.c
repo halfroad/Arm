@@ -11,7 +11,7 @@ static void onAdvancedTimerPeriodElapsedHandler(TIM_HandleTypeDef *htim);
 
 void InitStepperMotorController(void)
 {
-    InitAdvancedTimer(170 - 1, 1000 - 1, onAdvancedTimerPeriodElapsedHandler);
+    InitAdvancedTimer(170 - 1, 0xFFFF, onAdvancedTimerPeriodElapsedHandler);
     InitStepperMotor();
     
     if (stepperMotor.Init)
@@ -22,7 +22,9 @@ static void onAdvancedTimerPeriodElapsedHandler(TIM_HandleTypeDef *htim)
 {
     static uint8_t i = 0;
     
-    if (++ i % 2 == 0)
+    i ++;
+    
+    if (i % 2 == 0)
     {
         i = 0;
         
