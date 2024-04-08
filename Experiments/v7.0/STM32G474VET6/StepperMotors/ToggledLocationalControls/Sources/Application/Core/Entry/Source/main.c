@@ -194,13 +194,19 @@ int main(void)
             }
         }
         
-        HAL_Delay(10);
+        i ++;
         
-        if ( i++ % 10 == 0)
+        if ( i % 20 == 0)
         {
             ToggleLED(LightChoiceRedLED);
             ToggleLED(LightChoiceGreenLED);
+            
+            i = 0;
         }
+        
+        HAL_Delay(10);
+        
+        
         
         /* USER CODE END WHILE */
 

@@ -48,7 +48,7 @@ static void OC_MspInitCallback(TIM_HandleTypeDef *htim);
 
 static void ConfigurePulseWidthModlationOutputChannel(uint32_t channel, uint16_t pulse);
 
-void InitAdvancedTimer(uint32_t prescaler, uint16_t period, void (* advancedTimerPeriodElapsedHandler)(TIM_HandleTypeDef *htim))
+void InitAdvancedTimer(uint32_t prescaler, uint16_t period, void (* advancedTimerOutputDelayElapsedHandler)(TIM_HandleTypeDef *htim))
 {
     TIM_HandleType.Instance                 = TIMER;
     
@@ -63,10 +63,10 @@ void InitAdvancedTimer(uint32_t prescaler, uint16_t period, void (* advancedTime
     
     HAL_TIM_OC_Init(&TIM_HandleType);
 
-    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_0, period / 2);
-    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_1, period / 2);
+    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_0, 0);
+    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_1, 0);
     
-    HAL_TIM_RegisterCallback(&TIM_HandleType, HAL_TIM_OC_DELAY_ELAPSED_CB_ID, advancedTimerPeriodElapsedHandler);
+    HAL_TIM_RegisterCallback(&TIM_HandleType, HAL_TIM_OC_DELAY_ELAPSED_CB_ID, advancedTimerOutputDelayElapsedHandler);
     
     HAL_TIM_Base_Start(&TIM_HandleType);
 }
@@ -84,6 +84,8 @@ static void ConfigurePulseWidthModlationOutputChannel(uint32_t channel, uint16_t
     TIM_OC_InitType.OCNIdleState            = TIM_OCNIDLESTATE_RESET;
     
     HAL_TIM_OC_ConfigChannel(&TIM_HandleType, &TIM_OC_InitType, channel);
+    
+    __HAL_TIM_DISABLE_OCxPRELOAD(&TIM_HandleType, channel);
 }
 
 static void OC_MspInitCallback(TIM_HandleTypeDef *htim)
@@ -149,9 +151,7 @@ void StartPulseWidthModulation(PulseWidthModulationOutputCompareChannels channel
 }
 
 void StopPulseWidthModulation(PulseWidthModulationOutputCompareChannels channel)
-{
-    HAL_TIM_Base_Stop_IT(&TIM_HandleType);
-    
+{    
     switch (channel)
     {
         case PulseWidthModulationOutputCompareChannel0:
@@ -167,20 +167,20 @@ void StopPulseWidthModulation(PulseWidthModulationOutputCompareChannels channel)
     }
 }
 
-void AssignNewCompare(TIM_HandleTypeDef *htim)
+void AssignNewCompare(uint16_t increments)
 {
-    static uint32_t counter = 0, ccr = 500;
+    static uint16_t counter = 0;
     
-    counter = __HAL_TIM_GET_COUNTER(htim);
+    counter = __HAL_TIM_GET_COUNTER(&TIM_HandleType);
     
-    switch (htim -> Channel)
+    switch (TIM_HandleType.Channel)
     {
         case HAL_TIM_ACTIVE_CHANNEL_1:
-            __HAL_TIM_SET_COMPARE(htim, TIMER_OUTPUT_COMPARE_CHANNLE_0, (counter + ccr) % 0xFFFF);
+            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_0, (counter + increments) % 0xFFFF);
             break;
         
         case HAL_TIM_ACTIVE_CHANNEL_2:
-            __HAL_TIM_SET_COMPARE(htim, TIMER_OUTPUT_COMPARE_CHANNLE_1, (counter + ccr) % 0xFFFF);
+            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_1, (counter + increments) % 0xFFFF);
             break;
         
         default:

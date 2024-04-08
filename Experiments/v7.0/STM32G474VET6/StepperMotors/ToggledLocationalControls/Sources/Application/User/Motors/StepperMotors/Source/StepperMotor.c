@@ -8,14 +8,17 @@
                                                                         __HAL_RCC_GPIOF_CLK_ENABLE();                                                                               \
                                                                     }                                                                                                               \
                                                                     while   (0)
+
 #define MOTOR_0_DIRECTION_GPIO_PIN                                  GPIO_PIN_2
 
 #define MOTOR_0_ENABLEMENT_GPIO_PORT                                GPIOF
+
 #define RCC_MOTOR_0_ENABLEMENT_GPIO_CLOCK_ENABLE()                  do                                                                                                              \
                                                                     {                                                                                                               \
                                                                         __HAL_RCC_GPIOF_CLK_ENABLE();                                                                               \
                                                                     }                                                                                                               \
                                                                     while   (0)
+
 #define MOTOR_0_ENABLEMENT_GPIO_PIN                                 GPIO_PIN_9
 
                                                                     
@@ -25,6 +28,7 @@
                                                                         __HAL_RCC_GPIOE_CLK_ENABLE();                                                                               \
                                                                     }                                                                                                               \
                                                                     while   (0)
+
 #define MOTOR_1_DIRECTION_GPIO_PIN                                  GPIO_PIN_5
 
 #define MOTOR_1_ENABLEMENT_GPIO_PORT                                GPIOE
@@ -33,6 +37,7 @@
                                                                         __HAL_RCC_GPIOE_CLK_ENABLE();                                                                               \
                                                                     }                                                                                                               \
                                                                     while   (0)
+
 #define MOTOR_1_ENABLEMENT_GPIO_PIN                                 GPIO_PIN_6
                                                                     
 #define DIVERT_MOTOR(number, direction)                             do                                                                                                              \
@@ -70,18 +75,18 @@
                                                                             case ConnectorNumber0:                                                                             \
                                                                             {                                                                                                       \
                                                                                 if (Enabled == enablement)                                                                     \
-                                                                                    HAL_GPIO_WritePin(MOTOR_0_ENABLEMENT_GPIO_PORT, MOTOR_0_ENABLEMENT_GPIO_PIN, GPIO_PIN_SET);     \
+                                                                                    HAL_GPIO_WritePin(MOTOR_0_ENABLEMENT_GPIO_PORT, MOTOR_0_ENABLEMENT_GPIO_PIN, GPIO_PIN_RESET);     \
                                                                                 else                                                                                                \
-                                                                                    HAL_GPIO_WritePin(MOTOR_0_ENABLEMENT_GPIO_PORT, MOTOR_0_ENABLEMENT_GPIO_PIN, GPIO_PIN_RESET);   \
+                                                                                    HAL_GPIO_WritePin(MOTOR_0_ENABLEMENT_GPIO_PORT, MOTOR_0_ENABLEMENT_GPIO_PIN, GPIO_PIN_SET);   \
                                                                             }                                                                                                       \
                                                                             break;                                                                                                  \
                                                                                                                                                                                     \
                                                                             case ConnectorNumber1:                                                                             \
                                                                             {                                                                                                       \
                                                                                 if (Enabled == enablement)                                                                     \
-                                                                                    HAL_GPIO_WritePin(MOTOR_1_ENABLEMENT_GPIO_PORT, MOTOR_1_ENABLEMENT_GPIO_PIN, GPIO_PIN_SET);     \
+                                                                                    HAL_GPIO_WritePin(MOTOR_1_ENABLEMENT_GPIO_PORT, MOTOR_1_ENABLEMENT_GPIO_PIN, GPIO_PIN_RESET);     \
                                                                                 else                                                                                                \
-                                                                                    HAL_GPIO_WritePin(MOTOR_1_ENABLEMENT_GPIO_PORT,MOTOR_1_ENABLEMENT_GPIO_PIN,  GPIO_PIN_RESET);   \
+                                                                                    HAL_GPIO_WritePin(MOTOR_1_ENABLEMENT_GPIO_PORT, MOTOR_1_ENABLEMENT_GPIO_PIN, GPIO_PIN_SET);   \
                                                                             }                                                                                                       \
                                                                             break;                                                                                                  \
                                                                                                                                                                                     \
@@ -134,7 +139,7 @@ void InitStepperMotor(void)
 
 void StartMotor(ConnectorNumbers number, RotaryDirections rotationDirection)
 {
-   // ENABLE_MOTOR(number, Enabled);
+    ENABLE_MOTOR(number, Enabled);
     DIVERT_MOTOR(number, rotationDirection);
     
     switch (number)

@@ -7,18 +7,18 @@
 
 extern StepperMotorTypeDef stepperMotor;
 
-static void onAdvancedTimerPeriodElapsedHandler(TIM_HandleTypeDef *htim);
+static void onAdvancedTimerOutputDelayElapsedHandler(TIM_HandleTypeDef *htim);
 
 void InitStepperMotorController(void)
 {
-    InitAdvancedTimer(170 - 1, 0xFFFF, onAdvancedTimerPeriodElapsedHandler);
+    InitAdvancedTimer(170 - 1, 0xFFFF - 1, onAdvancedTimerOutputDelayElapsedHandler);
     InitStepperMotor();
     
     if (stepperMotor.Init)
         stepperMotor.Init();
 }
 
-static void onAdvancedTimerPeriodElapsedHandler(TIM_HandleTypeDef *htim)
+static void onAdvancedTimerOutputDelayElapsedHandler(TIM_HandleTypeDef *htim)
 {
     static uint8_t i = 0;
     
@@ -26,8 +26,6 @@ static void onAdvancedTimerPeriodElapsedHandler(TIM_HandleTypeDef *htim)
     
     if (i % 2 == 0)
     {
-        i = 0;
-        
         stepperMotor.pulses --;
         stepperMotor.state = StateRun;
         
@@ -44,7 +42,8 @@ static void onAdvancedTimerPeriodElapsedHandler(TIM_HandleTypeDef *htim)
         }
     }
     
-    AssignNewCompare(htim);
+   // AssignNewCompare(500 - i);
+    AssignNewCompare(500 - 1);
 }
 
 void AssignAngle(ConnectorNumbers number, RotaryDirections rotaryDirection, float angle)

@@ -11,7 +11,7 @@ typedef enum
     
 } PulseWidthModulationOutputCompareChannels;
 
-void InitAdvancedTimer(uint32_t prescaler, uint16_t period, void (* onAdvancedTimerPeriodElapsedHandler)(TIM_HandleTypeDef *htim));
+void InitAdvancedTimer(uint32_t prescaler, uint16_t period, void (* advancedTimerOutputDelayElapsedHandler)(TIM_HandleTypeDef *htim)));
 
 void StartPulseWidthModulation(PulseWidthModulationOutputCompareChannels channel);
 void StopPulseWidthModulation(PulseWidthModulationOutputCompareChannels channel);

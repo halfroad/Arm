@@ -66,8 +66,8 @@ void InitAdvancedTimer(uint32_t prescaler, uint16_t period, void (* advancedTime
     
     HAL_TIM_RegisterCallback(&TIM_HandleType, HAL_TIM_PERIOD_ELAPSED_CB_ID, advancedTimerPeriodElapsedHandler);
 
-    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_0, period / 2);
-    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_1, period / 2);
+    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_0, period / 3);
+    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_1, period / 3);
 }
 
 static void ConfigurePulseWidthModlationOutputChannel(uint32_t channel, uint16_t pulse)

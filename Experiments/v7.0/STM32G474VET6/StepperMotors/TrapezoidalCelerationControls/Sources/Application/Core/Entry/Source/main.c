@@ -157,6 +157,8 @@ int main(void)
         }
         else if (state == KEY_2_PRESSED)
         {
+            stepperMotor.rotaryDirection = steps > 0 ? RotaryDirectionClockwise: RotaryDirectionAntiClockwise;
+            
             RotateMotor(steps, accelerations, decelerations, velocity);
         }
         

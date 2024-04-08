@@ -41,11 +41,11 @@ typedef struct
     /*  Initializer */
     void (* Init)(void);
     
-} TrapezoidalMotionAlgorithmTypeDef;
+} TrapezoidalMotionsTypeDef;
 
-void InitTrapezoidalMotionAlgorithm(void);
+void InitTrapezoidalMotions(void);
 
-void CreateTrapezoidalVelocityControlParameters(int16_t steps, uint32_t acceleration, uint32_t deceleration, uint32_t maximumVelocity);
-void AssignNextPeriod(void (* motionStateChangeOccurs)(MotionStates newMotionState, uint16_t newPeriod));
+void GenerateTrapezoidalMotions(int16_t steps, uint32_t acceleration, uint32_t deceleration, uint32_t maximumVelocity);
+void ComputeNextPeriod(void (* motionStateChangeOccurs)(MotionStates newMotionState, uint16_t newPeriod));
 
 #endif  /*  #ifndef __TRAPEZOIDAL_MOTION_ALGORITHM_H   */
