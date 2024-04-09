@@ -18,8 +18,10 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-#include "stm32g4xx_it.h"
+
+#include "./Entry/Include/main.h"
+#include "./Interrutps/Include/stm32g4xx_it.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */

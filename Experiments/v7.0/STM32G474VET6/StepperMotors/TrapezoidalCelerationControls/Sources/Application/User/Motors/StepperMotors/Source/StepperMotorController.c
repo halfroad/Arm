@@ -1,56 +1,98 @@
-#include "../../../Peripherals/Timers/Include/AdavancedTimer.h"
+#include "./Peripherals/Timers/Include/AdavancedTimer.h"
+#include "../Include/TrapezoidalMotionAlgorithm.h"
 
 #include "../Include/StepperMotorController.h"
 
-#define PULSES_PER_ROUND                        (1600.0f)
-#define MINIMAL_ANGLE_PER_STEP                  (1.8f / 8.0f)
+#define PRESCALER                               170
+
+#define STEP_SUB_DIVISION                       8
+#define ANGLE_PER_STEP                          1.8f
+#define STEPS_PER_ROUND                         200
+
+#define PULSES_PER_ROUND                        (STEP_SUB_DIVISION * STEPS_PER_ROUND)
+#define MINIMAL_ANGLE_PER_STEP                  (ANGLE_PER_STEP / STEP_SUB_DIVISION)
 
 extern StepperMotorTypeDef stepperMotor;
+extern TrapezoidalMotionAlgorithmTypeDef motions;
 
-static void onAdvancedTimerOutputDelayElapsedHandler(TIM_HandleTypeDef *htim);
+static void OnAdvancedTimerOutputDelayElapsedHandler(TIM_HandleTypeDef *htim);
 
 void InitStepperMotorController(void)
 {
-    InitAdvancedTimer(85 - 1, 0xFFFF, onAdvancedTimerOutputDelayElapsedHandler);
+    InitAdvancedTimer(PRESCALER - 1, 0xFFFF - 1, OnAdvancedTimerOutputDelayElapsedHandler);
     InitStepperMotor();
     
     if (stepperMotor.Init)
         stepperMotor.Init();
+    
+    InitTrapezoidalMotions(PRESCALER);
+    
+    if (motions.Init)
+        motions.Init();
 }
 
-static void onAdvancedTimerOutputDelayElapsedHandler(TIM_HandleTypeDef *htim)
+void OnTrapezoidMotionEstimatedHandler(int32_t rounds)
+{
+    stepperMotor.rotaryDirection = rounds > 0 ? RotaryDirectionClockwise: RotaryDirectionAntiClockwise;
+    
+    StartMotor(stepperMotor.number, stepperMotor.rotaryDirection);    
+}
+
+void ApplyTrapezoidalMotions(int16_t rounds, int8_t acceleration, int16_t velocity, int8_t deceleration)
+{    
+    MoveTrapezoid(rounds, acceleration, velocity, deceleration, OnTrapezoidMotionEstimatedHandler);
+}
+
+void OnNextPeriodEstimatedHandler(MotionStates newMotionState, uint16_t newPulsePeriod)
+{
+    switch (newMotionState)
+    {
+        case MotionStateAcceleration:
+        case MotionStateUniformVelocity:
+        case MotionStateDeceleration:
+
+            stepperMotor.pulses ++;
+        
+            if (stepperMotor.rotaryDirection == RotaryDirectionClockwise)
+                stepperMotor.absoluteScales ++;
+            else
+                stepperMotor.absoluteScales --;
+        
+            break;
+        
+        default:
+            break;
+    }
+}
+
+void OnMotionCompletedHandler(void)
+{
+    StopMotor(stepperMotor.number);
+}
+
+static void OnAdvancedTimerOutputDelayElapsedHandler(TIM_HandleTypeDef *htim)
 {
     static uint8_t i = 0;
     
-    i ++;
-    
-    if (i % 2 == 0)
+    switch (stepperMotor.number)
     {
-        stepperMotor.pulses --;
-        stepperMotor.state = StateRun;
+        case ConnectorNumber0:
+            AssignNewCompare(PulseWidthModulationOutputCompareChannel0, motions.estimatedNextPulsePeriod / 2);
+            break;
         
-        if (stepperMotor.rotaryDirection == RotaryDirectionClockwise)
-            stepperMotor.accumulativePulses ++;
-        else
-            stepperMotor.accumulativePulses --;
+        case ConnectorNumber1:
+            AssignNewCompare(PulseWidthModulationOutputCompareChannel1, motions.estimatedNextPulsePeriod / 2);
+            break;
         
-        if (stepperMotor.pulses <= 0)
-        {
-            stepperMotor.state = StateStopped;
-            
-            StopMotor(stepperMotor.number);
-        }
+        default:
+            break;
     }
     
-    AssignNewCompare(500);
-}
-
-void AssignAngle(ConnectorNumbers number, RotaryDirections rotaryDirection, float angle)
-{
-    stepperMotor.pulses = angle / MINIMAL_ANGLE_PER_STEP;
     
-    if (stepperMotor.pulses == 0)
-        StopMotor(number);
-    else
-        StartMotor(number, rotaryDirection);
+    if (++ i == 2)
+    {
+        EstimateNextPeriod(OnNextPeriodEstimatedHandler, OnMotionCompletedHandler);
+        
+        i = 0;
+    }
 }

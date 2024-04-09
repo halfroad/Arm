@@ -53,10 +53,10 @@
 
 extern StepperMotorTypeDef stepperMotor;
 
-int16_t steps           = 1;
-uint32_t accelerations  = 25;
-uint32_t decelerations  = 20;
-uint32_t velocity       = 1000;
+uint16_t rounds              = 1;
+uint32_t acceleration       = 25;
+uint32_t velocity           = 1000;
+uint32_t deceleration       = 20;
 
 /* USER CODE END PV */
 
@@ -122,44 +122,44 @@ int main(void)
 
     KeyPressStates state;
     
-    uint8_t i                   = 0;
-    uint8_t motorNumber         = 0;
-    
-    SelectMotorNumber(motorNumber);
+    uint8_t i = 0;
     
     while (1)
     {
-        state                   = ScanButton();
+        state = ScanButton();
 
         if (state == KEY_0_PRESSED)
         {
-            steps ++;
+            rounds ++;
             
-            if (steps > 100)
-                steps = 1;
+            if (rounds > 100)
+                rounds = 1;
             
             /*
             SelectMotorNumber(motorNumber);
             
             motorNumber ^= 0x01 << 0;
             */
-            printf("steps = %d.\n", steps);
+            printf("Rounds = %d.\n", rounds);
             
         }
         else if (state == KEY_1_PRESSED)
         {
-            steps --;
+            rounds --;
             
-            if (steps < 1)
-                steps = 100;
+            if (rounds < 1)
+                rounds = 100;
             
-            printf("steps = %d.\n", steps);
+            printf("steps = %d.\n", rounds);
         }
         else if (state == KEY_2_PRESSED)
         {
-            stepperMotor.rotaryDirection = steps > 0 ? RotaryDirectionClockwise: RotaryDirectionAntiClockwise;
+            ApplyTrapezoidalMotions(rounds, acceleration, velocity, deceleration);
             
-            RotateMotor(steps, accelerations, decelerations, velocity);
+            rounds          = 1;
+            acceleration    = 25;
+            velocity        = 1000;
+            deceleration    = 20;
         }
         
         HAL_Delay(10);

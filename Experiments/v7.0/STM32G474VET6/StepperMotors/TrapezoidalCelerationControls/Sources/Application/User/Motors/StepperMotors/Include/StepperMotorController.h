@@ -7,6 +7,6 @@ void InitStepperMotorController(void);
 
 
 void SelectMotorNumber(uint8_t number);
-void RotateMotor(int16_t steps, uint32_t accelerations, uint32_t decelerations, uint32_t velocity);
+void ApplyTrapezoidalMotions(int16_t steps, int8_t acceleration, int16_t velocity, int8_t deceleration);
 
 #endif  /*  #ifndef _STEPPER_MOTOR_CONTROLLER_H */

@@ -63,8 +63,8 @@ void InitAdvancedTimer(uint32_t prescaler, uint16_t period, void (* advancedTime
     
     HAL_TIM_OC_Init(&TIM_HandleType);
 
-    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_0, period / 2);
-    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_1, period / 2);
+    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_0, 0);
+    ConfigurePulseWidthModlationOutputChannel(TIMER_OUTPUT_COMPARE_CHANNLE_1, 0);
     
     HAL_TIM_RegisterCallback(&TIM_HandleType, HAL_TIM_OC_DELAY_ELAPSED_CB_ID, advancedTimerOutputDelayElapsedHandler);
     
@@ -121,7 +121,7 @@ static void OC_MspInitCallback(TIM_HandleTypeDef *htim)
         RCC_CHANNEL_1_ALTERNATE_FUNCTION_GPIO_CLOCK_ENABLE();
         HAL_GPIO_Init(CHANNEL_0_ALTERNATE_FUNCTION_GPIO_PORT, &GPIO_InitType);
         
-        HAL_NVIC_SetPriority(TIMER_IRQN, 2, 2);
+        HAL_NVIC_SetPriority(TIMER_IRQN, 1, 1);
         HAL_NVIC_EnableIRQ(TIMER_IRQN);
     }
 }
@@ -165,20 +165,24 @@ void StopPulseWidthModulation(PulseWidthModulationOutputCompareChannels channel)
     }
 }
 
-void AssignNewCompare(uint16_t increments)
+void AssignNewCompare(PulseWidthModulationOutputCompareChannels channel, uint16_t increments)
 {
     static uint16_t counter = 0;
     
     counter = __HAL_TIM_GET_COUNTER(&TIM_HandleType);
     
-    switch (TIM_HandleType.Channel)
+    /*
+    printf("counter = %#x, increments = %#x, counter + increments = %#x.\n", counter, increments, counter + increments);
+    */
+    
+    switch (channel)
     {
-        case HAL_TIM_ACTIVE_CHANNEL_1:
-            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_0, (counter + increments) % 0xFFFF);
+        case PulseWidthModulationOutputCompareChannel0:
+            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_0, counter + increments);
             break;
         
-        case HAL_TIM_ACTIVE_CHANNEL_2:
-            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_1, (counter + increments) % 0xFFFF);
+        case PulseWidthModulationOutputCompareChannel1:
+            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_1, counter + increments);
             break;
         
         default:

@@ -42,8 +42,7 @@ typedef struct
     float angle;
     
     __IO float pulses;
-    __IO float accumulativePulses;
-    __IO float absoluteRotations;
+    __IO float absoluteScales;
     
     States state;
     
@@ -53,7 +52,7 @@ typedef struct
 
 void InitStepperMotor(void);
 
-void StartMotor(ConnectorNumbers number, RotaryDirections rotaryDirection);
+void StartMotor(ConnectorNumbers number, RotaryDirections rotationDirection);
 void StopMotor(ConnectorNumbers number);
 
 #endif  /*  #ifndef __STEPPER_MOTOR_H   */

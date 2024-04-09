@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>STM32G474xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Sources\Application\Core\Configurations\Include;..\Sources\Application\Core\Entry\Include;..\Sources\Application\Core\Initializers\Include;..\Sources\Application\Core\Interrutps\Include;..\Sources\Application\User\Motors\StepperMotors\Include;..\Sources\Application\User\Peripherals\SerialCommunications\Include;..\Sources\Application\User\Peripherals\Timers\Include;..\Sources\Application\User\RTOS\Tasks\Include;..\Sources\Drivers\BSP\Buttons\Include;..\Sources\Drivers\BSP\LEDs\Include;..\Sources\Drivers\CMSIS\Device\ST\STM32G4xx\Include;..\Sources\Drivers\CMSIS\Include;..\Sources\Drivers\STM32G4xx_HAL_Driver\Inc;..\Sources\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\Sources\Middlewares\Third_Party\FreeRTOS\Source\include;..\Sources\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F</IncludePath>
+              <IncludePath>..\Sources\Application\Core;..\Sources\Application\User;..\Sources\Drivers\BSP;..\Sources\Drivers\CMSIS\Device\ST\STM32G4xx\Include;..\Sources\Drivers\CMSIS\Include;..\Sources\Drivers\STM32G4xx_HAL_Driver\Inc;..\Sources\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy;..\Sources\Middlewares\Third_Party\FreeRTOS\Source\include;..\Sources\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

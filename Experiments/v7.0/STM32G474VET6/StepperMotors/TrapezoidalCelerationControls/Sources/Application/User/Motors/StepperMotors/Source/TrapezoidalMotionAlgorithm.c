@@ -4,45 +4,51 @@
 
 #include "../Include/TrapezoidalMotionAlgorithm.h"
 
-#define TIMER_FREQUENCY                                 (SystemCoreClock / 85)
+#define ANGLE_PER_STEP_SUB_DIVISION                     8
+#define ANGLE_PER_STEP                                  1.8
+/*  pulses/step     */
+#define MINIMAL_ANGLE_PER_STEP                          ((float)(1.8f / ANGLE_PER_STEP_SUB_DIVISION))           /*  1.8f: rads/step
+                                                                                                                    rads/pulse      */
+#define PULSES_PER_ROUND                                (360 / MINIMAL_ANGLE_PER_STEP)                          /*  pulses/round or pulses/2π or pulses/360°    */
+#define FREQUENCY                                       (SystemCoreClock / timerPrescaler)
 
-#define ANGLE_PER_STEP_SUB_DIVISION                     8                                                   /*  pulses/step     */
-#define MINIMAL_ANGLE_PER_STEP                          (1.8f / ANGLE_PER_STEP_SUB_DIVISION)                /*  1.8f: rads/step
-                                                                                                                rads/pulse      */
-#define STEPS_PER_ROUND                                 200                                                 /*  steps/round     */
-#define PULSES_PER_ROUND                                (ANGLE_PER_STEP_SUB_DIVISION * STEPS_PER_ROUND)     /*  pulses/round or pulses/2π or pulses/360°    */
-
-#define PI                                              3.1415926
+#define PI                                              3.1415926f
 /*
 
 α = 2π/PULSES_PER_ROUND
 
 */
-#define ANGLE_PER_PULSE                                 (2 * PI / PULSES_PER_ROUND)                         /*
-                                                                                                                PULSES_PER_ROUND        = pulses/rounds,
-                                                                                                                θ(rads)                 = 2π/round
-                                                                                                                θ / PULSES_PER_ROUND    = 2π/pulse
+#define ANGLE_PER_PULSE                                 ((float)(2 * PI / PULSES_PER_ROUND))                    /*
+                                                                                                                    PULSES_PER_ROUND        = pulses/rounds,
+                                                                                                                    θ(rads)                 = 2π/round
+                                                                                                                    θ / PULSES_PER_ROUND    = 2π/pulse
                                                                                                                                         = rads/pulse
-                                                                                                            */
+                                                                                                                */
 
-TrapezoidalMotionsTypeDef TrapezoidalMotionsType;
+uint8_t timerPrescaler;
+
+TrapezoidalMotionAlgorithmTypeDef motions;
+TrapezoidalMotionIntermediateParametersTypeDef motionParameters;
 
 void InitTrapezoidalMotionType(void)
 {
-    TrapezoidalMotionsType.nextPeriod                                = 0;
-    TrapezoidalMotionsType.periodDuringUniformVelocity               = 0;
-    TrapezoidalMotionsType.stepWhenMaximumVelocityLimitationReaches  = 0;
-    TrapezoidalMotionsType.stepWhenDecelerationMustBegin             = 0;
-    TrapezoidalMotionsType.stepWhenDecelerationBegin                 = 0;
-    TrapezoidalMotionsType.stepsDuringDeceleration                   = 0;
-    TrapezoidalMotionsType.stepsDuringCeleration                     = 0;
-    TrapezoidalMotionsType.rotatedSteps                              = 0;
-    TrapezoidalMotionsType.state                                     = MotionStateIdle;
+    motions.estimatedNextPulsePeriod                                    = 0;
+    motions.estimatedPeriodOfMaximumVelocity                            = 0;
+    motions.estimatedStepWhenDecelerationBegins                          = 0;
+    motions.estimatedTotalStepsDuringDeceleration                       = 0;
+    motions.state                                                       = MotionStateIdle;
+    
+    motionParameters.intersectionOfAccelerationMaximumLinears           = 0;
+    motionParameters.intersectionOfAccelerationDecelerationLinears      = 0;
+    motionParameters.actualStepsOfDeceleration                          = 0;
+    motionParameters.residual                                           = 0;
+    motionParameters.movedSteps                                         = 0;
 }
 
-void InitTrapezoidalMotions(void)
+void InitTrapezoidalMotions(uint8_t prescaler)
 {
-    TrapezoidalMotionsType.Init                                      = InitTrapezoidalMotionType;
+    timerPrescaler                                                      = prescaler;
+    motions.Init                                                        = InitTrapezoidalMotionType;
 }
 
 /*
@@ -111,34 +117,36 @@ void InitTrapezoidalMotions(void)
 */
 /**
   * @brief  This function is used to create the Trapezoidal Velocity Control Parameters.
-  * @note   GenerateTrapezoidalMotions() function is called from StepperMotorController.
+  * @note   MoveTrapezoid() function is called from StepperMotorController.
   *
-  * @param steps: Total Steps.
+  * @param rounds: Total rounds (rounds).
   * @param acceleration: the Acceleration value during acceleration phase.
-  * @param maximumVelocity: the Velocity value during the motion of Uniform Velocity phase.
+  * @param velocity: the Velocity value during the motion of Uniform Velocity phase.
   * @param deceleration: the Acceleration value during deceleration phase.
   * @retval None
   */
-void GenerateTrapezoidalMotions(int16_t steps, uint32_t acceleration, uint32_t deceleration, uint32_t maximumVelocity)
+void MoveTrapezoid(int32_t rounds, uint32_t acceleration, uint32_t velocity, uint32_t deceleration, void (* onTrapezoidMotionEstimated)(int32_t rounds))
 {
-    if (TrapezoidalMotionsType.Init)
-        TrapezoidalMotionsType.Init();
-    
-    steps                                                                           *= PULSES_PER_ROUND;
-    
-    if (steps < 0)
-        steps                                                                       = -steps;
-    else
+    if (motions.state == MotionStateIdle ||
+        motions.state == MotionStateArrived)
     {
+        InitTrapezoidalMotionType();
+        
+        static int32_t steps                                                    = 0;
+        steps                                                                   = rounds * PULSES_PER_ROUND;
+        
+        if (steps < 0)
+            steps                                                               = -steps;
+        
         if (steps == 1)
         {
             /*  Only 1 step, accelerate directly.   */
-            TrapezoidalMotionsType.stepsDuringCeleration                            = -1;
-            TrapezoidalMotionsType.state                                            = MotionStateDeceleration;
+            motions.stepsCountingWhenCelerating                                 = -1;
+            motions.state                                                       = MotionStateDeceleration;
             /*  Default velocity.   */
-            TrapezoidalMotionsType.nextPeriod                                       = 1000; /*  Give a default Auto Reload to render a
-                                                                                default frequency of pulses, that means
-                                                                                a default velocity for the stepper motor  */
+            motions.estimatedNextPulsePeriod                                    = 1000; /*  Give a default Compare to render a
+                                                                                                default frequency of pulses, that means
+                                                                                                a default velocity for the stepper motor  */
         }
         else if (steps > 1)
         {
@@ -146,35 +154,40 @@ void GenerateTrapezoidalMotions(int16_t steps, uint32_t acceleration, uint32_t d
                 Compute period during Uniform Velocity phase. The period will keep unchanged unitl the Uniform Velocity phase is over.
                 period = (α / t) / ω
             */
-            TrapezoidalMotionsType.periodDuringUniformVelocity                      = ANGLE_PER_PULSE * TIMER_FREQUENCY / maximumVelocity;
+            motions.estimatedPeriodOfMaximumVelocity                            = (int32_t)(ANGLE_PER_PULSE * FREQUENCY / velocity);
             /*
                 Compute the C₀ and set the period, the unit of acceleration is rad/second² ⑦
-                C₀ = (1/Tₜ) * √(2α / ω)                                                     ⑦
+                C₀ = (1/Tₜ) * √(2α / ω)                                                 ⑦
             */
-            TrapezoidalMotionsType.nextPeriod                                       = TIMER_FREQUENCY * sqrt(2 * ANGLE_PER_PULSE / acceleration);
+            motions.estimatedNextPulsePeriod                                    = (int32_t)(FREQUENCY * 0.96f * sqrt(2 * ANGLE_PER_PULSE / acceleration));
+            motions.estimatedFirstPulsePeriod                                   = motions.estimatedNextPulsePeriod;
             /*
                 Compute the step when the Maximum Velocity reaches.
                 nₐ = Vₘₐₓ² / (2aₐα)                                                         ⑦
+            
+             motionParameters.intersectionOfAccelerationMaximumLinears = max_s_lim
             */
-            TrapezoidalMotionsType.stepWhenMaximumVelocityLimitationReaches = maximumVelocity * maximumVelocity / (2 * acceleration * ANGLE_PER_PULSE);
+            motionParameters.intersectionOfAccelerationMaximumLinears           = (uint32_t)(velocity * velocity / (2 * ANGLE_PER_PULSE * acceleration));
             
             /*  Move 1 step at least.    */
-            if (TrapezoidalMotionsType.stepWhenMaximumVelocityLimitationReaches == 0)
-                TrapezoidalMotionsType.stepWhenMaximumVelocityLimitationReaches     = 1;
+            if (motionParameters.intersectionOfAccelerationMaximumLinears == 0)
+                motionParameters.intersectionOfAccelerationMaximumLinears   = 1;
             
             /*
                 Compute the step when the deceleration begins.
                 nₑ  = (nₐ + nₑ)ωₑ / (ωₐ + ωₑ) = Total_Steps * ωₑ / (ωₐ + ωₑ)
+            
+                motionParameters.intersectionOfAccelerationDecelerationLinears = accl_lim
             */
-            TrapezoidalMotionsType.stepWhenDecelerationMustBegin                    = steps * deceleration / (acceleration + deceleration);
+            motionParameters.intersectionOfAccelerationDecelerationLinears      = (uint32_t)(steps * deceleration / (acceleration + deceleration));
             
             /*
                 Move 1 step at least.
             */
-            if (TrapezoidalMotionsType.stepWhenDecelerationMustBegin == 0)
-                TrapezoidalMotionsType.stepWhenDecelerationMustBegin                = 1;
+            if (motionParameters.intersectionOfAccelerationDecelerationLinears == 0)
+                motionParameters.intersectionOfAccelerationDecelerationLinears  = 1;
             
-            if (TrapezoidalMotionsType.stepWhenDecelerationMustBegin <= TrapezoidalMotionsType.stepWhenMaximumVelocityLimitationReaches)
+            if (motionParameters.intersectionOfAccelerationDecelerationLinears <= motionParameters.intersectionOfAccelerationMaximumLinears)
             {
                 /*
                     In this scenario, the motor will be a <Triangular Motion>.
@@ -188,7 +201,7 @@ void GenerateTrapezoidalMotions(int16_t steps, uint32_t acceleration, uint32_t d
                     nₐ + nₑ             = Total_Steps                                   ②
                 
                 */
-                TrapezoidalMotionsType.stepsDuringDeceleration                      = TrapezoidalMotionsType.stepWhenDecelerationMustBegin - steps;
+                motions.estimatedTotalStepsDuringDeceleration                  = motionParameters.intersectionOfAccelerationDecelerationLinears - steps;
             }
             else
             {
@@ -200,64 +213,66 @@ void GenerateTrapezoidalMotions(int16_t steps, uint32_t acceleration, uint32_t d
                     In this scenario the motor will be a <Triangular Motion>.
                     The equations are,
                     
-                    ωₐnₐ                = ωₑnₑ                                              ①
-                    nₐ + nₘ + nₑ        = Total Steps                                       ④
+                    ωₐnₐ                    = ωₑnₑ                                      ①
+                    nₐ + nₘ + nₑ            = Total Steps                               ④
                 */
-                TrapezoidalMotionsType.stepsDuringDeceleration                      = -(TrapezoidalMotionsType.stepWhenMaximumVelocityLimitationReaches * acceleration / deceleration);
+                motions.estimatedTotalStepsDuringDeceleration                   = -(motionParameters.intersectionOfAccelerationMaximumLinears * acceleration / deceleration);
             }
             
             /*
                 Move 1 step at least.
             */
-            if (TrapezoidalMotionsType.stepsDuringDeceleration == 0)
-                TrapezoidalMotionsType.stepsDuringDeceleration = -1;
+            if (motions.estimatedTotalStepsDuringDeceleration == 0)
+                motions.estimatedTotalStepsDuringDeceleration = -1;
             
-            TrapezoidalMotionsType.stepWhenDecelerationBegin                        = steps + TrapezoidalMotionsType.stepsDuringCeleration;
+            motions.estimatedStepWhenDecelerationBegins                         = steps + motions.estimatedTotalStepsDuringDeceleration;
             
             /*
                 If the velocity of C₀ is greater than the maximum (Unifrom) velocity, rotate the stepper motor  ⑦
                 with Uniform Velocity directly, but not accelerate anymore.
             */
-            if (TrapezoidalMotionsType.nextPeriod <= TrapezoidalMotionsType.periodDuringUniformVelocity)
+            if (motions.estimatedNextPulsePeriod <= motions.estimatedPeriodOfMaximumVelocity)
             {
-                TrapezoidalMotionsType.nextPeriod                                   = TrapezoidalMotionsType.periodDuringUniformVelocity;
-                TrapezoidalMotionsType.state                                        = MotionStateUniformVelocity;
+                motions.estimatedNextPulsePeriod                                = motions.estimatedPeriodOfMaximumVelocity;
+                motions.state                                                   = MotionStateUniformVelocity;
             }
             else
-                TrapezoidalMotionsType.state                                        = MotionStateAcceleration;
+                motions.state                                                   = MotionStateAcceleration;
             
-            TrapezoidalMotionsType.stepsDuringCeleration                            = 0;
+            motions.stepsCountingWhenCelerating                                 = 0;
         }
+        
+        if (onTrapezoidMotionEstimated)
+            onTrapezoidMotionEstimated(rounds);
     }
 }
 
-void ComputeNextPeriod(void (* motionStateChangeOccurs)(MotionStates newMotionState, uint16_t newPeriod))
+void EstimateNextPeriod(void (* onNextPeriodEstimated)(MotionStates newMotionState, uint16_t newPulsePeriod), void (* onMotionCompleted)(void))
 {
-    __IO static uint16_t lastPeriod                                                 = 0;
-    __IO uint32_t newPeriod                                                         = 0;
+    __IO static uint16_t lastPulsePeriod                     = 0;
+    __IO static uint16_t newPulsePeriod                 = 0;
     
-    switch (TrapezoidalMotionsType.state)
+    switch (motions.state)
     {
-        case MotionStateIdle:
-        case MotionStateArrived:
-            TrapezoidalMotionsType.stepsDuringCeleration                            = 0;
-        
-            break;
-                
         case MotionStateAcceleration:
         {
-            TrapezoidalMotionsType.rotatedSteps ++;
-            TrapezoidalMotionsType.stepsDuringCeleration ++;
+            motionParameters.movedSteps ++;
+            motions.stepsCountingWhenCelerating ++;
             
-            newPeriod = TrapezoidalMotionsType.nextPeriod * (sqrt(TrapezoidalMotionsType.stepsDuringCeleration + 1) - sqrt(TrapezoidalMotionsType.stepsDuringCeleration));
+            /*
             
+                Cₙ = C₀ * (√(n + 1) - √n)                                                   ⑧
+            
+            */
+            newPulsePeriod                              = motions.estimatedNextPulsePeriod - (2 * motions.estimatedNextPulsePeriod + motionParameters.residual) / (4 * motions.stepsCountingWhenCelerating + 1);
+            motionParameters.residual                   = (2 * motions.estimatedNextPulsePeriod + motionParameters.residual) % (4 * motions.stepsCountingWhenCelerating + 1);
             /*  Check whether the step of deceleration reaches. */
-            if (TrapezoidalMotionsType.rotatedSteps >= TrapezoidalMotionsType.stepWhenDecelerationBegin)
+            if (motionParameters.movedSteps >= motions.estimatedStepWhenDecelerationBegins)
             {
-                TrapezoidalMotionsType.stepsDuringCeleration                        = TrapezoidalMotionsType.stepsDuringDeceleration;
-                TrapezoidalMotionsType.state                                        = MotionStateDeceleration;
+                motions.stepsCountingWhenCelerating     = motions.estimatedTotalStepsDuringDeceleration;
+                motions.state                           = MotionStateDeceleration;
             }
-            else if (newPeriod <= TrapezoidalMotionsType.periodDuringUniformVelocity)
+            else if (newPulsePeriod <= motions.estimatedPeriodOfMaximumVelocity)
             {
                 /*
                 
@@ -266,55 +281,74 @@ void ComputeNextPeriod(void (* motionStateChangeOccurs)(MotionStates newMotionSt
                 at Uniform Velocity.
                 
                 */
-                lastPeriod                                                          = newPeriod;
-                newPeriod                                                           = TrapezoidalMotionsType.periodDuringUniformVelocity;
+                lastPulsePeriod                         = newPulsePeriod;
+                newPulsePeriod                          = motions.estimatedPeriodOfMaximumVelocity;
                 
-                TrapezoidalMotionsType.state                                        = MotionStateUniformVelocity;
+                motionParameters.residual               = 0;
+                
+                motions.state                           = MotionStateUniformVelocity;
             }
+            
+            onNextPeriodEstimated(motions.state, newPulsePeriod);
         }
     
             break;
         
         case MotionStateUniformVelocity:
         {
-            TrapezoidalMotionsType.rotatedSteps ++;
+            motionParameters.movedSteps ++;
             
-            newPeriod                                                               = TrapezoidalMotionsType.periodDuringUniformVelocity;
+            newPulsePeriod                              = motions.estimatedPeriodOfMaximumVelocity;
             
             /*  Check whether the deceleration step reaches.    */
-            if (TrapezoidalMotionsType.rotatedSteps >= TrapezoidalMotionsType.stepWhenDecelerationBegin)
+            if (motionParameters.movedSteps >= motions.estimatedStepWhenDecelerationBegins)
             {
                 /*  The Steps During Celeration as the Acceleration/Deceleration steps. */
-                TrapezoidalMotionsType.stepsDuringCeleration                        = TrapezoidalMotionsType.stepsDuringDeceleration;
+                motions.stepsCountingWhenCelerating     = motions.estimatedTotalStepsDuringDeceleration;
                 /*  Assign the period of deceleration phase with the last period of Uniform Velocity phase. */
-                newPeriod                                                           = lastPeriod;
+                newPulsePeriod                          = lastPulsePeriod;
                 
-                TrapezoidalMotionsType.state                                        = MotionStateDeceleration;
+                motions.state                           = MotionStateDeceleration;
             }
+            
+            onNextPeriodEstimated(motions.state, newPulsePeriod);
         }
             break;
         
         case MotionStateDeceleration:
         {
-            TrapezoidalMotionsType.rotatedSteps ++;
+            motionParameters.movedSteps ++;
+            motions.stepsCountingWhenCelerating ++;
             
-            TrapezoidalMotionsType.stepsDuringCeleration ++;
-            newPeriod = TrapezoidalMotionsType.nextPeriod * (sqrt(TrapezoidalMotionsType.stepsDuringCeleration + 1) - sqrt(TrapezoidalMotionsType.stepsDuringCeleration));
+            newPulsePeriod                              = motions.estimatedNextPulsePeriod - (2 * motions.estimatedNextPulsePeriod + motionParameters.residual) / (4 * motions.stepsCountingWhenCelerating + 1);
+            motionParameters.residual                   = (2 * motions.estimatedNextPulsePeriod + motionParameters.residual) % (4 * motions.stepsCountingWhenCelerating + 1);
             
             /*  Check whether the last step reaches.    */
-            if (TrapezoidalMotionsType.stepsDuringCeleration >= 0)
+            if (motions.stepsCountingWhenCelerating >= 0)
             {
-                TrapezoidalMotionsType.state                                        = MotionStateArrived;
-                TrapezoidalMotionsType.rotatedSteps                                 = 0;
+                motions.state                           = MotionStateArrived;
+                motionParameters.movedSteps             = 0;
+                
+                motionParameters.residual               = 0;
             }
+            
+            onNextPeriodEstimated(motions.state, newPulsePeriod);
         }
+            break;
+        
+        case MotionStateArrived:
+        {
+            motionParameters.residual                   = 0;
+            motionParameters.movedSteps                 = 0;
+        
+            onMotionCompleted();
+        }
+        
             break;
                     
         default:
             break;
     }
     
-    TrapezoidalMotionsType.nextPeriod                                               = newPeriod;
-    
-    motionStateChangeOccurs(TrapezoidalMotionsType.state, newPeriod);
+    motions.estimatedNextPulsePeriod                    = newPulsePeriod;
 }

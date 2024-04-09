@@ -104,7 +104,6 @@ void InitStepperMotorType()
     stepperMotor.rotaryDirection    = RotaryDirectionClockwise;
     stepperMotor.angle              = 0.0f;
     stepperMotor.pulses             = 0.0f;
-    stepperMotor.accumulativePulses = 0.0f;
     stepperMotor.state              = StateIdle;
 }
 
@@ -141,7 +140,7 @@ void StartMotor(ConnectorNumbers number, RotaryDirections rotationDirection)
 {
     ENABLE_MOTOR(number, Enabled);
     DIVERT_MOTOR(number, rotationDirection);
-    
+        
     switch (number)
     {
         case ConnectorNumber0:
