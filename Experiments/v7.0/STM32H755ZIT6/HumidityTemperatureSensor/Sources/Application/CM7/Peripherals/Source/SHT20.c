@@ -81,10 +81,10 @@ uint16_t SendCommand(SensorCommands command)
     
     IssueStopSignal();
     
-    uint16_t ambiences = (buffer[0] << 8) + buffer[1];
-    
     if (CRC8Validate(buffer, 2, checksum) == 0)
     {
+    	uint16_t ambiences = (buffer[0] << 8) + buffer[1];
+
         if (command == CommandHolderMasterTriggerTemperatureMeasurement ||
             command == CommandNoHolderMasterTriggerTemperatureMeasurement)
         {
