@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Compilations\Objects\</OutputDirectory>
-          <OutputName>TrapezoidalCelerationControls</OutputName>
+          <OutputName>SCurveMotionProfiles</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -445,6 +445,11 @@
           <GroupName>Application/User/Motors/StepperMotors</GroupName>
           <Files>
             <File>
+              <FileName>SCurveMotionProfiles.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\User\Motors\StepperMotors\Source\SCurveMotionProfiles.c</FilePath>
+            </File>
+            <File>
               <FileName>StepperMotor.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\User\Motors\StepperMotors\Source\StepperMotor.c</FilePath>
@@ -453,31 +458,6 @@
               <FileName>StepperMotorController.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Application\User\Motors\StepperMotors\Source\StepperMotorController.c</FilePath>
-            </File>
-            <File>
-              <FileName>TrapezoidalMotionAlgorithm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Application\User\Motors\StepperMotors\Source\TrapezoidalMotionAlgorithm.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Application/User/Peripherals/SerialCommunications</GroupName>
-          <Files>
-            <File>
-              <FileName>SerialCommunications.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Application\User\Peripherals\SerialCommunications\Source\SerialCommunications.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Application/User/Peripherals/Timers</GroupName>
-          <Files>
-            <File>
-              <FileName>AdavancedTimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Application\User\Peripherals\Timers\Source\AdavancedTimer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -513,6 +493,26 @@
               <FileName>LED.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Drivers\BSP\LEDs\Source\LED.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/BSP/Timers</GroupName>
+          <Files>
+            <File>
+              <FileName>AdvancedTimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Drivers\BSP\Timers\Source\AdvancedTimer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/BSP/SerialCommunications</GroupName>
+          <Files>
+            <File>
+              <FileName>SerialCommunications.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Drivers\BSP\SerialCommunications\Source\SerialCommunications.c</FilePath>
             </File>
           </Files>
         </Group>
