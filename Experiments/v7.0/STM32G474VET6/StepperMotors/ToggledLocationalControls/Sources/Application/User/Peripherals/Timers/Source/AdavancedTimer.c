@@ -176,11 +176,11 @@ void AssignNewCompare(uint16_t increments)
     switch (TIM_HandleType.Channel)
     {
         case HAL_TIM_ACTIVE_CHANNEL_1:
-            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_0, (counter + increments) % 0xFFFF);
+            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_0, (counter + increments) & 0xFFFF);
             break;
         
         case HAL_TIM_ACTIVE_CHANNEL_2:
-            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_1, (counter + increments) % 0xFFFF);
+            __HAL_TIM_SET_COMPARE(&TIM_HandleType, TIMER_OUTPUT_COMPARE_CHANNLE_1, (counter + increments) & 0xFFFF);
             break;
         
         default:

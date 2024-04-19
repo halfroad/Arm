@@ -497,22 +497,22 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Drivers/BSP/Timers</GroupName>
-          <Files>
-            <File>
-              <FileName>AdvancedTimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Drivers\BSP\Timers\Source\AdvancedTimer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Drivers/BSP/SerialCommunications</GroupName>
           <Files>
             <File>
               <FileName>SerialCommunications.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Drivers\BSP\SerialCommunications\Source\SerialCommunications.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/BSP/Timers</GroupName>
+          <Files>
+            <File>
+              <FileName>AdvancedTimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Drivers\BSP\Timers\Source\AdvancedTimer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -648,6 +648,16 @@
               <FileName>heap_4.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Middlewares\Third_Party\FreeRTOS\Source\portable\MemMang\heap_4.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/Third_Party/AlienTek/Malloc</GroupName>
+          <Files>
+            <File>
+              <FileName>Malloc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Middlewares\Third_Party\AlienTek\Malloc\Source\Malloc.c</FilePath>
             </File>
           </Files>
         </Group>

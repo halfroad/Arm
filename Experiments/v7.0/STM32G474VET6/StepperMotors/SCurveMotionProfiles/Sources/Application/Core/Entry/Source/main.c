@@ -97,8 +97,8 @@ int main(void)
     
     InitStepperMotorController();
     
-    EventRecorderInitialize(EventRecordAll, 1U);
-    EventRecorderStart();
+    //EventRecorderInitialize(EventRecordAll, 1U);
+    //EventRecorderStart();
     
     /* USER CODE BEGIN 2 */
 
@@ -123,15 +123,17 @@ int main(void)
 
         if (state == KEY_0_PRESSED)
         {
-            SwitchRotaryDirection();
+            IncreaseRotationAngle();
         }
         else if (state == KEY_1_PRESSED)
         {
-            RotateMotor();
+            DecreaseRotationAngle();
         }
         else if (state == KEY_2_PRESSED)
         {
-            StationMotor();
+            StartMotionProfiles();
+            
+            ResetRotationAngle();
         }
         
         HAL_Delay(10);

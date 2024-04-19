@@ -67,10 +67,11 @@ static void OC_MspInitCallback(TIM_HandleTypeDef *htim);
 static void ConfigureOutputChannel(TIM_HandleTypeDef *htim, uint16_t pulse, uint8_t channel);
 
 TIM_HandleTypeDef TIM_HandleType            = { 0 };
+TIM_OC_InitTypeDef TIM_OC_InitType          = { 0 };
 
 void InitAdvancedTimer(uint16_t prescaler, uint16_t period, void (* onOutputCompareDelayElapsedCallback)(TIM_HandleTypeDef *htim))
 {
-    TIM_HandleType.Instance                 = TIM8;
+    TIM_HandleType.Instance                 = TIM;
     
     TIM_HandleType.Init.Prescaler           = prescaler;
     TIM_HandleType.Init.CounterMode         = TIM_COUNTERMODE_UP;
@@ -91,6 +92,21 @@ void InitAdvancedTimer(uint16_t prescaler, uint16_t period, void (* onOutputComp
     HAL_TIM_Base_Start(&TIM_HandleType);
 }
 
+static void ConfigureOutputChannel(TIM_HandleTypeDef *htim, uint16_t pulse, uint8_t channel)
+{
+    TIM_OC_InitType.OCMode                  = OUTPUT_COMPARE_CHANNEL_MODE;
+    TIM_OC_InitType.Pulse                   = pulse;
+    TIM_OC_InitType.OCPolarity              = OUTPUT_COMPARE_CHANNEL_POLARITY;
+    TIM_OC_InitType.OCNPolarity             = OUTPUT_COMPARE_CHANNEL_COMPLEMENTARY_POLARITY;
+    TIM_OC_InitType.OCFastMode              = TIM_OCFAST_DISABLE;
+    TIM_OC_InitType.OCIdleState             = OUTPUT_COMPARE_CHANNEL_IDLE_STATE;
+    TIM_OC_InitType.OCNIdleState            = OUTPUT_COMPARE_CHANNEL_COMPLEMENTARY_IDLE_STATE;
+    
+    HAL_TIM_OC_ConfigChannel(htim, &TIM_OC_InitType, channel);
+    
+    __HAL_TIM_DISABLE_OCxPRELOAD(&TIM_HandleType, channel);
+}
+
 static void OC_MspInitCallback(TIM_HandleTypeDef *htim)
 {
     if (htim -> Instance == TIM)
@@ -101,13 +117,14 @@ static void OC_MspInitCallback(TIM_HandleTypeDef *htim)
         
         GPIO_InitType.Pin                   = OUTPUT_COMPARE_CHANNEL_0_ALTERNATE_FUNCTION_GPIO_PIN | OUTPUT_COMPARE_CHANNEL_1_ALTERNATE_FUNCTION_GPIO_PIN;
         GPIO_InitType.Mode                  = GPIO_MODE_AF_PP;
+        GPIO_InitType.Pull                  = GPIO_PULLUP;
+        GPIO_InitType.Speed                 = GPIO_SPEED_HIGH;
         GPIO_InitType.Alternate             = OUTPUT_COMPARE_CHANNEL_0_ALTERNATE_FUNCTION;
-        
         
         RCC_OUTPUT_COMPARE_CHANNEL_0_ALTERNATE_FUNCTION_GPIO_PORT_CLOCK_ENABLE();
         HAL_GPIO_Init(OUTPUT_COMPARE_CHANNEL_0_ALTERNATE_FUNCTION_GPIO_PORT, &GPIO_InitType);
         
-        HAL_NVIC_SetPriority(TIM_IRQN, 1, 0);
+        HAL_NVIC_SetPriority(TIM_IRQN, 2, 3);
         HAL_NVIC_EnableIRQ(TIM_IRQN);
     }
 }
@@ -117,36 +134,39 @@ void TIM_IRQHANDLER(void)
     HAL_TIM_IRQHandler(&TIM_HandleType);
 }
 
-static void ConfigureOutputChannel(TIM_HandleTypeDef *htim, uint16_t pulse, uint8_t channel)
-{
-    TIM_OC_InitTypeDef TIM_OC_InitType      = { 0 };
-    
-    TIM_OC_InitType.OCMode                  = OUTPUT_COMPARE_CHANNEL_MODE;
-    TIM_OC_InitType.Pulse                   = pulse;
-    TIM_OC_InitType.OCPolarity              = OUTPUT_COMPARE_CHANNEL_POLARITY;
-    TIM_OC_InitType.OCNPolarity             = OUTPUT_COMPARE_CHANNEL_COMPLEMENTARY_POLARITY;
-    TIM_OC_InitType.OCFastMode              = TIM_OCFAST_DISABLE;
-    TIM_OC_InitType.OCIdleState             = OUTPUT_COMPARE_CHANNEL_IDLE_STATE;
-    TIM_OC_InitType.OCNIdleState            = OUTPUT_COMPARE_CHANNEL_COMPLEMENTARY_IDLE_STATE;
-    
-    HAL_TIM_OC_ConfigChannel(htim, &TIM_OC_InitType, channel);
-}
-
 void StartOutputCompare(OutputCompareChannels channel)
 {
     switch (channel)
     {
         case OutputCompareChannel0:
-
-            HAL_TIM_OC_Start_IT(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_0);
+        {
+            if (TIM_OC_InitType.OCMode == TIM_OCMODE_PWM1 ||
+                TIM_OC_InitType.OCMode == TIM_OCMODE_PWM2)
+            {
+                HAL_TIM_PWM_Start(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_0);
+            }
+            else if (TIM_OC_InitType.OCMode == TIM_OCMODE_TOGGLE)
+            {
+                HAL_TIM_OC_Start_IT(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_0);
+            }
+        }
         
-        break;
+            break;
         
         case OutputCompareChannel1:
+        {
             
-            HAL_TIM_OC_Start_IT(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_1);
-        
-        break;
+            if (TIM_OC_InitType.OCMode == TIM_OCMODE_PWM1 ||
+                TIM_OC_InitType.OCMode == TIM_OCMODE_PWM2)
+            {
+                HAL_TIM_PWM_Start(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_1);
+            }
+            else if (TIM_OC_InitType.OCMode == TIM_OCMODE_TOGGLE)
+            {
+                HAL_TIM_OC_Start_IT(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_1);
+            }
+        }
+            break;
         
         default:
             break;
@@ -158,20 +178,42 @@ void StopOutputCompare(OutputCompareChannels channel)
     switch (channel)
     {
         case OutputCompareChannel0:
-
-            HAL_TIM_OC_Stop_IT(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_0);
+        {
+            if (TIM_OC_InitType.OCMode == TIM_OCMODE_PWM1 ||
+                TIM_OC_InitType.OCMode == TIM_OCMODE_PWM2)
+            {
+                HAL_TIM_PWM_Stop(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_0);
+            }
+            else if (TIM_OC_InitType.OCMode == TIM_OCMODE_TOGGLE)
+            {
+                HAL_TIM_OC_Stop_IT(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_0);
+            }
+        }
         
-        break;
+            break;
         
         case OutputCompareChannel1:
             
-            HAL_TIM_OC_Stop_IT(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_1);
+            if (TIM_OC_InitType.OCMode == TIM_OCMODE_PWM1 ||
+                TIM_OC_InitType.OCMode == TIM_OCMODE_PWM2)
+            {
+                HAL_TIM_PWM_Stop(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_1);
+            }
+            else if (TIM_OC_InitType.OCMode == TIM_OCMODE_TOGGLE)
+            {
+                HAL_TIM_OC_Stop_IT(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_1);
+            }
         
-        break;
+            break;
         
         default:
             break;
     }
+}
+
+void ResetCounter(void)
+{
+    __HAL_TIM_SET_COUNTER(&TIM_HandleType, 0);
 }
 
 void AssignNewCompare(OutputCompareChannels channel, uint16_t increments)
@@ -184,13 +226,13 @@ void AssignNewCompare(OutputCompareChannels channel, uint16_t increments)
     {
         case OutputCompareChannel0:
 
-            __HAL_TIM_SetCompare(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_0, counter + increments);
+            __HAL_TIM_SET_COMPARE(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_0, (counter + increments) & 0xFFFF);
         
         break;
         
         case OutputCompareChannel1:
             
-            __HAL_TIM_SetCompare(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_1, counter + increments);
+            __HAL_TIM_SET_COMPARE(&TIM_HandleType, OUTPUT_COMPARE_CHANNEL_1, (counter + increments)  & 0xFFFF);
         
         break;
         

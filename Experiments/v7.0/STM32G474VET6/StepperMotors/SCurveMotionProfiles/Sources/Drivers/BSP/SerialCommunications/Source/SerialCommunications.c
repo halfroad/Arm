@@ -19,6 +19,8 @@
 /******************************************************************************************/
 /* 加入以下代码, 支持printf函数, 而不需要选择use MicroLIB */
 
+#define USE_PRINTF_REDIRECT     1
+
 #if USE_PRINTF_REDIRECT
 
 #if (__ARMCC_VERSION >= 6010050)                    /* 使用AC6编译器时 */

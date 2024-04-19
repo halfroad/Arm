@@ -16,6 +16,7 @@ void InitAdvancedTimer(uint16_t prescaler, uint16_t period, void (* onOutputComp
 void StartOutputCompare(OutputCompareChannels channel);
 void StopOutputCompare(OutputCompareChannels channel);
 
+void ResetCounter(void);
 void AssignNewCompare(OutputCompareChannels channel, uint16_t increments);
 
 #endif
