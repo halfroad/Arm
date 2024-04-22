@@ -3,6 +3,8 @@
 
 #include <stm32g4xx.h>
 
+#define USE_GPIO_AS_GROUND_PIN
+
 typedef enum
 {
     AcknowledgeNotRequired      = 0x00,
@@ -12,7 +14,16 @@ typedef enum
 
 void InitInterIntegratedCircuits(void);
 
-void WritetByte(uint8_t byte, AcknowledgeRequirements pollForAcknowledgement);
+void IssueStartSignal(void);
+void IssueStopSignal(void);
+
+void WriteByte(uint8_t byte, AcknowledgeRequirements pollForAcknowledgement);
 uint8_t ReadByte(AcknowledgeRequirements acknowledgeTransmitterNeeded);
+
+#ifdef USE_GPIO_AS_GROUND_PIN
+
+void PullDownAsGround(void);
+
+#endif   /* #ifdef USE_GPIO_AS_GROUND_PIN   */
 
 #endif  /*  #ifndef __INTER_INTEGRATED_CIRCUITS_H   */

@@ -5,7 +5,7 @@
    /*  RCC Clock   */
 #define GPIO_PORT_RCC_CLOCK_ENABLE(bus, bit, bitNumber)                     do                                                                                  \
                                                                             {                                                                                   \
-                                                                                if ((RCC -> bus & (bit << bitNumber)) != bit)                                   \
+                                                                                if ((RCC -> bus & (bit << bitNumber)) != (bit << bitNumber))                    \
                                                                                     RCC -> bus |= bit << bitNumber;                                             \
                                                                             }                                                                                   \
                                                                             while   (0)
@@ -14,50 +14,65 @@
                                                                             {                                                                                   \
                                                                                 if (PortDirectionInput == direction)                                            \
                                                                                 {                                                                               \
-                                                                                    if (PortDirectionInput != (port -> MODER & PortDirectionInput))             \
-                                                                                    {                                                                           \
-                                                                                        port -> MODER &= ~(0x03 << bitNumber * 2);                              \
-                                                                                        port -> MODER |= PortDirectionInput << bitNumber * 2;                   \
-                                                                                    }                                                                           \
+                                                                                    port -> MODER &= ~(0x03 << bitNumber * 2);                                  \
                                                                                 }                                                                               \
                                                                                 else if (PortDirectionOutput == direction)                                      \
                                                                                 {                                                                               \
-                                                                                    if (PortDirectionOutput != (port -> MODER & PortDirectionOutput))           \
-                                                                                    {                                                                           \
-                                                                                        port -> MODER &= ~(0x03 << bitNumber * 2);                              \
-                                                                                        port -> MODER |= PortDirectionOutput << bitNumber * 2;                  \
-                                                                                    }                                                                           \
+                                                                                    port -> MODER &= ~(0x03 << bitNumber * 2);                                  \
+                                                                                    port -> MODER |= PortDirectionOutput << bitNumber * 2;                      \
                                                                                 }                                                                               \
                                                                             }                                                                                   \
                                                                             while   (0)
 
 #define WRITE_GPIO_PORT(port, bitNumber, state)                             do                                                                                  \
                                                                             {                                                                                   \
-                                                                                if (state != (port -> ODR & (state << bitNumber)))                              \
-                                                                                {                                                                               \
-                                                                                    if (PortStateSet == state)                                                  \
-                                                                                        port -> BSRR |= ENABLE_BIT_NUMBER << bitNumber;                         \
-                                                                                    else if (PortStateSet == state)                                             \
-                                                                                        port -> BSRR |= ENABLE_BIT_NUMBER << (bitNumber + 0x0A);                \
-                                                                                }                                                                               \
+                                                                                if (PortStateSet == state)                                                      \
+                                                                                    port -> BSRR |= ENABLE_BIT_NUMBER << bitNumber;                             \
+                                                                                else if (PortStateReset == state)                                               \
+                                                                                    port -> BSRR |= ENABLE_BIT_NUMBER << (bitNumber + 0x10);                    \
                                                                             }                                                                                   \
                                                                             while   (0)
                                                                                 
-#define READ_GPIO_PORT(port, bitNumber)                                     port -> IDR
-                                                                                
+#define READ_GPIO_PORT(port, bitNumber)                                     port -> IDR >> bitNumber
+
 #define ENABLE_BIT_NUMBER                                                   0x01    /*  Bit if set the bit field.   */
 
-#define SDA_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
-#define SDA_GPIO_PORT_BIT_FILED_POSITION                                    1       /*  GPIOB   */
-#define SDA_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SDA_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SDA_GPIO_PORT_BIT_FILED_POSITION);
-#define SDA_GPIO_PORT                                                       GPIOB
-#define SDA_GPIO_PIN_BIT_FILED_NUMBER                                       3
-
 #define SCL_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
-#define SCL_GPIO_PORT_BIT_FILED_POSITION                                    1       /*  GPIOB   */
+#define SCL_GPIO_PORT_BIT_FILED_POSITION                                    1       /*  PB5   */
 #define SCL_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SCL_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SCL_GPIO_PORT_BIT_FILED_POSITION);
 #define SCL_GPIO_PORT                                                       GPIOB
-#define SCL_GPIO_PIN_BIT_FILED_NUMBER                                       4
+#define SCL_GPIO_PIN_BIT_FILED_NUMBER                                       5
+
+#define SDA_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
+#define SDA_GPIO_PORT_BIT_FILED_POSITION                                    3       /*  PD9   */
+#define SDA_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SDA_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SDA_GPIO_PORT_BIT_FILED_POSITION);
+#define SDA_GPIO_PORT                                                       GPIOD
+#define SDA_GPIO_PIN_BIT_FILED_NUMBER                                       9
+
+#ifdef USE_GPIO_AS_GROUND_PIN
+/*
+    GPIO as Ground Pin.
+*/
+
+#define GPPIO_RCC_CLOCK_REGISTER                        AHB2ENR
+#define GPPIO_AS_GROUNG_PORT                            GPIOD
+#define GPPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER           3
+#define GPPIO_AS_GROUNG_PIN                             10
+/*
+    AHB2 peripheral clock enable register (RCC_AHB2ENR)
+    
+    Bit 3 GPIODEN: IO port D clock enable
+    Set and cleared by software.
+        0: IO port D clock disabled
+        1: IO port D clock enabled
+*/
+
+#define GPIO_AS_GROUNG_PIN_RCC_CLOCK_ENABLE(clockRegister, portBitNumber)   do                                                                                  \
+                                                                            {                                                                                   \
+                                                                                RCC -> clockRegister |= 0x01 << portBitNumber;                                  \
+                                                                            }                                                                                   \
+                                                                            while   (0)
+#endif  /*  #ifdef USE_GPIO_AS_GROUND_PIN   */
 
 #define MAXIMUM_TRIAL_TIMES                                                 250
 
@@ -82,8 +97,21 @@ typedef enum
     
 } AcknowledgementStates;
 
+void IssueStartSignal(void);
+
 void InitInterIntegratedCircuits(void)
 {
+    /*
+    
+    Bit 1 GPIOBEN: IO port B clock enable
+    Set and cleared by software.
+        0: IO port B clock disabled
+        1: IO port B clock enabled
+    
+    */
+    
+    SDA_GPIO_PORT_RCC_CLOCK_ENABLE();
+    
     /*
     
     Bits 31:0 MODE[15:0][1:0]: Port x configuration I/O pin y (y = 15 to 0)
@@ -103,11 +131,9 @@ void InitInterIntegratedCircuits(void)
     These bits are written by software to configure the I/O output type.
         0: Output push-pull (reset state)
         1: Output open-drain
-    
-    SDA_GPIO_PORT -> OTYPER                     &= ~(0x01 << SDA_GPIO_PIN_BIT_FILED_NUMBER);
-    
-    */
-    
+        */
+    SDA_GPIO_PORT -> OTYPER                     |= 0x01 << SDA_GPIO_PIN_BIT_FILED_NUMBER;
+
     /*
     
     Bits 31:0 PUPD[15:0][1:0]: Port x configuration I/O pin y (y = 15 to 0)
@@ -121,33 +147,22 @@ void InitInterIntegratedCircuits(void)
     SDA_GPIO_PORT -> PUPDR                      &= ~(0x03 << SDA_GPIO_PIN_BIT_FILED_NUMBER * 2);
     SDA_GPIO_PORT -> PUPDR                      |= 0x01 << SDA_GPIO_PIN_BIT_FILED_NUMBER * 2;
     
-    /*
-    
-    Bit 1 GPIOBEN: IO port B clock enable
-    Set and cleared by software.
-        0: IO port B clock disabled
-        1: IO port B clock enabled
-    
-    */
-    
-    SDA_GPIO_PORT_RCC_CLOCK_ENABLE();
+    SCL_GPIO_PORT_RCC_CLOCK_ENABLE(); 
     
     SCL_GPIO_PORT -> MODER                      &= ~(0x03 << SCL_GPIO_PIN_BIT_FILED_NUMBER * 2);
     SCL_GPIO_PORT -> MODER                      |= 0x01 << SCL_GPIO_PIN_BIT_FILED_NUMBER * 2;
     
     SCL_GPIO_PORT -> PUPDR                      &= ~(0x03 << SCL_GPIO_PIN_BIT_FILED_NUMBER * 2);
     SCL_GPIO_PORT -> PUPDR                      |= 0x01 << SCL_GPIO_PIN_BIT_FILED_NUMBER * 2;
-    
-    SCL_GPIO_PORT_RCC_CLOCK_ENABLE();   
-    
+
     InitDelay();
 }
 
 void IssueStartSignal(void)
 {
-    /*  Set the direction of GPIO port to Output.   */
+    /*  Set the direction of GPIO port to Output.
     DIVERT_GPIO_PORT_DIRECTION(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortDirectionOutput);
-    
+   */
     /*  Set the SDA and SCL.   */
     WRITE_GPIO_PORT(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortStateSet);
     WRITE_GPIO_PORT(SCL_GPIO_PORT, SCL_GPIO_PIN_BIT_FILED_NUMBER, PortStateSet);
@@ -167,9 +182,9 @@ void IssueStartSignal(void)
 
 void IssueStopSignal(void)
 {
-    /*  Set the direction of GPIO port to Output.   */
+    /*  Set the direction of GPIO port to Output.
     DIVERT_GPIO_PORT_DIRECTION(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortDirectionOutput);
-    
+    */
     /*  Reset the SDA and SCL (SCL will be set later).   */
     WRITE_GPIO_PORT(SCL_GPIO_PORT, SCL_GPIO_PIN_BIT_FILED_NUMBER, PortStateReset);
     WRITE_GPIO_PORT(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortStateReset);
@@ -187,9 +202,9 @@ void IssueAcknowledgeSignal(AcknowledgeRequirements acknowledgementRequired)
 {
     /*  Reset the SCL, and get ready to acknowledge or non acknoledge the devices.   */
     WRITE_GPIO_PORT(SCL_GPIO_PORT, SCL_GPIO_PIN_BIT_FILED_NUMBER, PortStateReset);
-    
+    /*  
     DIVERT_GPIO_PORT_DIRECTION(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortDirectionOutput);
-    
+   */
     if (AcknowledgeRequired == acknowledgementRequired)
         WRITE_GPIO_PORT(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortStateReset);
     else
@@ -208,9 +223,9 @@ void IssueAcknowledgeSignal(AcknowledgeRequirements acknowledgementRequired)
 
 AcknowledgementStates PollForAcknowledgement(void)
 {
-    /*  Set the direction of GPIO port to Input so that the SDA is able to read the Acknowledgement or Non Acknowledgement from devices.   */
+    /*  Set the direction of GPIO port to Input so that the SDA is able to read the Acknowledgement or Non Acknowledgement from devices.
     DIVERT_GPIO_PORT_DIRECTION(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortDirectionInput);
-    
+    */
     WRITE_GPIO_PORT(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortStateSet);
     
     DelayUs(1);
@@ -221,7 +236,7 @@ AcknowledgementStates PollForAcknowledgement(void)
     
     uint8_t trials = 0;
     
-    while (READ_GPIO_PORT(SDA_GPIO_PORT,SDA_GPIO_PIN_BIT_FILED_NUMBER))
+    while (READ_GPIO_PORT(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER) & PortStateSet)
     {
         trials ++;
         
@@ -239,13 +254,15 @@ AcknowledgementStates PollForAcknowledgement(void)
     return AcknowledgementStateOK;
 }
 
-void WritetByte(uint8_t byte, AcknowledgeRequirements pollForAcknowledgement)
+void WriteByte(uint8_t byte, AcknowledgeRequirements pollForAcknowledgement)
 {
-    /*  Set the direction of GPIO port to Output so that the SDA is able to write the bytes.   */
+    /*  Set the direction of GPIO port to Output so that the SDA is able to write the bytes.
     DIVERT_GPIO_PORT_DIRECTION(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortDirectionOutput);
-    
+    */
     /*  Set the SCL to prepare the byte.   */
     WRITE_GPIO_PORT(SCL_GPIO_PORT, SCL_GPIO_PIN_BIT_FILED_NUMBER, PortStateReset);
+    
+    uint8_t bit = 0x00;
     
     for (uint8_t i = 0; i < 8; i ++)
     {
@@ -339,7 +356,10 @@ void WritetByte(uint8_t byte, AcknowledgeRequirements pollForAcknowledgement)
         byte                = 0b0000 0000
         
         */
-        WRITE_GPIO_PORT(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, (byte & 0x80) >> 7);
+        
+        bit = (byte & 0x80) >> 7;
+
+        WRITE_GPIO_PORT(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, bit);
         
         byte <<= 1;
         
@@ -368,9 +388,9 @@ void WritetByte(uint8_t byte, AcknowledgeRequirements pollForAcknowledgement)
 
 uint8_t ReadByte(AcknowledgeRequirements acknowledgeTransmitterNeeded)
 {
-    /*  Divert the direction of SDA to Input to make the SDA to be possible to read the byte. */
+    /*  Divert the direction of SDA to Input to make the SDA to be possible to read the byte.
     DIVERT_GPIO_PORT_DIRECTION(SDA_GPIO_PORT, SDA_GPIO_PIN_BIT_FILED_NUMBER, PortDirectionInput);
-    
+   */
     uint8_t byte = 0x00;
     
     for (uint8_t i = 0; i < 8; i ++)
@@ -500,3 +520,18 @@ uint8_t ReadByte(AcknowledgeRequirements acknowledgeTransmitterNeeded)
     
     return byte;
 }
+
+#ifdef USE_GPIO_AS_GROUND_PIN
+
+void PullDownAsGround(void)
+{
+    GPIO_AS_GROUNG_PIN_RCC_CLOCK_ENABLE(GPPIO_RCC_CLOCK_REGISTER, GPPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER);
+    
+    GPPIO_AS_GROUNG_PORT -> MODER &= ~(0x03 << GPPIO_AS_GROUNG_PIN * 2);
+    GPPIO_AS_GROUNG_PORT -> MODER |= 0x01 << GPPIO_AS_GROUNG_PIN * 2;
+    
+    GPPIO_AS_GROUNG_PORT -> PUPDR &= ~(0x03 << GPPIO_AS_GROUNG_PIN * 2);
+    GPPIO_AS_GROUNG_PORT -> PUPDR |= 0x02 << GPPIO_AS_GROUNG_PIN * 2;
+}
+
+#endif   /* #ifdef USE_GPIO_AS_GROUND_PIN   */

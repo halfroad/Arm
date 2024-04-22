@@ -442,6 +442,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Application/User/Displays/OLEDs</GroupName>
+          <Files>
+            <File>
+              <FileName>OLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Application\User\Displays\OLEDs\Source\OLED.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Application/User/RTOS/Tasks</GroupName>
           <Files>
             <File>

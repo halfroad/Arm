@@ -23,7 +23,7 @@
 #include "./Initializers/Include/SystemInitializer.h"
 #include "./Buttons/Include/PushButton.h"
 #include "./LEDs/Include/LED.h"
-#include "./Communications/InterIntegratedCircuits/Include/InterIntegratedCircuits.h"
+#include "./Displays/OLEDs/Include/OLED.h"
 
 #include "../Include/main.h"
 
@@ -93,9 +93,9 @@ int main(void)
     /* Initialize all configured peripherals */
     
     InitLEDs();
-    InitPushButtons();
+    OLED_Init();
     
-    InitInterIntegratedCircuits();
+    InitPushButtons();
     
     //EventRecorderInitialize(EventRecordAll, 1U);
     //EventRecorderStart();
@@ -112,7 +112,7 @@ int main(void)
     /* We should never get here as control is now taken by the scheduler */
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
-
+    
     KeyPressStates state;
     
     uint8_t i = 0;
@@ -123,6 +123,8 @@ int main(void)
 
         if (state == KEY_0_PRESSED)
         {
+            OLED_ShowString(0, 0, (uint8_t *)"Hello world!", 8, 1);
+            OLED_Refresh();
         }
         else if (state == KEY_1_PRESSED)
         {

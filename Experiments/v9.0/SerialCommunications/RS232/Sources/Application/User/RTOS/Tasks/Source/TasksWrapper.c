@@ -32,6 +32,10 @@ extern void SysTick_Handler     (void);
 /* FreeRTOS tick timer interrupt handler prototype */
 extern void xPortSysTickHandler (void);
 
+__weak void OnSysTickCallback (void)
+{
+}
+
 /*
   SysTick handler implementation that also clears overflow flag.
 */
@@ -44,6 +48,8 @@ void SysTick_Handler (void) {
     /* Call tick handler */
     xPortSysTickHandler();
   }
+  
+  OnSysTickCallback();
 }
 #endif
 #endif /* SysTick */
