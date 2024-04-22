@@ -28,7 +28,7 @@
                                                                             {                                                                                   \
                                                                                 if (PortStateSet == state)                                                      \
                                                                                     port -> BSRR |= ENABLE_BIT_NUMBER << bitNumber;                             \
-                                                                                else if (PortStateReset == state)                                                 \
+                                                                                else if (PortStateReset == state)                                               \
                                                                                     port -> BSRR |= ENABLE_BIT_NUMBER << (bitNumber + 0x10);                    \
                                                                             }                                                                                   \
                                                                             while   (0)
@@ -36,34 +36,43 @@
 #define READ_GPIO_PORT(port, bitNumber)                                     port -> IDR >> bitNumber
 
 #define ENABLE_BIT_NUMBER                                                   0x01    /*  Bit if set the bit field.   */
-                                                                            
-/*
-
-I2C1_SCL                PA13/PA15/PB8
-I2C1_SDA                PA14/PB7/PB9
-
-I2C2_SCL                PA9/PC4
-I2C2_SDA                PA8/PF0
-
-I2C3_SCL                PA8/PC8
-I2C3_SDA                PB5/PC9/PC11
-
-I2C4_SCL                PA13/PC6
-I2C4_SDA                PB7/PC7
-
-*/
 
 #define SCL_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
-#define SCL_GPIO_PORT_BIT_FILED_POSITION                                    3       /*  GPIOA   */
+#define SCL_GPIO_PORT_BIT_FILED_POSITION                                    1       /*  PB5   */
 #define SCL_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SCL_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SCL_GPIO_PORT_BIT_FILED_POSITION);
-#define SCL_GPIO_PORT                                                       GPIOD
-#define SCL_GPIO_PIN_BIT_FILED_NUMBER                                       9
+#define SCL_GPIO_PORT                                                       GPIOB
+#define SCL_GPIO_PIN_BIT_FILED_NUMBER                                       5
 
 #define SDA_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
-#define SDA_GPIO_PORT_BIT_FILED_POSITION                                    3       /*  GPIOA   */
+#define SDA_GPIO_PORT_BIT_FILED_POSITION                                    3       /*  PD9   */
 #define SDA_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SDA_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SDA_GPIO_PORT_BIT_FILED_POSITION);
 #define SDA_GPIO_PORT                                                       GPIOD
-#define SDA_GPIO_PIN_BIT_FILED_NUMBER                                       10
+#define SDA_GPIO_PIN_BIT_FILED_NUMBER                                       9
+
+#ifdef USE_GPIO_AS_GROUND_PIN
+/*
+    GPIO as Ground Pin.
+*/
+
+#define GPPIO_RCC_CLOCK_REGISTER                        AHB2ENR
+#define GPPIO_AS_GROUNG_PORT                            GPIOD
+#define GPPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER           3
+#define GPPIO_AS_GROUNG_PIN                             10
+/*
+    AHB2 peripheral clock enable register (RCC_AHB2ENR)
+    
+    Bit 3 GPIODEN: IO port D clock enable
+    Set and cleared by software.
+        0: IO port D clock disabled
+        1: IO port D clock enabled
+*/
+
+#define GPIO_AS_GROUNG_PIN_RCC_CLOCK_ENABLE(clockRegister, portBitNumber)   do                                                                                  \
+                                                                            {                                                                                   \
+                                                                                RCC -> clockRegister |= 0x01 << portBitNumber;                                  \
+                                                                            }                                                                                   \
+                                                                            while   (0)
+#endif  /*  #ifdef USE_GPIO_AS_GROUND_PIN   */
 
 #define MAXIMUM_TRIAL_TIMES                                                 250
 
@@ -511,3 +520,18 @@ uint8_t ReadByte(AcknowledgeRequirements acknowledgeTransmitterNeeded)
     
     return byte;
 }
+
+#ifdef USE_GPIO_AS_GROUND_PIN
+
+void PullDownAsGround(void)
+{
+    GPIO_AS_GROUNG_PIN_RCC_CLOCK_ENABLE(GPPIO_RCC_CLOCK_REGISTER, GPPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER);
+    
+    GPPIO_AS_GROUNG_PORT -> MODER &= ~(0x03 << GPPIO_AS_GROUNG_PIN * 2);
+    GPPIO_AS_GROUNG_PORT -> MODER |= 0x01 << GPPIO_AS_GROUNG_PIN * 2;
+    
+    GPPIO_AS_GROUNG_PORT -> PUPDR &= ~(0x03 << GPPIO_AS_GROUNG_PIN * 2);
+    GPPIO_AS_GROUNG_PORT -> PUPDR |= 0x02 << GPPIO_AS_GROUNG_PIN * 2;
+}
+
+#endif   /* #ifdef USE_GPIO_AS_GROUND_PIN   */

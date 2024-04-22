@@ -8,8 +8,8 @@
 
 //----------------- OLED Port definitions ---------------- 
 
-#define OLED_CMD                                0    // Write COMMAND
-#define OLED_DATA                               1    // Write DATA
+#define OLED_CMD                                        0    // Write COMMAND
+#define OLED_DATA                                       1    // Write DATA
 
 uint8_t OLED_GRAM[144][8];
 
@@ -17,6 +17,7 @@ uint8_t OLED_GRAM[144][8];
 void OLED_Init(void)
 {
     InitInterIntegratedCircuits();
+    PullDownAsGround();
 
     DelayMs(180);
 
@@ -53,6 +54,9 @@ void OLED_Init(void)
     OLED_WR_Byte(0xD6, OLED_CMD);
     OLED_WR_Byte(0x01, OLED_CMD);
     OLED_WR_Byte(0xAF, OLED_CMD);
+    
+    /*  Rotate 180 degree.  */
+    OLED_DisplayTurn(1);
     
     OLED_Clear();
 }
