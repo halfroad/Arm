@@ -30,7 +30,7 @@
 #define I2C_GPIO_PULL(port, bitNumber, pull)                                        do                                                                                      \
                                                                                     {                                                                                       \
                                                                                         if (pull == PullDown)                                                               \
-                                                                                            port -> BSRR |= 0x01 << (bitNumber + 16);                                         \
+                                                                                            port -> BSRR |= 0x01 << (bitNumber + 16);                                       \
                                                                                         else                                                                                \
                                                                                             port -> BSRR |= 0x01 << bitNumber;                                              \
                                                                                     }                                                                                       \
