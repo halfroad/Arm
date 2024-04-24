@@ -50,6 +50,7 @@ Port B                  PB11                    USART3_RX
 #define USARTX_IRQN                                     USART3_IRQn
 #define USARTX_IRQHANDLER                               USART3_IRQHandler
 
+#define ENABLE_DMAMUX_RCC_CLOCK()                       do { __HAL_RCC_DMAMUX1_CLK_ENABLE(); } while(0)
 #define ENABLE_DMA_RCC_CLOCK()                          do { __HAL_RCC_DMA1_CLK_ENABLE(); } while(0)
 
 #define DMA_STREAM_RECEIVE                              DMA1_Channel1
@@ -62,14 +63,14 @@ Port B                  PB11                    USART3_RX
 #define DMA_STREAM_TRANSMIT_IRQN                        DMA1_Channel2_IRQn
 #define DMA_STREAM_TRANSMIT_IRQNHANDLER                 DMA1_Channel2_IRQHandler
 
-#define MAXIMUM_RECEIVED_BUFFER_LENGTH                  100
+#define MAXIMUM_RECEIVED_BUFFER_LENGTH                  512
 
 #define USE_PRINTF_REDIRECT                             0
 
-UART_HandleTypeDef UART_HandleType                                  = { 0 };
+UART_HandleTypeDef UART_HandleType                          = { 0 };
 
-DMA_HandleTypeDef DMA_HandleTypeReceive                             = { 0 };
-DMA_HandleTypeDef DMA_HandleTypeTransmit                            = { 0 };
+DMA_HandleTypeDef DMA_HandleTypeReceive                     = { 0 };
+DMA_HandleTypeDef DMA_HandleTypeTransmit                    = { 0 };
 
 uint8_t bytesBuffer[MAXIMUM_RECEIVED_BUFFER_LENGTH]         = { 0 };
 
@@ -134,98 +135,8 @@ int fputc(int ch, FILE *f)
 
 #endif
 
-static void InitDMAChannels(void)
-{
-    __HAL_RCC_DMAMUX1_CLK_ENABLE();
-    ENABLE_DMA_RCC_CLOCK();
-
-    /* DMA interrupt init */
-    DMA_HandleTypeReceive.Instance                  = DMA_STREAM_RECEIVE;
-    
-    DMA_HandleTypeReceive.Init.Request              = DMA_STREAM_RECEIVE_REQUEST;
-    DMA_HandleTypeReceive.Init.Direction            = DMA_PERIPH_TO_MEMORY;
-    DMA_HandleTypeReceive.Init.PeriphInc            = DMA_PINC_DISABLE;
-    DMA_HandleTypeReceive.Init.MemInc               = DMA_MINC_ENABLE;
-    DMA_HandleTypeReceive.Init.PeriphDataAlignment  = DMA_PDATAALIGN_BYTE;
-    DMA_HandleTypeReceive.Init.PeriphDataAlignment  = DMA_MDATAALIGN_BYTE;
-    DMA_HandleTypeReceive.Init.Mode                 = DMA_NORMAL;
-    DMA_HandleTypeReceive.Init.Priority             = DMA_PRIORITY_MEDIUM;
-    
-    /*
-    
-    MCUs/STM32G474VET6/Reference Manuals/rm0440-stm32g4-series-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
-    
-    Table 1: STM32G4 Series memory density
-    
-    Memory density                                          Category 3
-    256 Kbytes                                              STM32G474
-    ------------------------------------------------------------------------------------------------------------
-    
-    Table 90. DMAMUX instantiation
-    
-    Number of DMAMUX output request channels                Category 3 devices
-    ------------------------------------------------------------------------------------------------------------
-
-    DMAMUX mapping
-    
-    The mapping of resources to DMAMUX is hardwired.
-    DMAMUX is used with DMA1 and DMA2:
-    
-    For category 3 and category 4 devices:
-    
-    1. DMAMUX channels 0 to 7 are connected to DMA1 channels 1 to 8
-    2. DMAMUX channels 8 to 15 are connected to DMA2 channels 1 to 8
-    ------------------------------------------------------------------------------------------------------------
-
-    Table 91. DMAMUX: assignment of multiplexer inputs to resources
-    
-    DMA request MUX input                                   Resource
-    
-    28                                                      USART3_RX
-    29                                                      USART3_TX
-    
-    ------------------------------------------------------------------------------------------------------------
-
-    */
-    
-    if (HAL_OK == HAL_DMA_Init(&DMA_HandleTypeReceive))
-    {
-        __HAL_LINKDMA(&UART_HandleType, hdmarx, DMA_HandleTypeReceive);
-        
-        /* DMA1_Channel4_IRQn interrupt configuration */
-        HAL_NVIC_SetPriority(DMA_STREAM_RECEIVE_IRQN, 0U, 0U);
-        HAL_NVIC_EnableIRQ(DMA_STREAM_RECEIVE_IRQN);
-    }
-    else
-        Error_Handler();
-    
-    DMA_HandleTypeTransmit.Instance                 = DMA_STREAM_TRANSMIT;
-    
-    DMA_HandleTypeTransmit.Init.Request             = DMA_STREAM_TRANSMIT_REQUEST;
-    DMA_HandleTypeTransmit.Init.Direction           = DMA_MEMORY_TO_PERIPH;
-    DMA_HandleTypeTransmit.Init.PeriphInc           = DMA_PINC_DISABLE;
-    DMA_HandleTypeTransmit.Init.MemInc              = DMA_MINC_ENABLE;
-    DMA_HandleTypeTransmit.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    DMA_HandleTypeTransmit.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
-    DMA_HandleTypeTransmit.Init.Mode                = DMA_NORMAL;
-    DMA_HandleTypeTransmit.Init.Priority            = DMA_PRIORITY_MEDIUM;
-    
-    if (HAL_OK == HAL_DMA_Init(&DMA_HandleTypeTransmit))
-    {
-        __HAL_LINKDMA(&UART_HandleType, hdmatx, DMA_HandleTypeTransmit);
-        
-        /* DMA1_Channel5_IRQn interrupt configuration */
-        HAL_NVIC_SetPriority(DMA_STREAM_TRANSMIT_IRQN, 0U, 0U);
-        HAL_NVIC_EnableIRQ(DMA_STREAM_TRANSMIT_IRQN);
-    }
-    else
-        Error_Handler();
-}
-
 void InitSerialCommunications(uint32_t baudRate, void *protocol, void onBytesReceivedHandler(void *protocol, uint8_t *bytes, uint16_t length))
 {
-    InitDMAChannels();
-    
     UART_HandleType.Instance                = USARTX;
     
     UART_HandleType.Init.BaudRate           = baudRate;
@@ -275,6 +186,91 @@ void HAL_UART_MspInit(UART_HandleTypeDef *husart)
         
         */
         
+        ENABLE_DMAMUX_RCC_CLOCK();
+        ENABLE_DMA_RCC_CLOCK();
+
+        /* DMA interrupt init */
+        DMA_HandleTypeReceive.Instance                  = DMA_STREAM_RECEIVE;
+        
+        DMA_HandleTypeReceive.Init.Request              = DMA_STREAM_RECEIVE_REQUEST;
+        DMA_HandleTypeReceive.Init.Direction            = DMA_PERIPH_TO_MEMORY;
+        DMA_HandleTypeReceive.Init.PeriphInc            = DMA_PINC_DISABLE;
+        DMA_HandleTypeReceive.Init.MemInc               = DMA_MINC_ENABLE;
+        DMA_HandleTypeReceive.Init.PeriphDataAlignment  = DMA_PDATAALIGN_BYTE;
+        DMA_HandleTypeReceive.Init.PeriphDataAlignment  = DMA_MDATAALIGN_BYTE;
+        DMA_HandleTypeReceive.Init.Mode                 = DMA_NORMAL;
+        DMA_HandleTypeReceive.Init.Priority             = DMA_PRIORITY_MEDIUM;
+        
+        /*
+        
+        MCUs/STM32G474VET6/Reference Manuals/rm0440-stm32g4-series-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+        
+        Table 1: STM32G4 Series memory density
+        
+        Memory density                                          Category 3
+        256 Kbytes                                              STM32G474
+        ------------------------------------------------------------------------------------------------------------
+        
+        Table 90. DMAMUX instantiation
+        
+        Number of DMAMUX output request channels                Category 3 devices
+        ------------------------------------------------------------------------------------------------------------
+
+        DMAMUX mapping
+        
+        The mapping of resources to DMAMUX is hardwired.
+        DMAMUX is used with DMA1 and DMA2:
+        
+        For category 3 and category 4 devices:
+        
+        1. DMAMUX channels 0 to 7 are connected to DMA1 channels 1 to 8
+        2. DMAMUX channels 8 to 15 are connected to DMA2 channels 1 to 8
+        ------------------------------------------------------------------------------------------------------------
+
+        Table 91. DMAMUX: assignment of multiplexer inputs to resources
+        
+        DMA request MUX input                                   Resource
+        
+        28                                                      USART3_RX
+        29                                                      USART3_TX
+        
+        ------------------------------------------------------------------------------------------------------------
+
+        */
+        
+        if (HAL_OK == HAL_DMA_Init(&DMA_HandleTypeReceive))
+        {
+            __HAL_LINKDMA(&UART_HandleType, hdmarx, DMA_HandleTypeReceive);
+            
+            /* DMA1_Channel4_IRQn interrupt configuration */
+            HAL_NVIC_SetPriority(DMA_STREAM_RECEIVE_IRQN, 0U, 0U);
+            HAL_NVIC_EnableIRQ(DMA_STREAM_RECEIVE_IRQN);
+        }
+        else
+            Error_Handler();
+        
+        DMA_HandleTypeTransmit.Instance                 = DMA_STREAM_TRANSMIT;
+        
+        DMA_HandleTypeTransmit.Init.Request             = DMA_STREAM_TRANSMIT_REQUEST;
+        DMA_HandleTypeTransmit.Init.Direction           = DMA_MEMORY_TO_PERIPH;
+        DMA_HandleTypeTransmit.Init.PeriphInc           = DMA_PINC_DISABLE;
+        DMA_HandleTypeTransmit.Init.MemInc              = DMA_MINC_ENABLE;
+        DMA_HandleTypeTransmit.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+        DMA_HandleTypeTransmit.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
+        DMA_HandleTypeTransmit.Init.Mode                = DMA_NORMAL;
+        DMA_HandleTypeTransmit.Init.Priority            = DMA_PRIORITY_MEDIUM;
+        
+        if (HAL_OK == HAL_DMA_Init(&DMA_HandleTypeTransmit))
+        {
+            __HAL_LINKDMA(&UART_HandleType, hdmatx, DMA_HandleTypeTransmit);
+            
+            /* DMA1_Channel5_IRQn interrupt configuration */
+            HAL_NVIC_SetPriority(DMA_STREAM_TRANSMIT_IRQN, 0U, 0U);
+            HAL_NVIC_EnableIRQ(DMA_STREAM_TRANSMIT_IRQN);
+        }
+        else
+            Error_Handler();
+            
         HAL_NVIC_SetPriority(USARTX_IRQN, 0U, 0U);
         HAL_NVIC_EnableIRQ(USARTX_IRQN);
     }

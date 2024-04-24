@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
+#include <string.h>
 #include <EventRecorder.h>
 
 #include "./Initializers/Include/SystemInitializer.h"
@@ -41,6 +42,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+#define OLED_MAXIMUM_BUFFER_LENGTH              21
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,6 +54,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
+uint8_t buffer[OLED_MAXIMUM_BUFFER_LENGTH]      = { 0 };
+uint8_t eventBits                               = 0;
 
 /* USER CODE END PV */
 
@@ -128,15 +134,35 @@ int main(void)
 
         if (state == KEY_0_PRESSED)
         {
-            OLED_ShowString(0, 0, (uint8_t *)"Hello world!", 8, 1);
+            memset(buffer, 0x00, OLED_MAXIMUM_BUFFER_LENGTH);
+            
+            sprintf((char *)buffer, "Hello, world! - %d", i);
+            
+            OLED_Clear();
+            
+            OLED_ShowString(0, 0, buffer, 8, 1);
             OLED_Refresh();
         }
         else if (state == KEY_1_PRESSED)
         {
-            SendRS485Message("Hello RS485!\n");
+            memset(buffer, 0x00, OLED_MAXIMUM_BUFFER_LENGTH);
+            
+            sprintf((char *)buffer, "Hello RS485! - %d.\n", i);
+            
+            SendRS485Message((char *)buffer);
         }
         else if (state == KEY_2_PRESSED)
         {
+            
+        }
+        
+        if (eventBits & (0x01 << 7))
+        {
+            OLED_Clear();
+            OLED_ShowString(0, 0, buffer, 8, 1);
+            OLED_Refresh();
+            
+            eventBits &= ~(0x01 << 7);
         }
         
         HAL_Delay(10);
@@ -156,6 +182,13 @@ int main(void)
 
 static void onBytesReceivedHandler(void *protocol, uint8_t *bytes, uint16_t length)
 {
-    OLED_ShowString(0, 8, (uint8_t *)bytes, 8, 1);
-    OLED_Refresh();
+    memset(buffer, 0x00, OLED_MAXIMUM_BUFFER_LENGTH);
+    
+    if (length > OLED_MAXIMUM_BUFFER_LENGTH)
+        memcpy(buffer, bytes, OLED_MAXIMUM_BUFFER_LENGTH);
+    else
+        memcpy(buffer, bytes, length);
+    
+    eventBits &= ~(0x01 << 7);
+    eventBits |= 0x01 << 7;
 }
