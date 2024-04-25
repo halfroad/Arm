@@ -18,12 +18,14 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
+#include <string.h>
 #include <EventRecorder.h>
 
 #include "./Initializers/Include/SystemInitializer.h"
 #include "./Buttons/Include/PushButton.h"
 #include "./LEDs/Include/LED.h"
 #include "./Displays/OLEDs/Include/OLED.h"
+#include "./Communications/SerialCommunications/Include/RS232.h"
 
 #include "../Include/main.h"
 
@@ -40,6 +42,8 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
+#define OLED_MAXIMUM_BUFFER_LENGTH              21
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -51,11 +55,16 @@
 
 /* USER CODE BEGIN PV */
 
+uint8_t buffer[OLED_MAXIMUM_BUFFER_LENGTH]      = { 0 };
+uint8_t eventBits                               = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN PFP */
+
+static void onBytesReceivedHandler(void *protocol, uint8_t *bytes, uint16_t length);
 
 /* USER CODE END PFP */
 
@@ -95,6 +104,8 @@ int main(void)
     InitLEDs();
     OLED_Init();
     
+    InitRS485(onBytesReceivedHandler);
+    
     InitPushButtons();
     
     //EventRecorderInitialize(EventRecordAll, 1U);
@@ -123,14 +134,35 @@ int main(void)
 
         if (state == KEY_0_PRESSED)
         {
-            OLED_ShowString(0, 0, (uint8_t *)"Hello world!", 8, 1);
+            memset(buffer, 0x00, OLED_MAXIMUM_BUFFER_LENGTH);
+            
+            sprintf((char *)buffer, "Hello, world! - %d", i);
+            
+            OLED_Clear();
+            
+            OLED_ShowString(0, 0, buffer, 8, 1);
             OLED_Refresh();
         }
         else if (state == KEY_1_PRESSED)
         {
+            memset(buffer, 0x00, OLED_MAXIMUM_BUFFER_LENGTH);
+            
+            sprintf((char *)buffer, "Hello RS485! - %d.\n", i);
+            
+            SendRS485Message((char *)buffer);
         }
         else if (state == KEY_2_PRESSED)
         {
+            
+        }
+        
+        if (eventBits & (0x01 << 7))
+        {
+            OLED_Clear();
+            OLED_ShowString(0, 0, buffer, 8, 1);
+            OLED_Refresh();
+            
+            eventBits &= ~(0x01 << 7);
         }
         
         HAL_Delay(10);
@@ -146,4 +178,17 @@ int main(void)
         /* USER CODE BEGIN 3 */
     }
     /* USER CODE END 3 */
+}
+
+static void onBytesReceivedHandler(void *protocol, uint8_t *bytes, uint16_t length)
+{
+    memset(buffer, 0x00, OLED_MAXIMUM_BUFFER_LENGTH);
+    
+    if (length > OLED_MAXIMUM_BUFFER_LENGTH)
+        memcpy(buffer, bytes, OLED_MAXIMUM_BUFFER_LENGTH);
+    else
+        memcpy(buffer, bytes, length);
+    
+    eventBits &= ~(0x01 << 7);
+    eventBits |= 0x01 << 7;
 }

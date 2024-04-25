@@ -294,25 +294,24 @@ void USARTX_IRQHANDLER(void)
         
         HAL_UART_DMAStop(&UART_HandleType);
         
-        static uint16_t residue                 = 0;
-        static uint16_t receivedBytesLength     = 0;
-        
-        residue                                 = __HAL_DMA_GET_COUNTER(&DMA_HandleTypeReceive);
-        receivedBytesLength                     = MAXIMUM_RECEIVED_BUFFER_LENGTH - residue;
-        
         if (OnBytesReceivedCallback)
         {
+            static uint16_t residue                 = 0;
+            static uint16_t receivedBytesLength     = 0;
+            
+            residue                                 = __HAL_DMA_GET_COUNTER(&DMA_HandleTypeReceive);
+            receivedBytesLength                     = MAXIMUM_RECEIVED_BUFFER_LENGTH - residue;
+            
             if (receivedBytesLength > 0)
             {
                 uint8_t *receivedBytesBuffer = custom_malloc(SRAMIN, sizeof(uint8_t) * receivedBytesLength);
 
-                memcpy(receivedBytesBuffer, bytesBuffer, receivedBytesLength);
+                custom_mem_copy(receivedBytesBuffer, bytesBuffer, receivedBytesLength);
                 
                 OnBytesReceivedCallback(communicationProtocol, receivedBytesBuffer, receivedBytesLength);
                 
                 custom_free(SRAMIN, receivedBytesBuffer);
-                
-                memset(bytesBuffer, 0, MAXIMUM_RECEIVED_BUFFER_LENGTH);
+                custom_mem_set(bytesBuffer, 0, MAXIMUM_RECEIVED_BUFFER_LENGTH);
             }
         }
         

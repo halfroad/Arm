@@ -3,8 +3,9 @@
 
 #include <stm32g4xx.h>
 
-void InitSerialCommunications(uint32_t baudRate, void *protocol, void onByteReceivedHandler(void *protocol, uint8_t *byte));
+void InitSerialCommunications(uint32_t baudRate, void *protocol, void (* newBytesReceivedHandler)(void *protocol, uint8_t *bytes, uint16_t length));
 
-HAL_StatusTypeDef tranmist(uint8_t *byte, uint16_t length);
+HAL_StatusTypeDef TransmitDMA(uint8_t *bytes, uint16_t length);
+HAL_StatusTypeDef ReceivedDMA(uint8_t *bytes,uint8_t length);
 
 #endif

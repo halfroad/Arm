@@ -490,14 +490,14 @@
           <GroupName>Drivers/BSP/Communications/SerialCommunications</GroupName>
           <Files>
             <File>
-              <FileName>RS232.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Sources\Drivers\BSP\Communications\SerialCommunications\Source\RS232.c</FilePath>
-            </File>
-            <File>
               <FileName>SerialCommunications.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Sources\Drivers\BSP\Communications\SerialCommunications\Source\SerialCommunications.c</FilePath>
+            </File>
+            <File>
+              <FileName>RS232.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Sources\Drivers\BSP\Communications\SerialCommunications\Source\RS232.c</FilePath>
             </File>
           </Files>
         </Group>

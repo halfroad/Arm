@@ -36,7 +36,7 @@ void InitPushButtons(void)
     
     HAL_GPIO_Init(PUSH_BUTTON_GPIO_PORT, &GPIO_InitType);
     
-    HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0U, 0U);
+    HAL_NVIC_SetPriority(EXTI15_10_IRQn, 1U, 1U);
     HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
     
     uint32_t precaler = __HAL_TIM_CALC_PSC(SystemCoreClock, 1e3);
@@ -99,7 +99,7 @@ HAL_StatusTypeDef InitBasicTimer(uint32_t prescaler, uint32_t autoReload)
             /* Configure the TIM IRQ priority 
             HAL_NVIC_SetPriority(TIM7_DAC_IRQn, 1UL << __NVIC_PRIO_BITS, 0U);
             */
-            HAL_NVIC_SetPriority(TIM7_DAC_IRQn, 2U, 2U);
+            HAL_NVIC_SetPriority(TIM7_DAC_IRQn, 1U, 1U);
         }
     }
 
