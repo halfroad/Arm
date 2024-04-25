@@ -147,7 +147,7 @@ int main(void)
         {
             memset(buffer, 0x00, OLED_MAXIMUM_BUFFER_LENGTH);
             
-            sprintf((char *)buffer, "Hello RS485! - %d.\n", i);
+            sprintf((char *)buffer, "Hello RS232! - %d.\n", i);
             
             SendRS485Message((char *)buffer);
         }

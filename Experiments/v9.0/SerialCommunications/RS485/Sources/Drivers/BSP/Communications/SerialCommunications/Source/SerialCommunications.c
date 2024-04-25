@@ -281,7 +281,7 @@ HAL_StatusTypeDef TransmitDMA(uint8_t *bytes, uint16_t length)
     return HAL_UART_Transmit_DMA(&UART_HandleType, bytes, length);
 }
 
-HAL_StatusTypeDef ReceivedDMA(uint8_t *bytes,uint8_t length)
+HAL_StatusTypeDef ReceivedDMA(uint8_t *bytes, uint8_t length)
 {
     return HAL_UARTEx_ReceiveToIdle_DMA(&UART_HandleType, bytes, length);
 }

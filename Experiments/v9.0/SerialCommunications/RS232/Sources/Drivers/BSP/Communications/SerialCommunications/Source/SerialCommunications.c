@@ -109,15 +109,17 @@ int fputc(int ch, FILE *f)
 
 #endif
 
-UART_HandleTypeDef UART_HandleType;
 
-DMA_HandleTypeDef DMA_HandleTypeTransmit;
-DMA_HandleTypeDef DMA_HandleTypeReceive;
+UART_HandleTypeDef UART_HandleType                                  = { 0 };
 
-uint8_t bytesBuffer[USART_MAXIMUM_RECEIVED_BUFFER_LENGTH];
-    
+DMA_HandleTypeDef DMA_HandleTypeTransmit                            = { 0 };
+DMA_HandleTypeDef DMA_HandleTypeReceive                             = { 0 };
+
+uint8_t bytesBuffer[USART_MAXIMUM_RECEIVED_BUFFER_LENGTH]           = { 0 };
+
 extern void Error_Handler(void);
 
+void *communicationProtocol;
 static void (* OnNewBytesReceivedCallback)(void *protocol, uint8_t *bytes, uint16_t length);
 
 void InitSerialCommunications(uint32_t baudRate, void *protocol, void (* newBytesReceivedHandler)(void *protocol, uint8_t *bytes, uint16_t length))
@@ -131,6 +133,8 @@ void InitSerialCommunications(uint32_t baudRate, void *protocol, void (* newByte
     UART_HandleType.Init.Mode                       = UART_MODE_TX_RX;
     UART_HandleType.Init.HwFlowCtl                  = UART_HWCONTROL_NONE;
     UART_HandleType.Init.OverSampling               = UART_OVERSAMPLING_16;
+    
+    communicationProtocol                           = protocol;
     
     /*  UART_HandleType.MspInitCallback                 = MspInitCallback;  */
 
@@ -150,129 +154,134 @@ void InitSerialCommunications(uint32_t baudRate, void *protocol, void (* newByte
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
-    RCC_USART_CLOCK_ENABLE();
-    
-    /*
-
-    DMG474_V1.0.pdf
-    HMI / RS232 Select,
-    
-    USART2_TX                           PD5
-    USART2_RX                           PD6
-    
-    STMicroelectronics/MCUs/STM32G474VET6/Product Specifications/stm32g474ve.pdf
-    Table 13. Alternate function (continued)
-    
-    Port                                AF7
-                                        USART1/2/3/FDCAN/COMP7/5/6
-    
-    PD5                                 USART2_TX
-    PD6                                 USART2_RX
-    
-    */
-    
-    GPIO_InitTypeDef GPIO_InitType                          = { 0 };
-    
-    GPIO_InitType.Pin                                       = USART_TX_GPIO_PIN;
-    GPIO_InitType.Mode                                      = GPIO_MODE_AF_PP;
-    GPIO_InitType.Alternate                                 = GPIO_AF7_USART2;
-    
-    RCC_USART_TX_GPIO_PORT_CLOCK_ENABLE();
-    HAL_GPIO_Init(USART_TX_GPIO_PORT, &GPIO_InitType);
-    
-    GPIO_InitType.Pin                                       = USART_RX_GPIO_PIN;
-    
-    RCC_USART_RX_GPIO_PORT_CLOCK_ENABLE();
-    HAL_GPIO_Init(USART_RX_GPIO_PORT, &GPIO_InitType);
-    
-    /*
-    
-    Table 1. STM32G4 Series memory density
-    
-    Memory density                          Category 3
-    
-    256 Kbytes                              STM32G474
-    
-    --------------------------------------------------------------------------------------------------
-    
-    Table 90. DMAMUX instantiation
-    
-                                            Feature                                             DMAMUX
-    
-    Number of DMAMUX output request channels    Category 2 devices(1)                           12
-                                                Category 3 devices(1)                           16
-                                                Category 4 devices(1)                           16
-                                    Number of DMAMUX request generator channels                 4
-                                    Number of DMAMUX request trigger inputs                     21
-                                    Number of DMAMUX synchronization inputs                     21
-                                    Number of DMAMUX peripheral request inputs                  115
-    --------------------------------------------------------------------------------------------------
-
-    DMAMUX mapping
-    
-    The mapping of resources to DMAMUX is hardwired.
-    
-    DMAMUX is used with DMA1 and DMA2:
-    For category 3 and category 4 devices:
-        1. DMAMUX channels 0 to 7 are connected to DMA1 channels 1 to 8
-        2. DMAMUX channels 8 to 15 are connected to DMA2 channels 1 to 8
-    --------------------------------------------------------------------------------------------------
-    
-    Table 91. DMAMUX: assignment of multiplexer inputs to resources
-
-    DMA request MUX input                   Resource
-    
-    26                                      USART2_RX
-    27                                      USART2_TX
-    --------------------------------------------------------------------------------------------------
-    */
-    
-    RCC_DMA_DMAMUX_CLOCK_ENABLE();
-    
-    DMA_HandleTypeTransmit.Instance                         = USART_TX_DMA_CHANNEL;
-    
-    DMA_HandleTypeTransmit.Init.Request                     = USART_TX_DMA_REQUEST;
-    DMA_HandleTypeTransmit.Init.Direction                   = DMA_PERIPH_TO_MEMORY;
-    DMA_HandleTypeTransmit.Init.PeriphInc                   = DMA_PINC_DISABLE;
-    DMA_HandleTypeTransmit.Init.MemInc                      = DMA_MINC_ENABLE;
-    DMA_HandleTypeTransmit.Init.PeriphDataAlignment         = DMA_PDATAALIGN_BYTE;
-    DMA_HandleTypeTransmit.Init.MemDataAlignment            = DMA_MDATAALIGN_BYTE;
-    DMA_HandleTypeTransmit.Init.Mode                        = DMA_NORMAL;
-    DMA_HandleTypeTransmit.Init.Priority                    = DMA_PRIORITY_HIGH;
-    
-    if (HAL_OK == HAL_DMA_Init(&DMA_HandleTypeTransmit))
+    if (huart -> Instance == USART)
     {
-        __HAL_LINKDMA(&UART_HandleType, hdmatx, DMA_HandleTypeTransmit);
+        RCC_USART_CLOCK_ENABLE();
+    
+        /*
+
+        DMG474_V1.0.pdf
+        HMI / RS232 Select,
         
-        HAL_NVIC_SetPriority(USART_TX_DMA_CHANNEL_IRQN, 0U, 0U);
-        HAL_NVIC_EnableIRQ(USART_TX_DMA_CHANNEL_IRQN);
-    }
-    else
-        Error_Handler();
-    
-    DMA_HandleTypeReceive.Instance                          = USART_TX_DMA_CHANNEL;
-    
-    DMA_HandleTypeReceive.Init.Request                      = USART_TX_DMA_REQUEST;
-    DMA_HandleTypeReceive.Init.Direction                    = DMA_PERIPH_TO_MEMORY;
-    DMA_HandleTypeReceive.Init.PeriphInc                    = DMA_PINC_DISABLE;
-    DMA_HandleTypeReceive.Init.MemInc                       = DMA_MINC_ENABLE;
-    DMA_HandleTypeReceive.Init.PeriphDataAlignment          = DMA_PDATAALIGN_BYTE;
-    DMA_HandleTypeReceive.Init.MemDataAlignment             = DMA_MDATAALIGN_BYTE;
-    DMA_HandleTypeReceive.Init.Mode                         = DMA_NORMAL;
-    DMA_HandleTypeReceive.Init.Priority                     = DMA_PRIORITY_HIGH;
-    
-    if (HAL_OK == HAL_DMA_Init(&DMA_HandleTypeReceive))
-    {
-         __HAL_LINKDMA(&UART_HandleType, hdmatx, DMA_HandleTypeTransmit);
+        USART2_TX                           PD5
+        USART2_RX                           PD6
         
-        HAL_NVIC_SetPriority(USART_RX_DMA_CHANNEL_IRQN, 0U, 0U);
-        HAL_NVIC_EnableIRQ(USART_RX_DMA_CHANNEL_IRQN);
+        STMicroelectronics/MCUs/STM32G474VET6/Product Specifications/stm32g474ve.pdf
+        Table 13. Alternate function (continued)
+        
+        Port                                AF7
+                                            USART1/2/3/FDCAN/COMP7/5/6
+        
+        PD5                                 USART2_TX
+        PD6                                 USART2_RX
+        
+        */
+        
+        GPIO_InitTypeDef GPIO_InitType                          = { 0 };
+        
+        GPIO_InitType.Pin                                       = USART_TX_GPIO_PIN;
+        GPIO_InitType.Mode                                      = GPIO_MODE_AF_PP;
+        GPIO_InitType.Pull                                      = GPIO_PULLUP;
+        GPIO_InitType.Alternate                                 = USART_TX_GPIO_ALTERNATE_FUNCTION;
+        
+        RCC_USART_TX_GPIO_PORT_CLOCK_ENABLE();
+        HAL_GPIO_Init(USART_TX_GPIO_PORT, &GPIO_InitType);
+        
+        GPIO_InitType.Pin                                       = USART_RX_GPIO_PIN;
+        GPIO_InitType.Alternate                                 = USART_RX_GPIO_ALTERNATE_FUNCTION;
+        
+        RCC_USART_RX_GPIO_PORT_CLOCK_ENABLE();
+        HAL_GPIO_Init(USART_RX_GPIO_PORT, &GPIO_InitType);
+        
+        /*
+        
+        Table 1. STM32G4 Series memory density
+        
+        Memory density                          Category 3
+        
+        256 Kbytes                              STM32G474
+        
+        --------------------------------------------------------------------------------------------------
+        
+        Table 90. DMAMUX instantiation
+        
+                                                Feature                                             DMAMUX
+        
+        Number of DMAMUX output request channels    Category 2 devices(1)                           12
+                                                    Category 3 devices(1)                           16
+                                                    Category 4 devices(1)                           16
+                                        Number of DMAMUX request generator channels                 4
+                                        Number of DMAMUX request trigger inputs                     21
+                                        Number of DMAMUX synchronization inputs                     21
+                                        Number of DMAMUX peripheral request inputs                  115
+        --------------------------------------------------------------------------------------------------
+
+        DMAMUX mapping
+        
+        The mapping of resources to DMAMUX is hardwired.
+        
+        DMAMUX is used with DMA1 and DMA2:
+        For category 3 and category 4 devices:
+            1. DMAMUX channels 0 to 7 are connected to DMA1 channels 1 to 8
+            2. DMAMUX channels 8 to 15 are connected to DMA2 channels 1 to 8
+        --------------------------------------------------------------------------------------------------
+        
+        Table 91. DMAMUX: assignment of multiplexer inputs to resources
+
+        DMA request MUX input                   Resource
+        
+        26                                      USART2_RX
+        27                                      USART2_TX
+        --------------------------------------------------------------------------------------------------
+        */
+        
+        RCC_DMA_DMAMUX_CLOCK_ENABLE();
+        
+        DMA_HandleTypeTransmit.Instance                         = USART_TX_DMA_CHANNEL;
+        
+        DMA_HandleTypeTransmit.Init.Request                     = USART_TX_DMA_REQUEST;
+        DMA_HandleTypeTransmit.Init.Direction                   = DMA_MEMORY_TO_PERIPH;
+        DMA_HandleTypeTransmit.Init.PeriphInc                   = DMA_PINC_DISABLE;
+        DMA_HandleTypeTransmit.Init.MemInc                      = DMA_MINC_ENABLE;
+        DMA_HandleTypeTransmit.Init.PeriphDataAlignment         = DMA_PDATAALIGN_BYTE;
+        DMA_HandleTypeTransmit.Init.MemDataAlignment            = DMA_MDATAALIGN_BYTE;
+        DMA_HandleTypeTransmit.Init.Mode                        = DMA_NORMAL;
+        DMA_HandleTypeTransmit.Init.Priority                    = DMA_PRIORITY_MEDIUM;
+        
+        if (HAL_OK == HAL_DMA_Init(&DMA_HandleTypeTransmit))
+        {
+            __HAL_LINKDMA(&UART_HandleType, hdmatx, DMA_HandleTypeTransmit);
+            
+            HAL_NVIC_SetPriority(USART_TX_DMA_CHANNEL_IRQN, 0U, 0U);
+            HAL_NVIC_EnableIRQ(USART_TX_DMA_CHANNEL_IRQN);
+        }
+        else
+            Error_Handler();
+        
+        DMA_HandleTypeReceive.Instance                          = USART_RX_DMA_CHANNEL;
+        
+        DMA_HandleTypeReceive.Init.Request                      = USART_RX_DMA_REQUEST;
+        DMA_HandleTypeReceive.Init.Direction                    = DMA_PERIPH_TO_MEMORY;
+        DMA_HandleTypeReceive.Init.PeriphInc                    = DMA_PINC_DISABLE;
+        DMA_HandleTypeReceive.Init.MemInc                       = DMA_MINC_ENABLE;
+        DMA_HandleTypeReceive.Init.PeriphDataAlignment          = DMA_PDATAALIGN_BYTE;
+        DMA_HandleTypeReceive.Init.MemDataAlignment             = DMA_MDATAALIGN_BYTE;
+        DMA_HandleTypeReceive.Init.Mode                         = DMA_NORMAL;
+        DMA_HandleTypeReceive.Init.Priority                     = DMA_PRIORITY_MEDIUM;
+        
+        if (HAL_OK == HAL_DMA_Init(&DMA_HandleTypeReceive))
+        {
+             __HAL_LINKDMA(&UART_HandleType, hdmarx, DMA_HandleTypeReceive);
+            
+            HAL_NVIC_SetPriority(USART_RX_DMA_CHANNEL_IRQN, 0U, 0U);
+            HAL_NVIC_EnableIRQ(USART_RX_DMA_CHANNEL_IRQN);
+        }
+        else
+            Error_Handler();
+        
+        HAL_NVIC_SetPriority(USART_IRQN, 0U, 0U);
+        HAL_NVIC_EnableIRQ(USART_IRQN);
     }
-    else
-        Error_Handler();
-    
-    HAL_NVIC_SetPriority(USART_IRQN, 0U, 0U);
-    HAL_NVIC_EnableIRQ(USART_IRQN);
 }
 
 HAL_StatusTypeDef TransmitDMA(uint8_t *bytes, uint16_t length)
@@ -280,7 +289,7 @@ HAL_StatusTypeDef TransmitDMA(uint8_t *bytes, uint16_t length)
     return HAL_UART_Transmit_DMA(&UART_HandleType, bytes, length);
 }
 
-HAL_StatusTypeDef ReceivedDMA(uint8_t *bytes,uint8_t length)
+HAL_StatusTypeDef ReceivedDMA(uint8_t *bytes, uint8_t length)
 {
     return HAL_UARTEx_ReceiveToIdle_DMA(&UART_HandleType, bytes, length);
 }
@@ -288,9 +297,10 @@ HAL_StatusTypeDef ReceivedDMA(uint8_t *bytes,uint8_t length)
 
 void USART_IRQHANDLER(void)
 {
-    if (SET == __HAL_UART_GET_FLAG(&UART_HandleType, UART_IT_IDLE))
+    if (SET == __HAL_UART_GET_FLAG(&UART_HandleType, UART_FLAG_IDLE))
     {
         __HAL_UART_CLEAR_IDLEFLAG(&UART_HandleType);
+        
         HAL_UART_DMAStop(&UART_HandleType);
         
         if (OnNewBytesReceivedCallback)
@@ -306,6 +316,8 @@ void USART_IRQHANDLER(void)
                 
                 custom_mem_copy(receivedBytesBuffer, bytesBuffer, receivedBytesLength);
                 
+                OnNewBytesReceivedCallback(communicationProtocol, receivedBytesBuffer, receivedBytesLength);
+
                 custom_free(SRAMIN, receivedBytesBuffer);
                 custom_mem_set(bytesBuffer, 0x00, USART_MAXIMUM_RECEIVED_BUFFER_LENGTH);
             }
