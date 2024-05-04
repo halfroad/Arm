@@ -1,0 +1,12 @@
+#ifndef __SERIAL_COMMUNICATIONS_H
+#define __SERIAL_COMMUNICATIONS_H
+
+#include <stm32h7xx.h>
+
+#include "../Include/RingBuffer.h"
+
+void InitSerialCommunications(uint32_t baudRate, void *protocol, void onByteReceivedHandler(void *protocol));
+
+HAL_StatusTypeDef Tranmist(uint8_t *byte, uint16_t length);
+
+#endif
