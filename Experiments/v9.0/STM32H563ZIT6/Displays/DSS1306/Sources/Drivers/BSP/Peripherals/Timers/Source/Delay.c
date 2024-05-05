@@ -14,7 +14,8 @@ void DelayUs(uint32_t us)
     // Reload us value
     usTicks = us;
     // Wait until usTick reach zero
-    while (usTicks);
+    while (usTicks)
+        ;
 }
 
 void DelayMs(uint32_t ms)
@@ -27,8 +28,17 @@ void DelayMs(uint32_t ms)
     }
 }
 
+#if (USE_CUSTOM_SYSTICK_HANDLER_IMPLEMENTATION == 0)
+
 // SysTick_Handler function will be called every 1 us
-void OnSysTickCallback (void)
+void SysTickPeriodElapsedHandler (void)
+    
+#else
+
+void SysTick_Handler (void)
+
+#endif  /*  #if (USE_CUSTOM_SYSTICK_HANDLER_IMPLEMENTATION == 0)    */
+
 {
     if (usTicks != 0)
     {

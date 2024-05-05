@@ -17,11 +17,15 @@ uint8_t OLED_GRAM[144][8];
 void OLED_Init(void)
 {
     InitInterIntegratedCircuits();
-    PullDownAsGround();
+    
+#ifdef CUSTOM_GROUND_PIN
+    
+    CustomizeGround();
+    
+#endif  /*  #ifdef CUSTOM_GROUND_PIN    */
 
     DelayMs(180);
 
-    /* Init LCD */
     OLED_WR_Byte(0xAE, OLED_CMD); //display off
     OLED_WR_Byte(0x20, OLED_CMD); //Set Memory Addressing Mode   
     OLED_WR_Byte(0x10, OLED_CMD); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid

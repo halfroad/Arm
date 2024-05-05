@@ -3,7 +3,7 @@
 
 #include <stm32h5xx.h>
 
-#define USE_GPIO_AS_GROUND_PIN
+/*    #define CUSTOM_GROUND_PIN    */
 
 typedef enum
 {
@@ -20,10 +20,10 @@ void IssueStopSignal(void);
 void WriteByte(uint8_t byte, AcknowledgeRequirements pollForAcknowledgement);
 uint8_t ReadByte(AcknowledgeRequirements acknowledgeTransmitterNeeded);
 
-#ifdef USE_GPIO_AS_GROUND_PIN
+#ifdef CUSTOM_GROUND_PIN
 
-void PullDownAsGround(void);
+void CustomizeGround(void);
 
-#endif   /* #ifdef USE_GPIO_AS_GROUND_PIN   */
+#endif   /* #ifdef CUSTOM_GROUND_PIN   */
 
 #endif  /*  #ifndef __INTER_INTEGRATED_CIRCUITS_H   */

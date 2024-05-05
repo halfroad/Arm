@@ -38,18 +38,18 @@
 #define ENABLE_BIT_NUMBER                                                   0x01    /*  Bit if set the bit field.   */
 
 #define SCL_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
-#define SCL_GPIO_PORT_BIT_FILED_POSITION                                    1       /*  PB5   */
+#define SCL_GPIO_PORT_BIT_FILED_POSITION                                    0       /*  PA5   */
 #define SCL_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SCL_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SCL_GPIO_PORT_BIT_FILED_POSITION);
-#define SCL_GPIO_PORT                                                       GPIOB
+#define SCL_GPIO_PORT                                                       GPIOA
 #define SCL_GPIO_PIN_BIT_FILED_NUMBER                                       5
 
 #define SDA_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
-#define SDA_GPIO_PORT_BIT_FILED_POSITION                                    3       /*  PD9   */
+#define SDA_GPIO_PORT_BIT_FILED_POSITION                                    6       /*  PG9  */
 #define SDA_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SDA_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SDA_GPIO_PORT_BIT_FILED_POSITION);
-#define SDA_GPIO_PORT                                                       GPIOD
+#define SDA_GPIO_PORT                                                       GPIOG
 #define SDA_GPIO_PIN_BIT_FILED_NUMBER                                       9
 
-#ifdef USE_GPIO_AS_GROUND_PIN
+#ifdef CUSTOM_GROUND_PIN
 /*
     GPIO as Ground Pin.
 */
@@ -67,12 +67,12 @@
         1: IO port D clock enabled
 */
 
-#define GPIO_AS_GROUNG_PIN_RCC_CLOCK_ENABLE(clockRegister, portBitNumber)   do                                                                                  \
+#define CUSTOM_GROUND_PIN_RCC_CLOCK_ENABLE(clockRegister, portBitNumber)   do                                                                                   \
                                                                             {                                                                                   \
                                                                                 RCC -> clockRegister |= 0x01 << portBitNumber;                                  \
                                                                             }                                                                                   \
                                                                             while   (0)
-#endif  /*  #ifdef USE_GPIO_AS_GROUND_PIN   */
+#endif  /*  #ifdef CUSTOM_GROUND_PIN   */
 
 #define MAXIMUM_TRIAL_TIMES                                                 250
 
@@ -521,11 +521,11 @@ uint8_t ReadByte(AcknowledgeRequirements acknowledgeTransmitterNeeded)
     return byte;
 }
 
-#ifdef USE_GPIO_AS_GROUND_PIN
+#ifdef CUSTOM_GROUND_PIN
 
-void PullDownAsGround(void)
+void CustomizeGround(void)
 {
-    GPIO_AS_GROUNG_PIN_RCC_CLOCK_ENABLE(GPPIO_RCC_CLOCK_REGISTER, GPPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER);
+    CUSTOM_GROUND_PIN_RCC_CLOCK_ENABLE(GPPIO_RCC_CLOCK_REGISTER, GPPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER);
     
     GPPIO_AS_GROUNG_PORT -> MODER &= ~(0x03 << GPPIO_AS_GROUNG_PIN * 2);
     GPPIO_AS_GROUNG_PORT -> MODER |= 0x01 << GPPIO_AS_GROUNG_PIN * 2;
@@ -534,4 +534,4 @@ void PullDownAsGround(void)
     GPPIO_AS_GROUNG_PORT -> PUPDR |= 0x02 << GPPIO_AS_GROUNG_PIN * 2;
 }
 
-#endif   /* #ifdef USE_GPIO_AS_GROUND_PIN   */
+#endif   /* #ifdef CUSTOM_GROUND_PIN   */

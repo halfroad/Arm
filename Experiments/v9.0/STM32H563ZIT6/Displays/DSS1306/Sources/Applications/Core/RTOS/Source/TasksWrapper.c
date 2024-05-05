@@ -29,15 +29,16 @@ __WEAK void SysTickPeriodElapsedHandler(void)
 */
 #if (USE_CUSTOM_SYSTICK_HANDLER_IMPLEMENTATION == 0)
 void SysTick_Handler (void) {
-  /* Clear overflow flag */
-  SysTick->CTRL;
+    
+    SysTickPeriodElapsedHandler();
+    
+    /* Clear overflow flag */
+    SysTick->CTRL;
 
-  if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
-    /* Call tick handler */
-    xPortSysTickHandler();
-  }
-  
-  SysTickPeriodElapsedHandler();
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+        /* Call tick handler */
+        xPortSysTickHandler();
+    }
 }
 #endif
 #endif /* SysTick */
@@ -127,7 +128,7 @@ __WEAK void vApplicationGetTimerTaskMemory (StaticTask_t **ppxTimerTaskTCBBuffer
 /* USER CODE END Application */
 
 #define SCHEDULE_TASKS_TASK_STACK_DEPTH             128
-#define SCHEDULE_TASKS_PRIORITY                       15
+#define SCHEDULE_TASKS_PRIORITY                     15
 
 TaskHandle_t ScheduleTasksHandle;
 StackType_t ScheduleTasksStack[SCHEDULE_TASKS_TASK_STACK_DEPTH];
@@ -140,10 +141,8 @@ void InitRtos(void)
     /* Start scheduler if initialized and not started before */
     
 #if (configSUPPORT_STATIC_ALLOCATION == 1)
-    
-#define CREATE_TASKS_STATICALLY   1
-    
-#if (CREATE_TASKS_STATICALLY == 1)
+
+#if CREATE_TASKS_STATICALLY
     
     ScheduleTasksHandle = xTaskCreateStatic(ScheduleTasks,
                                     "ScheduleTasksName", /*lint !e971 Unqualified char types are allowed for strings and single characters only. */

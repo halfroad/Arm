@@ -1,4 +1,4 @@
-SET PATH=D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\李进辉\AppData\Local\Microsoft\WindowsApps
+SET PATH=D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\李进辉\AppData\Local\Microsoft\WindowsApps;
 SET CPU_TYPE=STM32H563ZITx
 SET CPU_VENDOR=STMicroelectronics
 SET UV2_TARGET=STM32H563ZIT6
