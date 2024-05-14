@@ -37,27 +37,27 @@
 
 #define ENABLE_BIT_NUMBER                                                   0x01    /*  Bit if set the bit field.   */
 
-#define SCL_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
-#define SCL_GPIO_PORT_BIT_FILED_POSITION                                    1       /*  PB8   */
+#define SCL_GPIO_PORT_BUS_BRIDGE                                            AHB4ENR
+#define SCL_GPIO_PORT_BIT_FILED_POSITION                                    0       /*  PA5   */
 #define SCL_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SCL_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SCL_GPIO_PORT_BIT_FILED_POSITION);
-#define SCL_GPIO_PORT                                                       GPIOB
-#define SCL_GPIO_PIN_BIT_FILED_NUMBER                                       8
+#define SCL_GPIO_PORT                                                       GPIOA
+#define SCL_GPIO_PIN_BIT_FILED_NUMBER                                       5
 
-#define SDA_GPIO_PORT_BUS_BRIDGE                                            AHB2ENR
-#define SDA_GPIO_PORT_BIT_FILED_POSITION                                    1       /*  PB9  */
+#define SDA_GPIO_PORT_BUS_BRIDGE                                            AHB4ENR
+#define SDA_GPIO_PORT_BIT_FILED_POSITION                                    0       /*  PA6  */
 #define SDA_GPIO_PORT_RCC_CLOCK_ENABLE()                                    GPIO_PORT_RCC_CLOCK_ENABLE(SDA_GPIO_PORT_BUS_BRIDGE, ENABLE_BIT_NUMBER, SDA_GPIO_PORT_BIT_FILED_POSITION);
-#define SDA_GPIO_PORT                                                       GPIOB
-#define SDA_GPIO_PIN_BIT_FILED_NUMBER                                       9
+#define SDA_GPIO_PORT                                                       GPIOA
+#define SDA_GPIO_PIN_BIT_FILED_NUMBER                                       6
 
 #ifdef CUSTOM_GROUND_PIN
 /*
     GPIO as Ground Pin.
 */
 
-#define GPPIO_RCC_CLOCK_REGISTER                        AHB2ENR
-#define GPPIO_AS_GROUNG_PORT                            GPIOD
-#define GPPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER           3
-#define GPPIO_AS_GROUNG_PIN                             10
+#define GPIO_RCC_CLOCK_REGISTER                        AHB2ENR
+#define GPIO_AS_GROUNG_PORT                            GPIOD
+#define GPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER           3
+#define GPIO_AS_GROUNG_PIN                             10
 /*
     AHB2 peripheral clock enable register (RCC_AHB2ENR)
     
@@ -525,13 +525,13 @@ uint8_t ReadByte(AcknowledgeRequirements acknowledgeTransmitterNeeded)
 
 void CustomizeGround(void)
 {
-    CUSTOM_GROUND_PIN_RCC_CLOCK_ENABLE(GPPIO_RCC_CLOCK_REGISTER, GPPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER);
+    CUSTOM_GROUND_PIN_RCC_CLOCK_ENABLE(GPIO_RCC_CLOCK_REGISTER, GPIO_AS_GROUNG_PORT_BIT_FIELD_NUMBER);
     
-    GPPIO_AS_GROUNG_PORT -> MODER &= ~(0x03 << GPPIO_AS_GROUNG_PIN * 2);
-    GPPIO_AS_GROUNG_PORT -> MODER |= 0x01 << GPPIO_AS_GROUNG_PIN * 2;
+    GPIO_AS_GROUNG_PORT -> MODER &= ~(0x03 << GPIO_AS_GROUNG_PIN * 2);
+    GPIO_AS_GROUNG_PORT -> MODER |= 0x01 << GPIO_AS_GROUNG_PIN * 2;
     
-    GPPIO_AS_GROUNG_PORT -> PUPDR &= ~(0x03 << GPPIO_AS_GROUNG_PIN * 2);
-    GPPIO_AS_GROUNG_PORT -> PUPDR |= 0x02 << GPPIO_AS_GROUNG_PIN * 2;
+    GPIO_AS_GROUNG_PORT -> PUPDR &= ~(0x03 << GPIO_AS_GROUNG_PIN * 2);
+    GPIO_AS_GROUNG_PORT -> PUPDR |= 0x02 << GPIO_AS_GROUNG_PIN * 2;
 }
 
 #endif   /* #ifdef CUSTOM_GROUND_PIN   */
