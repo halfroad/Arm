@@ -10,12 +10,17 @@
 #define MODE                                                    SPI_MODE_MASTER
 #define DIRECTION                                               SPI_DIRECTION_2LINES
 #define DATASIZE                                                SPI_DATASIZE_8BIT
-#define POLARITY                                                SPI_POLARITY_HIGH
-#define PHASE                                                   SPI_PHASE_2EDGE
-#define BAUD_RATE_PRESCALER                                     SPI_BAUDRATEPRESCALER_32
+#define POLARITY                                                SPI_POLARITY_LOW
+#define PHASE                                                   SPI_PHASE_1EDGE
+#define BAUD_RATE_PRESCALER                                     SPI_BAUDRATEPRESCALER_16
 #define FIRSTBIT                                                SPI_FIRSTBIT_MSB
 #define SLAVE_SELECT                                            SPI_NSS_SOFT
 
+#define RCC_PERIPH_CLOPCK                                       RCC_PERIPHCLK_SPI2
+#define SPI_CLOCK_SELECTION                                     Spi2ClockSelection
+#define SPI_CLOCK_SOURCE                                        RCC_SPI2CLKSOURCE_PLL1Q
+
+/*  CS: PD5 */
 #define SPI_NSS_GPIO_PORT                                       GPIOD
 #define RCC_SPI_NSS_GPIO_PORT_ENABLE()                          do                                  \
                                                                 {                                   \
@@ -28,6 +33,7 @@
     #define SPI_NSS_GPIO_PIN_ALTERNATE_FUNCTION                     GPIO_AF5_SPI2
 */
 
+/*  MISO: PC2 */
 #define SPI_MISO_GPIO_PORT                                      GPIOC
 #define RCC_SPI_MISO_GPIO_PORT_ENABLE()                         do                                  \
                                                                 {                                   \
@@ -38,6 +44,7 @@
 #define SPI_MISO_GPIO_PIN                                       GPIO_PIN_2
 #define SPI_MISO_GPIO_PIN_ALTERNATE_FUNCTION                    GPIO_AF5_SPI2
 
+/*  MOSI: PC3 */
 #define SPI_MOSI_GPIO_PORT                                      GPIOC
 #define RCC_SPI_MOSI_GPIO_PORT_ENABLE()                         do                                  \
                                                                 {                                   \
@@ -48,6 +55,7 @@
 #define SPI_MOSI_GPIO_PIN                                       GPIO_PIN_3
 #define SPI_MOSI_GPIO_PIN_ALTERNATE_FUNCTION                    GPIO_AF5_SPI2
 
+/*  SCK: PD3 */
 #define SPI_SCK_GPIO_PORT                                       GPIOD
 #define RCC_SPI_SCK_GPIO_PORT_ENABLE()                          do                                  \
                                                                 {                                   \
@@ -145,8 +153,8 @@ static void MspInitCallback(SPI_HandleTypeDef *hspi)
         
         RCC_PeriphCLKInitTypeDef RCC_PeriphCLKInitType  = { 0 };
         
-        RCC_PeriphCLKInitType.PeriphClockSelection      = RCC_PERIPHCLK_SPI2;
-        RCC_PeriphCLKInitType.Spi1ClockSelection        = RCC_SPI1CLKSOURCE_PLL1Q;
+        RCC_PeriphCLKInitType.PeriphClockSelection      = RCC_PERIPH_CLOPCK;
+        RCC_PeriphCLKInitType.SPI_CLOCK_SELECTION       = SPI_CLOCK_SOURCE;
         
         HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphCLKInitType);
         

@@ -81,4 +81,5 @@ __WEAK void vApplicationGetTimerTaskMemory (StaticTask_t **ppxTimerTaskTCBBuffer
   *ppxTimerTaskStackBuffer = &Timer_Stack[0];
   *pulTimerTaskStackSize   = (uint32_t)configTIMER_TASK_STACK_DEPTH;
 }
+
 #endif
