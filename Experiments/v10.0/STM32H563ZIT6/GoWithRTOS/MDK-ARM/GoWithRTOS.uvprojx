@@ -49,7 +49,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Compilations\Objects\</OutputDirectory>
-          <OutputName>DSS1306</OutputName>
+          <OutputName>GoWithRTOS</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -452,12 +452,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Applications/User/Peripherals/Displays/DSS1603</GroupName>
+          <GroupName>Applications/User/Peripherals/Displays/DSS1306</GroupName>
           <Files>
             <File>
               <FileName>OLED.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Sources\Applications\User\Peripherals\Displays\DSS1603\Source\OLED.c</FilePath>
+              <FilePath>..\Sources\Applications\User\Peripherals\Displays\DSS1306\Source\OLED.c</FilePath>
             </File>
           </Files>
         </Group>

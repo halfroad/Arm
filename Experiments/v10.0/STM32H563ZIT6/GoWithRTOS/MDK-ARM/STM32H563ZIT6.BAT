@@ -1,4 +1,7 @@
 SET PATH=D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\Àî½ø»Ô\AppData\Local\Microsoft\WindowsApps;
+SET ARMCC6_ASMOPT=--diag_suppress=9931
+SET ARMCC6_CCOPT=--diag_suppress=9931
+SET ARMCC6_LINKOPT=--diag_suppress=9931
 SET CPU_TYPE=STM32H563ZITx
 SET CPU_VENDOR=STMicroelectronics
 SET UV2_TARGET=STM32H563ZIT6
@@ -47,5 +50,5 @@ SET CPU_CLOCK=0x00B71B00
 "D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin\ArmClang.exe" @".\compilations\objects\heap_4.__i"
 "D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin\ArmClang.exe" @".\compilations\objects\eventrecorder.__i"
 "D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin\ArmClang.exe" @".\compilations\objects\retarget_io.__i"
-"D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin\ArmLink" --Via ".\Compilations\Objects\DSS1306.lnp"
-"D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin\fromelf.exe" ".\Compilations\Objects\DSS1306.axf" --i32combined --output ".\Compilations\Objects\DSS1306.hex"
+"D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin\ArmLink" --Via ".\Compilations\Objects\GoWithRTOS.lnp"
+"D:\Programs\Arm\Keil_v5\ARM\ARMCLANG\Bin\fromelf.exe" ".\Compilations\Objects\GoWithRTOS.axf" --i32combined --output ".\Compilations\Objects\GoWithRTOS.hex"
