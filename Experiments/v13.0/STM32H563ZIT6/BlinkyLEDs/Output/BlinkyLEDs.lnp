@@ -1,0 +1,13 @@
+--cpu=Cortex-M33
+"..\..\output\main.o"
+"..\..\output\system_stm32h5xx.o"
+"..\..\output\stm32h5xx_it.o"
+"..\..\output\startup_stm32h563xx.o"
+"..\..\output\stm32h5xx_hal_rcc.o"
+"..\..\output\stm32h5xx_hal.o"
+"..\..\output\stm32h5xx_hal_cortex.o"
+"..\..\output\stm32h5xx_hal_gpio.o"
+--strict --scatter "..\..\Output\BlinkyLEDs.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "..\..\Output\BlinkyLEDs.map" -o ..\..\Output\BlinkyLEDs.axf
