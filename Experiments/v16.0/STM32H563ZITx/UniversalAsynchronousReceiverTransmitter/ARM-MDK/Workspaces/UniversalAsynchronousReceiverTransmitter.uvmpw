@@ -8,19 +8,17 @@
   <WorkspaceName>UniversalAsynchronousReceiverTransmitter</WorkspaceName>
 
   <project>
-    <PathAndName>..\..\HALUniversalAsynchronousReceiverTransmitter\ARM-MDK\HALUniversalAsynchronousReceiverTransmitter.uvprojx</PathAndName>
-    <NodeIsExpanded>1</NodeIsExpanded>
+    <PathAndName>..\..\HALUsart\ARM-MDK\HALUsart.uvprojx</PathAndName>
   </project>
 
   <project>
-    <PathAndName>..\..\RegisterUniversalAsynchronousReceiverTransmitter\ARM-MDK\RegisterUniversalAsynchronousReceiverTransmitter.uvprojx</PathAndName>
-    <NodeIsExpanded>1</NodeIsExpanded>
-  </project>
-
-  <project>
-    <PathAndName>..\..\HALUniversalAsynchronousReceiverTransmitterIdle\ARM-MDK\HALUniversalAsynchronousReceiverTransmitterIdle.uvprojx</PathAndName>
+    <PathAndName>..\..\HALUsartFixedLength\ARM-MDK\HALUsartFixedLength.uvprojx</PathAndName>
     <NodeIsActive>1</NodeIsActive>
     <NodeIsExpanded>1</NodeIsExpanded>
+  </project>
+
+  <project>
+    <PathAndName>..\..\RegisterUSART\ARM-MDK\RegisterUSART.uvprojx</PathAndName>
   </project>
 
 </ProjectWorkspace>

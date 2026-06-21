@@ -9,4 +9,4 @@ typedef enum
 } LEDs;
 
 void InitLEDs(void);
-void Toggle (LEDs led);
+void ToggleLED (LEDs led);

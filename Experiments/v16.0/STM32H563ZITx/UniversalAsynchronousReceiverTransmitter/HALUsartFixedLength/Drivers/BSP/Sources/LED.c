@@ -69,7 +69,7 @@ void InitLEDs (void)
     HAL_GPIO_Init(RED_LED_PORT, &GPIO_InitType);
 }
 
-void Toggle (LEDs led)
+void ToggleLED (LEDs led)
 {
     switch (led)
     {
