@@ -1,4 +1,4 @@
-SET PATH=d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\Bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\???\AppData\Local\Microsoft\WindowsApps
+SET PATH=d:\Program Files\Arm\Keil_v5\ARM\ARMCLANG\Bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\???\AppData\Local\Microsoft\WindowsApps;
 SET ARMCC6_ASMOPT=--diag_suppress=9931
 SET ARMCC6_CCOPT=--diag_suppress=9931
 SET ARMCC6_LINKOPT=--diag_suppress=9931

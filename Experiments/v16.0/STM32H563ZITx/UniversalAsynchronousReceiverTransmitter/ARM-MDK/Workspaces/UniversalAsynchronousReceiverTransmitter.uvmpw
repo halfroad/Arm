@@ -9,16 +9,22 @@
 
   <project>
     <PathAndName>..\..\HALUsart\ARM-MDK\HALUsart.uvprojx</PathAndName>
+    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
   <project>
     <PathAndName>..\..\HALUsartFixedLength\ARM-MDK\HALUsartFixedLength.uvprojx</PathAndName>
-    <NodeIsActive>1</NodeIsActive>
     <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
   <project>
     <PathAndName>..\..\RegisterUSART\ARM-MDK\RegisterUSART.uvprojx</PathAndName>
+  </project>
+
+  <project>
+    <PathAndName>..\..\HALUsartIdle\ARM-MDK\HALUsartIdle.uvprojx</PathAndName>
+    <NodeIsActive>1</NodeIsActive>
+    <NodeIsExpanded>1</NodeIsExpanded>
   </project>
 
 </ProjectWorkspace>
